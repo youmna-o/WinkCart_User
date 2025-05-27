@@ -37,6 +37,18 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
             }
         }
     }
+    fun getProductsList() : List<Product>? {
+        val productResponse: ProductResponse? = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
+        val productList = productResponse?.products
+        return productList
+    }
+
+    fun getProduct(id: Long): Product? {
+        val productResponse = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
+        val productList = productResponse?.products
+        return productList?.find { it.id == id }
+    }
+
 
 
     fun getALlSubCategories() : Set<String> {
@@ -47,6 +59,15 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
             ?: emptySet()
         return uniqueProductTypes
     }
+//    fun getProductDetails() : Product {
+//        val productResponse: ProductResponse? = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
+//       // val
+////        val uniqueProductTypes: Set<String> = productResponse?.products
+////            ?.map { it.product_type }
+////            ?.toSet()
+////            ?: emptySet()
+////        return uniqueProductTypes
+//   // }
 
 
     fun getMenProducts(): List<Product> {

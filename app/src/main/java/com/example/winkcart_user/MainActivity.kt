@@ -51,13 +51,40 @@ class MainActivity : ComponentActivity() {
                 vm.getKidsProducts()
             }
 
+            var myProducts =  remember (productState.value) {
+                vm.getProductsList()
+            }
+
+            var myProduct =  remember (productState.value) {
+                vm.getProduct(id=9083149353208)
+            }
+
 
             LaunchedEffect(subCategories) {
                 Log.i("TAG", "Unique Product Types: $subCategories")
                 Log.i("TAG", "men Product Types: $menProducts")
                 Log.i("TAG", "women Product Types: $womenProducts")
                 Log.i("TAG", "kids Product Types: $kidsProducts")
-            }
+
+                Log.i("Yomna", "**************************: ${myProduct?.body_html}")
+                Log.i("Yomna", "**************************: ${myProduct?.title}")
+                myProduct?.images?.forEach { image ->
+                    Log.i("Yomna", "**************************: ${image.src}")
+                }
+                myProduct?.options?.filter {
+                    it.name == "Size"
+                }?.forEach { size ->
+                     Log.i("Yomna", "**************************: ${size.values}")
+                }
+                
+                    Log.i("Yomna", "**************************: ${myProduct?.variants[0]?.price}")
+                }
+//                myProduct?.options?.forEach { option ->
+//                    Log.i("Yomna", "**************************: ${option.values.size}")
+//                }
+
+                // Log.i("Yomna", "**************************: ${allProducts?.forEach { it.title }}")
+
 
             WinkCart_UserTheme {
                 val  navController = rememberNavController()
