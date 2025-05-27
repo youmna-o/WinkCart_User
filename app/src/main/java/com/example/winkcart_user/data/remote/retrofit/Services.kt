@@ -1,5 +1,8 @@
 package com.example.winkcart_user.data.remote.retrofit
 
+import com.example.winkcart_user.BuildConfig
+
+
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -10,6 +13,7 @@ import retrofit2.http.Query
 interface Services {
     @GET("smart_collections.json")
     suspend fun getSmartCollections( @Header("X-Shopify-Access-Token") token: String):Response<SmartCollectionsResponse>
+
 
 
 

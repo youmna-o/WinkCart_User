@@ -24,6 +24,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
         buildConfigField("String","shopifyAccessToken","\"${localProps["shopifyAccessToken"]}\"")
 
     }
@@ -68,9 +70,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
+    val nav_version = "2.8.8"
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
     //retrofit
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+
 
 }
