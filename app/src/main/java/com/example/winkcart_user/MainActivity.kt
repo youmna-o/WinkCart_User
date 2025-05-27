@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.winkcart_user.ui.login.LoginScreen
+import com.example.winkcart_user.ui.login.SignUpScreen
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,12 +21,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WinkCart_UserTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+              //  LoginScreen()
+                SignUpScreen()
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+////                    Greeting(
+////                        name = "Android",
+////                        modifier = Modifier.padding(innerPadding)
+////                    )
+//                }
             }
         }
     }
