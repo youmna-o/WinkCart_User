@@ -1,7 +1,7 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.application) version "8.9.2"
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
@@ -73,11 +73,11 @@ dependencies {
 
     val nav_version = "2.8.8"
     implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     //retrofit
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-
 
 }
