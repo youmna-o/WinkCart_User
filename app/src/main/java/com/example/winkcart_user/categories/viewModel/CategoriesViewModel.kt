@@ -15,10 +15,6 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
 
     private val _productList = MutableStateFlow<ResponseStatus<ProductResponse>>(ResponseStatus.Loading)
     val producs = _productList.asStateFlow()
-
-
-
-
     init {
         getAllProducts()
     }
@@ -47,15 +43,12 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
             ?: emptySet()
         return uniqueProductTypes
     }
-
-
     fun getMenProducts(): List<Product> {
         val productResponse = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
         return productResponse?.products
             ?.filter { it.tags.contains("men", ignoreCase = true) }
             ?: emptyList()
     }
-
     fun getWomenProducts(): List<Product>{
         val productResponse = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
         return productResponse?.products
