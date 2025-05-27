@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WinkCart_UserTheme {
-              //  LoginScreen()
+               // LoginScreen()
                 SignUpScreen()
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 ////                    Greeting(

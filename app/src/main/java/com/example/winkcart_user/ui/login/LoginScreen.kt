@@ -27,7 +27,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.R
-import com.example.winkcart_user.ui.theme.myOrange
+import com.example.winkcart_user.ui.utils.CustomTextField
+
 
 @Composable
 fun LoginScreen(){
@@ -57,18 +58,4 @@ fun LoginScreen(){
 
 }
 
-@Composable
-fun CustomTextField(lable: String){
-    val myText = remember { mutableStateOf(TextFieldValue("")) }
-    Column {
-        OutlinedTextField(
-            value = myText.value,
-            onValueChange = { myText.value = it },
-            label = { Text(lable) },
-            modifier = Modifier
-                .fillMaxWidth(),
-            singleLine = true
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
+
