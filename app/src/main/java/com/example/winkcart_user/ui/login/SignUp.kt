@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,18 +20,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.ui.utils.CustomTextField
+import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 
 @Composable
-fun SignUpScreen(){
+fun SignUpScreen(navController: NavController){
+
     Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
         Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
         CustomTextField(lable = "Name")
         CustomTextField(lable = "Email")
         CustomTextField(lable = "Password")
-        Text("Already have an account?LOGIN", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End)
+        Text("Already have an account?LOGIN", modifier = Modifier.fillMaxWidth()
+            .clickable(onClick = {
+               navController.navigate("Login")
+
+        }), textAlign = TextAlign.End)
 
 
         Spacer(modifier = Modifier.height(30.dp))

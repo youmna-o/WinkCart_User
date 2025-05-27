@@ -14,5 +14,7 @@ val Rose40 = Color(0xFF89475E)
 val Rose20 = Color(0xFF4F2434)
 val Rose10 = Color(0xFF2A111B)
 
+val myPurplr = Color(0xFF89475e)
+
 
 
