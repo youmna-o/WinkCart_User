@@ -41,6 +41,9 @@ fun SettingsCard(settingIcon: Int = R.drawable.ic_about_us,settingName:Int = R.s
             .height(48.dp),
         colors = CardDefaults.cardColors(
             containerColor = CardBackgroundColor
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
         )
     ) {
 

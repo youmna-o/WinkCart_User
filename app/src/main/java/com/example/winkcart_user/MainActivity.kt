@@ -22,8 +22,7 @@ import com.example.winkcart_user.ui.login.LoginScreen
 import com.example.winkcart_user.ui.login.SignUpScreen
 
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+
 import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
