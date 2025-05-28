@@ -1,10 +1,21 @@
 package com.example.winkcart_user
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,6 +27,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.winkcart_user.ui.login.LoginScreen
 import com.example.winkcart_user.ui.login.SignUpScreen
 
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import com.example.winkcart_user.brands.viewModel.BrandsViewModel
@@ -23,9 +38,9 @@ import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.ProductRepoImpl
-
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
+import com.example.winkcart_user.ui.home.HomeScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -37,35 +52,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             val productState = vm.producs.collectAsState()
 
-            val subCategories = remember(productState.value) {
-                vm.getALlSubCategories()
-            }
-
-            val menProducts = remember (productState.value) {
-                vm.getMenProducts()
-            }
-            val womenProducts = remember (productState.value) {
-                vm.getWomenProducts()
-            }
-            val kidsProducts = remember (productState.value) {
-                vm.getKidsProducts()
-            }
-
+         
             var myProducts =  remember (productState.value) {
                 vm.getProductsList()
             }
-
             var myProduct =  remember (productState.value) {
                 vm.getProduct(id=9083149353208)
             }
-
-
-
             LaunchedEffect(subCategories) {
-                Log.i("TAG", "Unique Product Types: $subCategories")
-                Log.i("TAG", "men Product Types: $menProducts")
-                Log.i("TAG", "women Product Types: $womenProducts")
-                Log.i("TAG", "kids Product Types: $kidsProducts")
+    
 
                 Log.i("Product", "**************************: ${myProduct?.body_html}")
                 Log.i("Product", "**************************: ${myProduct?.title}")
@@ -85,49 +80,108 @@ class MainActivity : ComponentActivity() {
 
 
 
-
             WinkCart_UserTheme {
-                val  navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = NavigationRout.SignUp.rout
-
-                ) {
-                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController) }
-                    composable(NavigationRout.Login.rout) { LoginScreen(navController)}
-
-                }
-               // LoginScreen()
-                //SignUpScreen()
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-////                    Greeting(
-////                        name = "Android",
-////                        modifier = Modifier.padding(innerPadding)
-////                    )
-//                }
+                AppInit()
             }
+        }
+    }
+}
+@Composable
+fun AppInit() {
+    val navController = rememberNavController()
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
 
-           // var state = BrandsViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper()))).brandList.collectAsState()
+    val screensWithBottomBar = listOf(
+        NavigationRout.Home.route,
+        NavigationRout.Profile.route,
+        NavigationRout.Settings.route
+    )
+    val showBottomBar = currentRoute in screensWithBottomBar
 
+
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                BottomNavigationBar(navController = navController)
+            }
+        }
+    ) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = NavigationRout.Login.route,
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            composable(NavigationRout.Login.route) {
+                LoginScreen(navController = navController)
+            }
+            composable(NavigationRout.SignUp.route) {
+                SignUpScreen(navController = navController)
+            }
+            composable(NavigationRout.Home.route) {
+                HomeScreen(navController = navController)
+            }
+            //    NavHost(
+//        navController = navController
+//            .startDestination = NavigationRout.SignUp.rout
+//
+//    ) {
+//        composable(NavigationRout.SignUp.rout) { SignUpScreen(navController) }
+//        composable(NavigationRout.Login.rout) { LoginScreen(navController)}
+//    }
         }
     }
 }
 
 @Composable
- fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun BottomNavigationBar(navController: NavController) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
 
+    NavigationBar {
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+            label = { Text("Home") },
+            selected = currentRoute == NavigationRout.Home.route,
+            onClick = {
+                navController.navigate(NavigationRout.Home.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.ThumbUp, contentDescription = "Profile") },
+            label = { Text("Profile") },
+            selected = currentRoute == NavigationRout.Profile.route,
+            onClick = {
+                navController.navigate(NavigationRout.Profile.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
 
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    WinkCart_UserTheme {
-        Greeting("Android")
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+            label = { Text("Settings") },
+            selected = currentRoute == NavigationRout.Settings.route,
+            onClick = {
+                navController.navigate(NavigationRout.Settings.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
     }
 }
+

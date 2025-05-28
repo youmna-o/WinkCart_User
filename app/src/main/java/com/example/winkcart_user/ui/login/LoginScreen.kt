@@ -25,13 +25,12 @@ import com.example.winkcart_user.ui.utils.CustomTextField
 @Composable
 fun LoginScreen(navController: NavController){
     Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
+
          Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
          CustomTextField(lable = "Email")
          CustomTextField(lable = "Password")
         Text("Forget your password?", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End)
-
-
         Spacer(modifier = Modifier.height(30.dp))
         Button(onClick = {}, modifier = Modifier.fillMaxWidth().height(48.dp),) {
             Text("LOGIN")
@@ -51,6 +50,14 @@ fun LoginScreen(navController: NavController){
                 navController.navigate("SignUp")
             },
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        CustomButton(
+            "To Home screen",
+            onClick ={
+                navController.navigate("home")
+            },
+        )
+
 //        Button(onClick = {
 //            navController.navigate("SignUp")
 //        }, modifier = Modifier.fillMaxWidth().height(48.dp),) {
