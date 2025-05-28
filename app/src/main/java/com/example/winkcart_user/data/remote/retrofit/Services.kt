@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.remote.retrofit
 
 import com.example.winkcart_user.BuildConfig
+import com.example.winkcart_user.data.model.products.ProductResponse
 
 
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -14,6 +15,8 @@ interface Services {
     @GET("smart_collections.json")
     suspend fun getSmartCollections( @Header("X-Shopify-Access-Token") token: String):Response<SmartCollectionsResponse>
 
+    @GET("products.json")
+    suspend fun getAllProducts (@Header("X-Shopify-Access-Token") token: String) :Response<ProductResponse>
 
 
 
