@@ -29,13 +29,14 @@ import com.example.winkcart_user.data.model.settings.Address
 import com.example.winkcart_user.ui.theme.CardBackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
 import com.example.winkcart_user.ui.theme.myPurplr
+import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 
 @Composable
 fun AddressCard(address: Address){
 
     Card(
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(CARD_CARD_CORNER_RADIUS),
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp),

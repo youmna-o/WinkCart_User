@@ -21,4 +21,9 @@
     <string name="edit">Edit</string>
     <string name= "address_card_checkbox_text">Use as the default address</string>
 
+    <string name="title">Title</string>
+    <string name="contact_person">Contact Person</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="country">Country</string>
+
 </resources>
