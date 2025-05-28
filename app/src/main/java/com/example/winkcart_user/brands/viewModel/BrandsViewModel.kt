@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.vendors.SmartCollection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -21,20 +22,26 @@ class BrandsViewModel(private  val repo: ProductRepo) : ViewModel() {
     private val _brandList = MutableStateFlow<ResponseStatus<SmartCollectionsResponse>>(ResponseStatus.Loading)
     val brandList = _brandList.asStateFlow()
 
+
     fun getSmartCollections() {
         viewModelScope.launch {
-            val brands = repo.getSmartCollections()
-            brands.catch {
-                _brandList.value = ResponseStatus.Error(it)
-            }.collect{ it
-                if (it!= null){
-                    _brandList.value= ResponseStatus.Success<SmartCollectionsResponse>(it)
-                }else{
-                    _brandList.value = ResponseStatus.Error(NullPointerException("SmartCollectionsResponse is null"))
+            repo.getFilteredSmartCollections()
+                .catch { exception ->
+                    _brandList.value = ResponseStatus.Error(exception)
                 }
-            }
+                .collect { response ->
+                    if (response != null) {
+                        _brandList.value = ResponseStatus.Success(response)
+                    } else {
+                        _brandList.value = ResponseStatus.Error(
+                            NullPointerException("SmartCollectionsResponse is null")
+                        )
+                    }
+                }
         }
     }
+
+
 
 
 }

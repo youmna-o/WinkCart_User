@@ -4,7 +4,6 @@ import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepo {
-
     suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?>
-
+    suspend fun getFilteredSmartCollections(): Flow<SmartCollectionsResponse?>
 }
