@@ -1,5 +1,7 @@
-package com.example.winkcart_user.ui.login
+package com.example.winkcart_user.ui.signUp
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,30 +19,42 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
+import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
+import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
+import com.example.winkcart_user.data.repository.FirebaseRepoImp
+import com.example.winkcart_user.ui.login.AuthViewModel
 import com.example.winkcart_user.ui.utils.CustomTextField
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun SignUpScreen(navController: NavController){
+    val authViewModel = AuthViewModel(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+    var context = LocalContext.current
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
         Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
-        CustomTextField(lable = "Name",input = email,onValueChange = { newEmail ->
+        CustomTextField(lable = "Name",input = name,onValueChange = { newName ->
+            name = newName
+        },)
+        CustomTextField(lable = "Email",input = email,onValueChange = { newEmail ->
             email = newEmail
         },)
-        CustomTextField(lable = "Email",input = name,onValueChange = { newEmail ->
-            email = newEmail
-        },)
-        CustomTextField(lable = "Password",input = password,onValueChange = { newEmail ->
-            email = newEmail
+        CustomTextField(lable = "Password",input = password,onValueChange = { newPassword ->
+            password = newPassword
         },)
         Text("Already have an account?LOGIN", modifier = Modifier.fillMaxWidth()
             .clickable(onClick = {
@@ -50,18 +64,24 @@ fun SignUpScreen(navController: NavController){
 
 
         Spacer(modifier = Modifier.height(30.dp))
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth().height(48.dp),) {
+        Button(onClick = {
+            authViewModel.signUp(email,password)
+        }, modifier = Modifier.fillMaxWidth().height(48.dp),) {
             Text("SIGN UP")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth().height(48.dp),) {
+        Button(onClick = {
+            authViewModel.signIn(email,password)
+
+        }, modifier = Modifier.fillMaxWidth().height(48.dp),) {
              Image(painter = painterResource(id = R.drawable.google), contentDescription = "")
             Text("SIGN UP WITH GOOGLE")
         }
 
-
     }
 
+
 }
+
 
 

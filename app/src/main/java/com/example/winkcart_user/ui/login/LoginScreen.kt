@@ -1,5 +1,7 @@
 package com.example.winkcart_user.ui.login
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 
@@ -22,17 +24,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
+import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
+import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
+import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.ui.utils.CustomTextField
+import com.google.firebase.auth.FirebaseAuth
 
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun LoginScreen(navController: NavController){
+    val authViewModel = AuthViewModel(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
          Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
-        Spacer(modifier = Modifier.height(56.dp))
+         Spacer(modifier = Modifier.height(56.dp))
          CustomTextField(lable = "Email", input = email,onValueChange = { newEmail ->
              email = newEmail
          },)
@@ -43,7 +53,9 @@ fun LoginScreen(navController: NavController){
 
 
         Spacer(modifier = Modifier.height(30.dp))
-        Button(onClick = {}, modifier = Modifier.fillMaxWidth().height(48.dp),) {
+        Button(onClick = {
+            authViewModel.signIn(email,password)
+        }, modifier = Modifier.fillMaxWidth().height(48.dp),) {
             Text("LOGIN")
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -71,5 +83,4 @@ fun LoginScreen(navController: NavController){
     }
 
 }
-
 
