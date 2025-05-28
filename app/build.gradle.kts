@@ -1,7 +1,5 @@
-import java.util.Properties
-
 plugins {
-    alias(libs.plugins.android.application) version "8.9.2"
+    alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
@@ -9,12 +7,6 @@ plugins {
 android {
     namespace = "com.example.winkcart_user"
     compileSdk = 35
-
-    val localProps = Properties()
-    val localPropsFile = rootProject.file("local.properties")
-    if (localPropsFile.exists()) {
-        localProps.load(localPropsFile.inputStream())
-    }
 
     defaultConfig {
         applicationId = "com.example.winkcart_user"
@@ -24,10 +16,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-
-        buildConfigField("String","shopifyAccessToken","\"${localProps["shopifyAccessToken"]}\"")
-
     }
 
     buildTypes {
@@ -48,7 +36,6 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
@@ -69,17 +56,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-
-    val nav_version = "2.8.8"
-    implementation("androidx.navigation:navigation-compose:$nav_version")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
-    //retrofit
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.google.code.gson:gson:2.12.1")
-    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-
-
 }
