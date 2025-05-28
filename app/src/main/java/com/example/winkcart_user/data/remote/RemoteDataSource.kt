@@ -10,4 +10,10 @@ interface RemoteDataSource {
 
     suspend fun getAllProducts (): Flow<ProductResponse?>
 
+    suspend fun getRate (): Double
+
+    suspend fun getReview (): String
+
+
+
 }

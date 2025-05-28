@@ -8,5 +8,7 @@ interface ProductRepo {
 
     suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?>
     suspend fun getAllProducts() : Flow<ProductResponse?>
+    suspend fun getRate() : Double
+    suspend fun getReview(): String
 
 }

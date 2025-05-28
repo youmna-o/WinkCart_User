@@ -48,6 +48,12 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
         val productList = productResponse?.products
         return productList?.find { it.id == id }
     }
+    suspend fun getRate(): Double {
+        return repo.getRate()
+    }
+    suspend fun getReview(): String {
+        return repo.getReview()
+    }
 
 
 

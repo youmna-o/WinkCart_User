@@ -60,30 +60,30 @@ class MainActivity : ComponentActivity() {
             }
 
 
+
             LaunchedEffect(subCategories) {
                 Log.i("TAG", "Unique Product Types: $subCategories")
                 Log.i("TAG", "men Product Types: $menProducts")
                 Log.i("TAG", "women Product Types: $womenProducts")
                 Log.i("TAG", "kids Product Types: $kidsProducts")
 
-                Log.i("Yomna", "**************************: ${myProduct?.body_html}")
-                Log.i("Yomna", "**************************: ${myProduct?.title}")
+                Log.i("Product", "**************************: ${myProduct?.body_html}")
+                Log.i("Product", "**************************: ${myProduct?.title}")
                 myProduct?.images?.forEach { image ->
-                    Log.i("Yomna", "**************************: ${image.src}")
+                    Log.i("Product", "**************************: ${image.src}")
                 }
                 myProduct?.options?.filter {
                     it.name == "Size"
                 }?.forEach { size ->
-                     Log.i("Yomna", "**************************: ${size.values}")
+                     Log.i("Product", "**************************: ${size.values}")
                 }
                 
-                    Log.i("Yomna", "**************************: ${myProduct?.variants[0]?.price}")
+                    Log.i("Product", "**************************: ${myProduct?.variants[0]?.price}")
+                     Log.i("Product", "------------------: ${vm.getRate()}")
+                      Log.i("Product", "------------------: ${vm.getReview()}")
                 }
-//                myProduct?.options?.forEach { option ->
-//                    Log.i("Yomna", "**************************: ${option.values.size}")
-//                }
 
-                // Log.i("Yomna", "**************************: ${allProducts?.forEach { it.title }}")
+
 
 
             WinkCart_UserTheme {
