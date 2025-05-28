@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
-import com.example.winkcart_user.Utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
 
