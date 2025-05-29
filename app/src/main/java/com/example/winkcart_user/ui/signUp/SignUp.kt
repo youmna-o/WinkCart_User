@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,41 +41,61 @@ import com.google.firebase.auth.auth
 @Composable
 fun SignUpScreen(navController: NavController){
     val authViewModel = AuthViewModel(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+    var isInputError = false
     var context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
-    Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
-        Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
+        Row (modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 106.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ){ Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge)
+            Text("Skip", style = MaterialTheme.typography.labelSmall)
+        }
+        //Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
         CustomTextField(lable = "Name",input = name,onValueChange = { newName ->
             name = newName
-        },)
+        },isInputError)
         CustomTextField(lable = "Email",input = email,onValueChange = { newEmail ->
             email = newEmail
-        },)
+        },isInputError)
         CustomTextField(lable = "Password",input = password,onValueChange = { newPassword ->
             password = newPassword
-        },)
-        Text("Already have an account?LOGIN", modifier = Modifier.fillMaxWidth()
+        },isInputError)
+        Text("Already have an account?LOGIN", modifier = Modifier
+            .fillMaxWidth()
             .clickable(onClick = {
-               navController.navigate("Login")
+                navController.navigate("Login")
 
-        }), textAlign = TextAlign.End)
+            }), textAlign = TextAlign.End)
 
 
         Spacer(modifier = Modifier.height(30.dp))
-        Button(onClick = {
-            authViewModel.signUp(email,password)
-        }, modifier = Modifier.fillMaxWidth().height(48.dp),) {
+        Button(
+            onClick = {
+                //  authViewModel.signUp(email,password)
+                var result = authViewModel.isEmailValid(email)
+                Log.i("SignUpScreen", "SignUpScreen: ${result}")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+        ) {
             Text("SIGN UP")
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             authViewModel.signIn(email,password)
 
-        }, modifier = Modifier.fillMaxWidth().height(48.dp),) {
+        }, modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),) {
              Image(painter = painterResource(id = R.drawable.google), contentDescription = "")
             Text("SIGN UP WITH GOOGLE")
         }

@@ -3,7 +3,9 @@ package com.example.winkcart_user.ui.login
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,18 +39,24 @@ import com.google.firebase.auth.FirebaseAuth
 fun LoginScreen(navController: NavController){
     val authViewModel = AuthViewModel(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
 
-
+    var isInputError = false
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
-         Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
+
+        Row (modifier = Modifier.fillMaxWidth()
+            .padding(top = 106.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            ){ Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge)
+                Text("Skip", style = MaterialTheme.typography.labelSmall)
+        }
          Spacer(modifier = Modifier.height(56.dp))
          CustomTextField(lable = "Email", input = email,onValueChange = { newEmail ->
              email = newEmail
-         },)
+         },isInputError)
          CustomTextField(lable = "Password",input = password,onValueChange = { newPassword ->
              password = newPassword
-         },)
+         },isInputError)
         Text("Forget your password?", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End)
 
 
@@ -68,9 +76,11 @@ fun LoginScreen(navController: NavController){
         }
         Spacer(modifier = Modifier.height(16.dp))
         CustomButton(
-            "SIGN UP",
+            "Product Info",
+            //"SIGN UP",
             onClick ={
-                navController.navigate("SignUp")
+                navController.navigate("ProductInfo")
+                //   navController.navigate("SignUp")
             },
         )
 //        Button(onClick = {
