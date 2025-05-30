@@ -83,10 +83,20 @@ class MainActivity : ComponentActivity() {
                 myProduct?.options?.filter {
                     it.name == "Size"
                 }?.forEach { size ->
-                     Log.i("Product", "**************************: ${size.values}")
+                    for(i in size.values){
+                        Log.i("Product", "**************************: ${i}")
+                    }
                 }
-                
-                    Log.i("Product", "**************************: ${myProduct?.variants[0]?.price}")
+
+                myProduct?.options?.filter {
+                    it.name == "Color"
+                }?.forEach { color ->
+                    for(i in color.values){
+                    Log.i("Product", "**************************color is : ${i}")
+                }
+                }
+
+                     Log.i("Product", "**************************: ${myProduct?.variants[0]?.price}")
                      Log.i("Product", "------------------: ${vm.getRate()}")
                       Log.i("Product", "------------------: ${vm.getReview()}")
                 }

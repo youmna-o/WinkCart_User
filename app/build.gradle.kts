@@ -100,4 +100,6 @@ dependencies {
 
     //glide
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation ("com.google.accompanist:accompanist-pager:0.28.0")
+
 }
