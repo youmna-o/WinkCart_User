@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +22,7 @@ class BrandsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     private val _brandList = MutableStateFlow<ResponseStatus<SmartCollectionsResponse>>(ResponseStatus.Loading)
     val brandList = _brandList.asStateFlow()
+
 
 
     fun getSmartCollections() {
@@ -40,6 +42,9 @@ class BrandsViewModel(private  val repo: ProductRepo) : ViewModel() {
                 }
         }
     }
+
+
+
 
 
 
