@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,27 +15,34 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.winkcart_user.ui.login.LoginScreen
-import com.example.winkcart_user.ui.login.SignUpScreen
+import com.example.winkcart_user.ui.signUp.SignUpScreen
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
+import com.example.winkcart_user.data.repository.FirebaseRepo
+import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.ui.login.AuthViewModel
+import com.example.winkcart_user.ui.productInfo.ProductInfo
 
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         var vm =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper())))
 
+
         setContent {
+            val scroll = rememberScrollState()
             val productState = vm.producs.collectAsState()
 
             val subCategories = remember(productState.value) {
@@ -83,20 +91,19 @@ class MainActivity : ComponentActivity() {
                       Log.i("Product", "------------------: ${vm.getReview()}")
                 }
 
-
-
-
             WinkCart_UserTheme {
                 val  navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = NavigationRout.SignUp.rout
-
-                ) {
-                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController) }
-                    composable(NavigationRout.Login.rout) { LoginScreen(navController)}
-
-                }
+               ProductInfo(navController, scroll)
+//                NavHost(
+//                    navController = navController,
+//                    startDestination = NavigationRout.SignUp.rout
+//
+//                ) {
+//                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController) }
+//                    composable(NavigationRout.Login.rout) { LoginScreen(navController)}
+//                    composable(NavigationRout.ProductInfo.rout) { ProductInfo(navController, scroll) }
+//
+//                }
                // LoginScreen()
                 //SignUpScreen()
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
