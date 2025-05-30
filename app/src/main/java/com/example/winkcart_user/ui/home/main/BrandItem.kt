@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
 @Composable
-fun BrandCard(brandName: String, imageUrl: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun VendorCard(vendorName: String, imageUrl: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         modifier = modifier
             .size(width = 150.dp, height = 130.dp)
@@ -36,14 +36,11 @@ fun BrandCard(brandName: String, imageUrl: String, modifier: Modifier = Modifier
         ) {
             AsyncImage(
                 model = imageUrl,
-                contentDescription = brandName,
+                contentDescription = vendorName,
                 modifier = Modifier
                     .fillMaxWidth()
-                  //.clip(RoundedCornerShape(50)),
                     , contentScale = ContentScale.Fit
             )
-         //   Spacer(modifier = Modifier.height(8.dp))
-         //   Text(text = brandName, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

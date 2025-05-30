@@ -8,10 +8,15 @@ import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollection
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class BrandsViewModel(private  val repo: ProductRepo) : ViewModel() {
@@ -22,7 +27,6 @@ class BrandsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     private val _brandList = MutableStateFlow<ResponseStatus<SmartCollectionsResponse>>(ResponseStatus.Loading)
     val brandList = _brandList.asStateFlow()
-
 
 
     fun getSmartCollections() {

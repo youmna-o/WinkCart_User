@@ -109,7 +109,7 @@ fun HomeScreenSuccess(
     viewModel: BrandsViewModel
 ) {
    var brands = viewModel.brandList.collectAsState()
-    val brandPairs: List<Pair<String, String>> =
+   val brandPairs: List<Pair<String, String>> =
         (brands.value as? ResponseStatus.Success)?.result?.smart_collections
             ?.map { brand -> brand.title to (brand.image?.src ?: "") } ?: emptyList()
     var filteredBrandPairs by remember { mutableStateOf(brandPairs) }
@@ -120,7 +120,6 @@ fun HomeScreenSuccess(
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
-        containerColor = Color(245, 245, 245),
         topBar = {
             TopAppBar(
                 title = {
@@ -195,7 +194,7 @@ fun HomeScreenSuccess(
             }
 
             if (filteredBrandPairs.isNotEmpty()) {
-                BrandSection(
+                VendorsScetion(
                     brandItems = filteredBrandPairs,
                     modifier = Modifier.fillMaxWidth(),
                     navController
@@ -274,7 +273,7 @@ fun SimpleSearchBarSimple(
 }
 
 @Composable
-fun BrandSection(
+fun VendorsScetion(
     brandItems: List<Pair<String, String>>,
     modifier: Modifier = Modifier,
     navController: NavController
@@ -300,8 +299,8 @@ fun BrandSection(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    BrandCard(
-                        brandName = pair.getOrNull(0)?.first ?: "",
+                    VendorCard(
+                        vendorName = pair.getOrNull(0)?.first ?: "",
                         imageUrl = pair.getOrNull(0)?.second ?: "",
                         onClick = {
                             navController.navigate(
@@ -313,8 +312,8 @@ fun BrandSection(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     if (pair.size > 1) {
-                        BrandCard(
-                            brandName = pair[1].first,
+                        VendorCard(
+                            vendorName = pair[1].first,
                             imageUrl = pair[1].second,
                             onClick = {
                                 navController.navigate(
