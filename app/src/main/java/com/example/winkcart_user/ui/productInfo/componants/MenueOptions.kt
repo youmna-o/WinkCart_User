@@ -27,10 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LongBasicDropdownMenu(lable: String) {
+fun LongBasicDropdownMenu(lable: String ,menuItemData : List<String> ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val menuItemData = List(5) { "Option ${it + 1}" }
 
     Box(
         modifier = Modifier

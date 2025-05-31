@@ -19,15 +19,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Reviews(){
+fun Reviews(review: String , rate: Float, starSize: Float){
     Spacer(Modifier.height(16.dp))
     Text("Reviews", style = MaterialTheme.typography.titleLarge)
-    LazyRow (horizontalArrangement = Arrangement.spacedBy(8.dp),){items (3){item -> ReviewCard()  }  }
+    LazyRow (horizontalArrangement = Arrangement.spacedBy(8.dp),){items (3){item -> ReviewCard(review,rate,starSize)  }  }
     Spacer(Modifier.height(16.dp))
 }
 
 @Composable
-fun ReviewCard(){
+fun ReviewCard(review: String , rate: Float ,starSize: Float ){
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,9 +37,13 @@ fun ReviewCard(){
             containerColor = Color.White
         )
     ){
-        Column (Modifier.padding(4.dp)){
-            StarRatingBar(3.0f)
-            Text("rrrrrrrrrrrrrr")
+        Column (Modifier.padding(8.dp)){
+            StarRatingBar(
+                rating = rate,
+                maxStars = 5,
+                size = starSize
+            )
+            Text(review)
         }
 
     }

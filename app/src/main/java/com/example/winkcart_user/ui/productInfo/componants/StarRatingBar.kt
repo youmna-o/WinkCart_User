@@ -18,9 +18,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StarRatingBar(rating: Float, maxStars: Int = 5) {
+fun StarRatingBar(rating: Float, maxStars: Int = 5 , size : Float) {
     val density = LocalDensity.current.density
-    val starSize = (12f * density).dp
+    val starSize = (size * density).dp
     val starSpacing = (0.5f * density).dp
 
     val fullStars = rating.toInt()

@@ -18,7 +18,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImageCard() {
+fun ImageCard(url: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +29,7 @@ fun ImageCard() {
         )
     ) {
         GlideImage(
-            model = "https://cdn.shopify.com/s/files/1/0758/1132/4152/files/product_21_image1.jpg?v=1748153911",
+            model = url,
             contentDescription = "image",
             modifier = Modifier
                 .fillMaxSize()

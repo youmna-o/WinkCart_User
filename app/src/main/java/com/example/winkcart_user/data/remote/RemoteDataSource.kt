@@ -13,9 +13,9 @@ interface RemoteDataSource {
 
     suspend fun getAllProducts (): Flow<ProductResponse?>
 
-    suspend fun getRate (): Double
+     fun getRate (): Float
 
-    suspend fun getReview (): String
+    fun getReview (): String
 
     fun signUpFireBase(email: String,password: String) : FirebaseUser?
 

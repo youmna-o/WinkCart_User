@@ -62,13 +62,6 @@ class MainActivity : ComponentActivity() {
                 vm.getKidsProducts()
             }
 
-            var myProducts =  remember (productState.value) {
-                vm.getProductsList()
-            }
-
-            var myProduct =  remember (productState.value) {
-                vm.getProduct(id=9083149353208)
-            }
 
 
 
@@ -78,47 +71,23 @@ class MainActivity : ComponentActivity() {
                 Log.i("TAG", "women Product Types: $womenProducts")
                 Log.i("TAG", "kids Product Types: $kidsProducts")
 
-                Log.i("Product", "**************************: ${myProduct?.body_html}")
-                Log.i("Product", "**************************: ${myProduct?.title}")
-                myProduct?.images?.forEach { image ->
-                    Log.i("Product", "**************************: ${image.src}")
-                }
-                myProduct?.options?.filter {
-                    it.name == "Size"
-                }?.forEach { size ->
-                    for(i in size.values){
-                        Log.i("Product", "**************************: ${i}")
-                    }
-                }
 
-                myProduct?.options?.filter {
-                    it.name == "Color"
-                }?.forEach { color ->
-                    for(i in color.values){
-                    Log.i("Product", "**************************color is : ${i}")
-                }
-                }
-
-                     Log.i("Product", "**************************: ${myProduct?.variants[0]?.price}")
-                     Log.i("Product", "------------------: ${vm.getRate()}")
-                      Log.i("Product", "------------------: ${vm.getReview()}")
                 }
 
             WinkCart_UserTheme {
                 val  navController = rememberNavController()
-               ProductInfo(navController, scroll)
-//                NavHost(
-//                    navController = navController,
-//                    startDestination = NavigationRout.SignUp.rout
-//
-//                ) {
-//                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController,authViewModel) }
-//                    composable(NavigationRout.Login.rout) { LoginScreen(navController,authViewModel)}
-//                    composable(NavigationRout.ProductInfo.rout) { ProductInfo(navController, scroll) }
-//
-//                }
-               // LoginScreen()
-                //SignUpScreen()
+              // ProductInfo(9083149353208,navController, scroll, vm)
+                NavHost(
+                    navController = navController,
+                    startDestination = NavigationRout.SignUp.rout
+
+                ) {
+                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController,authViewModel) }
+                    composable(NavigationRout.Login.rout) { LoginScreen(navController,authViewModel)}
+                    composable(NavigationRout.ProductInfo.rout) { ProductInfo(9083149353208,navController, scroll,vm) }
+
+                }
+
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 ////                    Greeting(
 ////                        name = "Android",

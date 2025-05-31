@@ -26,8 +26,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalPagerApi::class)
 @Composable
-fun ImageSlider() {
+fun ImageSlider(images: List<String>) {
     val pagerState = rememberPagerState{5}
+
 
     Column(
         modifier = Modifier
@@ -35,16 +36,18 @@ fun ImageSlider() {
             .height(240.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Horizontal Pager for sliding images
+
         HorizontalPager(
 
-            // Matches your original items(5)
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
         ) { page ->
-            ImageCard()
+            if(images.isEmpty()){
+                ImageCard("https://cdn.shopify.com/s/files/1/0758/1132/4152/files/product_21_image1.jpg?v=1748153911")
+            }else
+            ImageCard(images[page])
         }
 
         Row(
@@ -54,7 +57,6 @@ fun ImageSlider() {
         ) {
             repeat(5) { index ->
                 val isSelected = pagerState.currentPage == index
-                //optional
                 val animatedSize = animateFloatAsState(if (isSelected) 12f else 8f)
                 Box(
                     modifier = Modifier
