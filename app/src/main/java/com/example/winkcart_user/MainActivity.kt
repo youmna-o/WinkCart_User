@@ -27,6 +27,8 @@ import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.settings.SettingsView
+import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
@@ -49,6 +51,10 @@ class MainActivity : ComponentActivity() {
                     composable(NavigationRout.Login.rout) { LoginScreen(navController)}
 
                 }
+//                val settingsViewModel = remember {
+//                    SettingsViewModel(ProductRepoImpl(RemoteDataSourceImpl(RetrofitHelper())))
+//                }
+//                SettingsView(settingsViewModel)
                // LoginScreen()
                 //SignUpScreen()
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

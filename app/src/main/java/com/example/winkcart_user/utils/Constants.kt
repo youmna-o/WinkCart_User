@@ -9,4 +9,7 @@ object Constants{
     const val CONTACT_US_EMAIL = "rofaidasobhy123@gmail.com"
     const val CONTACT_US_PHONE = "tel:+201140708568"
 
+    const val BASE_URL_CURRENCY = "https://api.currencyapi.com/"
+
+
 }

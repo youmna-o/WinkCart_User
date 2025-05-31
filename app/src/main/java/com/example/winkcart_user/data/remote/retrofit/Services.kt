@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.remote.retrofit
 
 import com.example.winkcart_user.BuildConfig
+import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -15,8 +16,21 @@ interface Services {
     suspend fun getSmartCollections( @Header("X-Shopify-Access-Token") token: String):Response<SmartCollectionsResponse>
 
 
+//    //currency
+//    @GET("v3/latest")
+//    suspend fun getLatestRateFromUSDToEGP(
+//        @Query("apikey") apiKey: String,
+//        @Query("currencies") currencies: String
+//    ): Response<CurrencyResponse>
 
 
 
+}
 
+interface CurrencyService {
+    @GET("v3/latest")
+    suspend fun getLatestRateFromUSDToEGP(
+        @Query("apikey") apiKey: String,
+        @Query("currencies") currencies: String
+    ): Response<CurrencyResponse>
 }
