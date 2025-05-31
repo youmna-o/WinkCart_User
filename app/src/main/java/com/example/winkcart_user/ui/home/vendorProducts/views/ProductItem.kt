@@ -89,8 +89,6 @@ fun ProductItem (product: ProductAbstracted){
                         text = product.title,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
-                       // modifier = Modifier.align(Alignment.CenterVertically)
-
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))

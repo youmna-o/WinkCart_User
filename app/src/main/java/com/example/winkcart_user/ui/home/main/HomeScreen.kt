@@ -16,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -53,6 +54,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,6 +74,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.vendors.SmartCollection
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.ProductRepoImpl
@@ -101,23 +104,19 @@ fun HomeScreen(
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenSuccess(
     navController: NavController,
-    viewModel: BrandsViewModel
+    viewModel: BrandsViewModel,
 ) {
-   var brands = viewModel.brandList.collectAsState()
-   val brandPairs: List<Pair<String, String>> =
-        (brands.value as? ResponseStatus.Success)?.result?.smart_collections
-            ?.map { brand -> brand.title to (brand.image?.src ?: "") } ?: emptyList()
-    var filteredBrandPairs by remember { mutableStateOf(brandPairs) }
-    val allBrandTitles = remember(brandPairs) { brandPairs.map { it.first } }
+    val state = viewModel.brandList.collectAsState()
+    val smartCollections = (state.value as? ResponseStatus.Success)?.result?.smart_collections ?: emptyList()
+    var filteredBrands by remember { mutableStateOf(smartCollections) }
     val textFieldState = rememberTextFieldState()
     val scrollState = rememberScrollState()
+    val allBrandTitles = smartCollections.map{ it.title }
     val imeState = rememberImeState()
-
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Horizontal),
         topBar = {
@@ -132,8 +131,7 @@ fun HomeScreenSuccess(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(245, 245, 245)
-                ),
-                expandedHeight = 30.dp
+                )
             )
         }
     ) { paddingValues ->
@@ -146,20 +144,19 @@ fun HomeScreenSuccess(
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(40.dp))
 
             SimpleSearchBarSimple(
                 textFieldState = textFieldState,
                 onSearch = { query ->
-                    filteredBrandPairs = if (query.isBlank()) {
-                        brandPairs
+                    filteredBrands = if (query.isBlank()) {
+                        smartCollections
                     } else {
-                        brandPairs.filter { it.first.contains(query, ignoreCase = true) }
+                        smartCollections.filter { it.title.contains(query, ignoreCase = true) }
                     }
                 },
                 searchResults = allBrandTitles
             )
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -193,17 +190,19 @@ fun HomeScreenSuccess(
                 }
             }
 
-            if (filteredBrandPairs.isNotEmpty()) {
-                VendorsScetion(
-                    brandItems = filteredBrandPairs,
-                    modifier = Modifier.fillMaxWidth(),
-                    navController
-                )
+            if (filteredBrands.isNotEmpty()) {
+                    VendorsScetion(
+                        brandItems = filteredBrands,
+                        modifier = Modifier.fillMaxWidth(),
+                        navController = navController
+                    )
+
             } else {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f), contentAlignment = Alignment.Center
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         "Try searching with different keywords 🔍",
@@ -272,9 +271,11 @@ fun SimpleSearchBarSimple(
     }
 }
 
+
+
 @Composable
 fun VendorsScetion(
-    brandItems: List<Pair<String, String>>,
+    brandItems: List<SmartCollection>,
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
@@ -292,62 +293,51 @@ fun VendorsScetion(
             modifier = Modifier.padding(start = 8.dp, bottom = 12.dp),
             color = Color.Gray
         )
-        val pairedItems = brandItems.chunked(2)
-        LazyRow {
-            items(pairedItems) { pair ->
-                Column(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    VendorCard(
-                        vendorName = pair.getOrNull(0)?.first ?: "",
-                        imageUrl = pair.getOrNull(0)?.second ?: "",
-                        onClick = {
-                            navController.navigate(
-                                NavigationRout.VendorProducts.createRoute(
-                                    pair.getOrNull(0)?.first ?: ""
-                                )
-                            )
-                        },
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    if (pair.size > 1) {
-                        VendorCard(
-                            vendorName = pair[1].first,
-                            imageUrl = pair[1].second,
-                            onClick = {
-                                navController.navigate(
-                                    NavigationRout.VendorProducts.createRoute(
-                                        pair[1].first
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                val pairedItems = brandItems.chunked(2)
 
+                items(pairedItems) { pair ->
+                    Column(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        pair.forEach { item ->
+                            VendorCard(
+                                vendorName = item.title,
+                                imageUrl = item.image?.src ?: "",
+                                onClick = {
+                                    navController.navigate(
+                                        NavigationRout.VendorProducts.createRoute(item.title)
                                     )
-                                )
-                            },
-                        )
-                    } else {
-                        Spacer(modifier = Modifier.height(100.dp))
+                                }
+                            )
+                        }
+                        if (pair.size == 1) {
+                            Spacer(modifier = Modifier.height(150.dp))
+                        }
                     }
                 }
             }
-        }
     }
 }
 
 
 @Composable
 fun HomeScreenLoading() {
-    var text = "L.O.A.D.A.I.N.G"
+    val text = "L.O.A.D.A.I.N.G"
     Column(
-        TODO@
         Modifier
-            .fillMaxSize()
-            .background(Color.Black), // will be changed later
+            .fillMaxSize(),
         Arrangement.Center,
         Alignment.CenterHorizontally
     ) {
         val blurList = text.mapIndexed { index, char ->
             if (char == ' ') {
-                remember { mutableStateOf(0f) }
+                remember { mutableFloatStateOf(0f) }
             } else {
                 val infiniteTransition =
                     rememberInfiniteTransition(label = "infinite transition $index")
@@ -380,7 +370,7 @@ fun HomeScreenLoading() {
 
                 Text(
                     text = char.toString(),
-                    color = Color.White,
+                    color = Color.Black,
                     fontSize = 16.sp,
                     modifier = Modifier
                         .graphicsLayer {

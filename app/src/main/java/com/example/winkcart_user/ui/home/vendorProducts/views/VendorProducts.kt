@@ -43,7 +43,6 @@ fun VendorProductScreen(
         is ResponseStatus.Loading -> {
             VendorProductScreenOnLoading()
         }
-
         is ResponseStatus.Success -> VendorProductsOnScuccess(
             mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products),
             vendor = vendor,

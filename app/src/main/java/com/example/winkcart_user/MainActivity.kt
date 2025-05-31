@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -24,6 +25,8 @@ import com.example.winkcart_user.ui.login.LoginScreen
 import com.example.winkcart_user.ui.login.SignUpScreen
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -41,36 +44,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        var vm =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper())))
-
         setContent {
-       /*     val productState = vm.producs.collectAsState()
-
-
-            var myProducts =  remember (productState.value) {
-                vm.getProductsList()
-            }
-            var myProduct =  remember (productState.value) {
-                vm.getProduct(id=9083149353208)
-            }*/
-    /*        LaunchedEffect(myProduct) {
-
-                Log.i("Product", "**************************: ${myProduct?.body_html}")
-                Log.i("Product", "**************************: ${myProduct?.title}")
-                myProduct?.images?.forEach { image ->
-                    Log.i("Product", "**************************: ${image.src}")
-                }
-                myProduct?.options?.filter {
-                    it.name == "Size"
-                }?.forEach { size ->
-                     Log.i("Product", "**************************: ${size.values}")
-                }
-
-                    Log.i("Product", "**************************: ${myProduct?.variants?.get(0)?.price}")
-                     Log.i("Product", "------------------: ${vm.getRate()}")
-                      Log.i("Product", "------------------: ${vm.getReview()}")
-                }*/
-
             WinkCart_UserTheme {
                 AppInit()
            }
@@ -82,7 +56,6 @@ fun AppInit() {
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
-
     val screensWithBottomBar = listOf(
         NavigationRout.Home.route,
         NavigationRout.Profile.route,
@@ -117,14 +90,6 @@ fun AppInit() {
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
                     VendorProductScreen(vendor = brand)
                 }
-                //    NavHost(
-//        navController = navController
-//            .startDestination = NavigationRout.SignUp.rout
-//
-//    ) {
-//        composable(NavigationRout.SignUp.rout) { SignUpScreen(navController) }
-//        composable(NavigationRout.Login.rout) { LoginScreen(navController)}
-//    }
             }
         }
     }
@@ -136,7 +101,7 @@ fun BottomNavigationBar(navController: NavController) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
 
-    NavigationBar {
+    NavigationBar(containerColor = Color.White) {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
             label = { Text("Home") },
