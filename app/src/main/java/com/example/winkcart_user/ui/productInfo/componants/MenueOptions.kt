@@ -36,7 +36,7 @@ fun LongBasicDropdownMenu(lable: String) {
         modifier = Modifier
             .padding(16.dp)
             .height(40.dp)
-            .width(140.dp)
+            .width(120.dp)
     ) {
         Button(onClick = { expanded = !expanded },
             colors = ButtonDefaults.buttonColors(

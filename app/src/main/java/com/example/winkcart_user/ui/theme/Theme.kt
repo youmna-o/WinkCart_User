@@ -43,7 +43,14 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = Rose10,
 
     tertiary = Rose60,
-    onTertiary = Color.White
+    onTertiary = Color.White,
+
+    background = BackgroundColor,
+    onBackground = HeaderTextColor,
+    surface = CardBackgroundColor,
+    onSurface = HeaderTextColor
+
+
 )
 
 //    primary = Purple40,

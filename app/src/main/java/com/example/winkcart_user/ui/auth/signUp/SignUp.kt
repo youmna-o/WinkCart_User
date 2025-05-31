@@ -1,7 +1,6 @@
-package com.example.winkcart_user.ui.signUp
+package com.example.winkcart_user.ui.auth.signUp
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,27 +20,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
-import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
-import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
-import com.example.winkcart_user.data.repository.FirebaseRepoImp
-import com.example.winkcart_user.ui.login.AuthViewModel
+import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.utils.CustomTextField
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun SignUpScreen(navController: NavController){
-    val authViewModel = AuthViewModel(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
-    var isInputError = false
+fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
+    val emailError by authViewModel.emailError
+    val passwordError by authViewModel.passwordError
     var context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
@@ -61,13 +56,19 @@ fun SignUpScreen(navController: NavController){
         Spacer(modifier = Modifier.height(56.dp))
         CustomTextField(lable = "Name",input = name,onValueChange = { newName ->
             name = newName
-        },isInputError)
+        },false)
         CustomTextField(lable = "Email",input = email,onValueChange = { newEmail ->
             email = newEmail
-        },isInputError)
+        },emailError != null)
+        if (emailError != null) {
+            Text(emailError ?: "", color = Color.Red, fontSize = 12.sp)
+        }
         CustomTextField(lable = "Password",input = password,onValueChange = { newPassword ->
             password = newPassword
-        },isInputError)
+        },passwordError != null)
+        if (passwordError != null) {
+            Text(passwordError ?: "", color = Color.Red, fontSize = 12.sp)
+        }
         Text("Already have an account?LOGIN", modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = {
@@ -79,9 +80,7 @@ fun SignUpScreen(navController: NavController){
         Spacer(modifier = Modifier.height(30.dp))
         Button(
             onClick = {
-                //  authViewModel.signUp(email,password)
-                var result = authViewModel.isEmailValid(email)
-                Log.i("SignUpScreen", "SignUpScreen: ${result}")
+                  authViewModel.signUp(email,password)
             },
             modifier = Modifier
                 .fillMaxWidth()

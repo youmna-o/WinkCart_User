@@ -14,18 +14,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.winkcart_user.ui.login.LoginScreen
-import com.example.winkcart_user.ui.signUp.SignUpScreen
+import com.example.winkcart_user.ui.auth.login.LoginScreen
+import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
-import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
-import com.example.winkcart_user.ui.login.AuthViewModel
+import com.example.winkcart_user.ui.auth.AuthFactory
+import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.productInfo.ProductInfo
 
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
@@ -40,6 +41,8 @@ class MainActivity : ComponentActivity() {
 
         var vm =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper())))
 
+        var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+        var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
 
         setContent {
             val scroll = rememberScrollState()
@@ -103,17 +106,17 @@ class MainActivity : ComponentActivity() {
 
             WinkCart_UserTheme {
                 val  navController = rememberNavController()
-               ProductInfo(navController, scroll)
-//                NavHost(
-//                    navController = navController,
-//                    startDestination = NavigationRout.SignUp.rout
-//
-//                ) {
-//                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController) }
-//                    composable(NavigationRout.Login.rout) { LoginScreen(navController)}
-//                    composable(NavigationRout.ProductInfo.rout) { ProductInfo(navController, scroll) }
-//
-//                }
+           //    ProductInfo(navController, scroll)
+                NavHost(
+                    navController = navController,
+                    startDestination = NavigationRout.SignUp.rout
+
+                ) {
+                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController,authViewModel) }
+                    composable(NavigationRout.Login.rout) { LoginScreen(navController,authViewModel)}
+                    composable(NavigationRout.ProductInfo.rout) { ProductInfo(navController, scroll) }
+
+                }
                // LoginScreen()
                 //SignUpScreen()
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
