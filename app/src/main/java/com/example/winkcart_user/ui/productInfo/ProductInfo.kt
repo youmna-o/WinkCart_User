@@ -49,8 +49,10 @@ fun ProductInfo(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
+        Log.i("TAG", "ProductInfo: $productID")
         ImageSlider(myProduct?.images?.map { it.src }?.toList() ?: emptyList())
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             LongBasicDropdownMenu(lable = "Size", myProduct?.options?.filter {
@@ -62,7 +64,7 @@ fun ProductInfo(
             }?.flatMap { it.values }?.toList() ?: emptyList())
         }
         Text("${myProduct?.title}", style = MaterialTheme.typography.titleLarge)
-        Text("${myProduct?.variants[0]?.price}$", style = MaterialTheme.typography.titleLarge)
+        Text("${myProduct?.variants?.get(0)?.price}$", style = MaterialTheme.typography.titleLarge)
         StarRatingBar(rating = 3.0f, size = 12.0f)
         Card(
             modifier = Modifier
@@ -72,7 +74,7 @@ fun ProductInfo(
                 containerColor = Color.White
             )
         ) {
-            Text("${myProduct?.body_html}", Modifier.padding(8.dp))
+            Text(myProduct?.body_html?:"", Modifier.padding(8.dp))
         }
         Reviews(
             rate = viewModel.getRate(),

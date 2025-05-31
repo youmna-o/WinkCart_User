@@ -21,13 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.example.winkcart_user.ui.theme.myPurple
-import com.google.accompanist.pager.ExperimentalPagerApi
-
-
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalPagerApi::class)
 @Composable
 fun ImageSlider(images: List<String>) {
-    val pagerState = rememberPagerState{5}
+    val pagerState = rememberPagerState{images.size}
 
 
     Column(
@@ -44,9 +40,6 @@ fun ImageSlider(images: List<String>) {
                 .fillMaxWidth()
                 .weight(1f)
         ) { page ->
-            if(images.isEmpty()){
-                ImageCard("https://cdn.shopify.com/s/files/1/0758/1132/4152/files/product_21_image1.jpg?v=1748153911")
-            }else
             ImageCard(images[page])
         }
 
@@ -55,7 +48,7 @@ fun ImageSlider(images: List<String>) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            repeat(5) { index ->
+            repeat(images.size) { index ->
                 val isSelected = pagerState.currentPage == index
                 val animatedSize = animateFloatAsState(if (isSelected) 12f else 8f)
                 Box(
