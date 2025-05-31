@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductAbstracted
@@ -35,7 +36,8 @@ fun VendorProductScreen(
                 RetrofitHelper()
             )
         )
-    )
+    ),
+    navController: NavController
 ) {
     vendorProductsViewModel.getProductsPyVendor(vendor)
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
@@ -46,6 +48,7 @@ fun VendorProductScreen(
         is ResponseStatus.Success -> VendorProductsOnScuccess(
             mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products),
             vendor = vendor,
+            navController
         )
 
         is ResponseStatus.Error -> {
@@ -56,7 +59,7 @@ fun VendorProductScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String) {
+fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, navController: NavController) {
     Scaffold(
         containerColor = Color(245, 245, 245),
         topBar = {
@@ -84,7 +87,7 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String) 
             modifier = Modifier.fillMaxSize()
         ) {
             items(products.size) { index ->
-                ProductItem(product = products[index])
+                ProductItem(product = products[index], onProductItemClicked = {navController.navigate("ProductInfo/${products[index].id}")})
             }
         }
     }

@@ -36,7 +36,7 @@ import coil.compose.AsyncImage
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 
 @Composable
-fun ProductItem (product: ProductAbstracted){
+fun ProductItem (product: ProductAbstracted , onProductItemClicked : () -> Unit){
 
     Card(
         modifier = Modifier
@@ -46,7 +46,8 @@ fun ProductItem (product: ProductAbstracted){
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
-        )
+        ),
+        onClick = onProductItemClicked
     ) {
         Box(
             modifier = Modifier

@@ -62,7 +62,7 @@ fun ProductInfo(
             }?.flatMap { it.values }?.toList() ?: emptyList())
         }
         Text("${myProduct?.title}", style = MaterialTheme.typography.titleLarge)
-        Text("${myProduct?.variants[0]?.price}$", style = MaterialTheme.typography.titleLarge)
+        Text("${myProduct?.variants?.get(0)?.price}$", style = MaterialTheme.typography.titleLarge)
         StarRatingBar(rating = 3.0f, size = 12.0f)
         Card(
             modifier = Modifier

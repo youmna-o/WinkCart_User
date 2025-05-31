@@ -11,7 +11,9 @@ package com.example.winkcart_user.ui.utils.navigation
      object VendorProducts : NavigationRout("vendor_products/{vendorName}") {
          fun createRoute(vendorName: String) = "vendor_products/$vendorName"
      }
-object  ProductInfo : NavigationRout("ProductInfo")
+object  ProductInfo : NavigationRout("ProductInfo/{productId}"){
+    fun createRoute(productId: String) = "productId/$productId"
+}
 
 
 

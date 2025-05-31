@@ -3,7 +3,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -25,13 +24,10 @@ import com.example.winkcart_user.ui.auth.login.LoginScreen
 import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
@@ -71,7 +67,7 @@ class MainActivity : ComponentActivity() {
     }
 
 @Composable
-fun AppInit(authViewModel : AuthViewModel, vm : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper())))) {
+fun AppInit(authViewModel : AuthViewModel, categoriesViewModel : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper())))) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -108,14 +104,16 @@ fun AppInit(authViewModel : AuthViewModel, vm : CategoriesViewModel =  Categorie
                 }
                 composable("vendor_products/{brand}") { backStackEntry ->
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
-                    VendorProductScreen(vendor = brand)
+                    VendorProductScreen(vendor = brand,navController = navController)
                 }
                 composable(NavigationRout.ProductInfo.route) {
+                        backStackEntry ->
+                    val productId = backStackEntry.arguments?.getString("productId") ?: ""
                     ProductInfo(
-                        9083150827768,
+                        productId.toLong(),
                         navController = navController,
                         scrollState = scroll,
-                        viewModel = vm,
+                        viewModel = categoriesViewModel,
 
                     )
                 }

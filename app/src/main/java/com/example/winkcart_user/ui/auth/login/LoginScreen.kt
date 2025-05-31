@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +52,8 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel){
             .padding(top = 106.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             ){ Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge)
-                Text("Skip", style = MaterialTheme.typography.labelSmall)
+            TextButton({navController.navigate("home")}) { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
+
         }
          Spacer(modifier = Modifier.height(56.dp))
          CustomTextField(lable = "Email", input = email,onValueChange = { newEmail ->
@@ -76,6 +78,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel){
         Spacer(modifier = Modifier.height(30.dp))
         Button(onClick = {
             authViewModel.signIn(email,password)
+            navController.navigate("home")
         }, modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),) {

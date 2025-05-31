@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +51,7 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
             .padding(top = 106.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ){ Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge)
-            Text("Skip", style = MaterialTheme.typography.labelSmall)
+            TextButton({navController.navigate("home")}) { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
         }
         //Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
@@ -98,10 +99,7 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
             Image(painter = painterResource(id = R.drawable.google), contentDescription = "")
             Text("SIGN UP WITH GOOGLE")
         }
-
     }
-
-
 }
 
 
