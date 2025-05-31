@@ -106,17 +106,17 @@ class MainActivity : ComponentActivity() {
 
             WinkCart_UserTheme {
                 val  navController = rememberNavController()
-           //    ProductInfo(navController, scroll)
-                NavHost(
-                    navController = navController,
-                    startDestination = NavigationRout.SignUp.rout
-
-                ) {
-                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController,authViewModel) }
-                    composable(NavigationRout.Login.rout) { LoginScreen(navController,authViewModel)}
-                    composable(NavigationRout.ProductInfo.rout) { ProductInfo(navController, scroll) }
-
-                }
+               ProductInfo(navController, scroll)
+//                NavHost(
+//                    navController = navController,
+//                    startDestination = NavigationRout.SignUp.rout
+//
+//                ) {
+//                    composable(NavigationRout.SignUp.rout) { SignUpScreen(navController,authViewModel) }
+//                    composable(NavigationRout.Login.rout) { LoginScreen(navController,authViewModel)}
+//                    composable(NavigationRout.ProductInfo.rout) { ProductInfo(navController, scroll) }
+//
+//                }
                // LoginScreen()
                 //SignUpScreen()
 //                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

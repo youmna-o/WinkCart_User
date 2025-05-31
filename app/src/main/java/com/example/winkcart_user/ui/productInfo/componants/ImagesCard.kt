@@ -24,7 +24,7 @@ fun ImageCard() {
             .fillMaxWidth()
             .height(400.dp)
             .clip(RoundedCornerShape(16.dp)),
-        colors = CardDefaults.cardColors(
+            colors = CardDefaults.cardColors(
             containerColor = Color.White
         )
     ) {
