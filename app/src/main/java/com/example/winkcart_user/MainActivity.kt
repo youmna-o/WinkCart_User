@@ -1,5 +1,4 @@
 package com.example.winkcart_user
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,14 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.winkcart_user.ui.login.LoginScreen
-import com.example.winkcart_user.ui.login.SignUpScreen
+import com.example.winkcart_user.ui.auth.login.LoginScreen
+import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
@@ -30,10 +30,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
+import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.ui.auth.AuthFactory
+import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.ui.productInfo.ProductInfo
+
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.ui.home.main.HomeScreen
@@ -41,18 +49,30 @@ import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScree
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
+
+            var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+            var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
             WinkCart_UserTheme {
-                AppInit()
+                AppInit(authViewModel)
            }
+
+            }
+
+           // var state = BrandsViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper()))).brandList.collectAsState()
+
+
         }
     }
-}
+
 @Composable
-fun AppInit() {
+fun AppInit(authViewModel : AuthViewModel, vm : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper())))) {
+    val scroll = rememberScrollState()
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
@@ -78,10 +98,10 @@ fun AppInit() {
                 modifier = Modifier.padding(paddingValues)
             ) {
                 composable(NavigationRout.Login.route) {
-                    LoginScreen(navController = navController)
+                    LoginScreen(navController = navController , authViewModel = authViewModel)
                 }
                 composable(NavigationRout.SignUp.route) {
-                    SignUpScreen(navController = navController)
+                    SignUpScreen(navController = navController,authViewModel=authViewModel)
                 }
                 composable(NavigationRout.Home.route) {
                     HomeScreen(navController = navController)
@@ -89,6 +109,15 @@ fun AppInit() {
                 composable("vendor_products/{brand}") { backStackEntry ->
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
                     VendorProductScreen(vendor = brand)
+                }
+                composable(NavigationRout.ProductInfo.route) {
+                    ProductInfo(
+                        9083150827768,
+                        navController = navController,
+                        scrollState = scroll,
+                        viewModel = vm,
+
+                    )
                 }
             }
         }

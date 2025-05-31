@@ -1,4 +1,4 @@
-package com.example.winkcart_user.ui.login
+package com.example.winkcart_user.ui.auth.login
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -50,19 +50,19 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel){
             .fillMaxWidth()
             .padding(top = 106.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-        ){ Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge)
-            Text("Skip", style = MaterialTheme.typography.labelSmall)
+            ){ Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge)
+                Text("Skip", style = MaterialTheme.typography.labelSmall)
         }
-        Spacer(modifier = Modifier.height(56.dp))
-        CustomTextField(lable = "Email", input = email,onValueChange = { newEmail ->
-            email = newEmail
-        },emailError != null)
+         Spacer(modifier = Modifier.height(56.dp))
+         CustomTextField(lable = "Email", input = email,onValueChange = { newEmail ->
+             email = newEmail
+         },emailError != null)
         if (emailError != null) {
             Text(emailError ?: "", color = Color.Red, fontSize = 12.sp)
         }
-        CustomTextField(lable = "Password",input = password,onValueChange = { newPassword ->
-            password = newPassword
-        },passwordError != null)
+         CustomTextField(lable = "Password",input = password,onValueChange = { newPassword ->
+             password = newPassword
+         },passwordError != null)
         if (passwordError != null) {
             Text(passwordError ?: "", color = Color.Red, fontSize = 12.sp)
         }
@@ -104,8 +104,14 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel){
                 //   navController.navigate("SignUp")
             },
         )
+//        Button(onClick = {
+//            navController.navigate("SignUp")
+//        }, modifier = Modifier.fillMaxWidth().height(48.dp),) {
+//            Text("SIGN UP")
+//        }
 
 
     }
 
 }
+

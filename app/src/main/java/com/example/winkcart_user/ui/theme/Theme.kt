@@ -47,8 +47,11 @@ private val LightColorScheme = lightColorScheme(
     background = BackgroundColor,
     onBackground = HeaderTextColor,
     surface = CardBackgroundColor,
+    onSurface = HeaderTextColor
 
-    )
+
+)
+
 
 //    primary = Purple40,
 //    secondary = PurpleGrey40,

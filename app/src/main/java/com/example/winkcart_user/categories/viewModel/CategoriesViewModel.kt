@@ -16,9 +16,6 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _productList = MutableStateFlow<ResponseStatus<ProductResponse>>(ResponseStatus.Loading)
     val producs = _productList.asStateFlow()
 
-
-
-
     init {
         getAllProducts()
     }
@@ -48,10 +45,11 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
         val productList = productResponse?.products
         return productList?.find { it.id == id }
     }
-    suspend fun getRate(): Double {
+
+    fun getRate(): Float {
         return repo.getRate()
     }
-    suspend fun getReview(): String {
+     fun getReview(): String {
         return repo.getReview()
     }
 
@@ -65,6 +63,7 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
             ?: emptySet()
         return uniqueProductTypes
     }
+
 //    fun getProductDetails() : Product {
 //        val productResponse: ProductResponse? = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
 //       // val

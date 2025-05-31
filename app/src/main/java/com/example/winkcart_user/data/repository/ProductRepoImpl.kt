@@ -32,6 +32,7 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource) : Produ
         return remoteDataSource.getAllProducts()
     }
 
+
     override suspend fun getProductsByVendor(vendor: String): Flow<ProductResponse?> {
         return remoteDataSource.getProductsByVendor(vendor)
             .map { response ->
@@ -43,11 +44,12 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource) : Produ
            }
     }
 
-    override suspend fun getRate(): Double{
+
+    override  fun getRate(): Float {
         return  remoteDataSource.getRate()
     }
 
-    override suspend fun getReview(): String {
+    override  fun getReview(): String {
         return remoteDataSource.getReview()
     }
 }
