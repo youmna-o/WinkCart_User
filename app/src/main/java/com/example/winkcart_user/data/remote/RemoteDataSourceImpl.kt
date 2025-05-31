@@ -22,6 +22,12 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         val result = retrofitHelper.apiServices?.getAllProducts(token = BuildConfig.shopifyAccessToken)?.body()
         return flowOf(result)
     }
+
+    override suspend fun getProductsByVendor( vendor : String): Flow<ProductResponse?> {
+        val  result = retrofitHelper.apiServices?.getProductsByVendor(token = BuildConfig.shopifyAccessToken , vendor = vendor)?.body()
+        return flowOf(result)
+    }
+
     override  suspend fun getRate(): Double{
         var rate =  Random.nextDouble(from = 2.5, until =5.0 )
         return  round(rate * 10) / 10
