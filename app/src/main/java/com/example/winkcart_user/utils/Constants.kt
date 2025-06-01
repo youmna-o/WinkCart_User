@@ -11,5 +11,10 @@ object Constants{
 
     const val BASE_URL_CURRENCY = "https://api.currencyapi.com/"
 
+//    const val CURRENCY_CODE = "CURRENCY_CODE"
+//    const val CURRENCY_RATE = "CURRENCY_RATE"
+//    const val CURRENCY_READING_DATE = "CURRENCY_READING_DATE"
+
+
 
 }

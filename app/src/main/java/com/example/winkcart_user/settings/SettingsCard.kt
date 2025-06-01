@@ -26,9 +26,11 @@ import com.example.winkcart_user.ui.theme.HeaderTextColor
 import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 @Preview
-
 @Composable
-fun SettingsCard(settingIcon: Int = R.drawable.ic_about_us,settingName:Int = R.string.about_us){
+fun SettingsCard(settingIcon: Int = R.drawable.ic_about_us,
+                 settingName:Int = R.string.about_us,
+                 subtitleText: String = "",
+                 onClick: () -> Unit = {}){
 
     Card(
         shape = RoundedCornerShape(CARD_CARD_CORNER_RADIUS),
@@ -40,7 +42,8 @@ fun SettingsCard(settingIcon: Int = R.drawable.ic_about_us,settingName:Int = R.s
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
-        )
+        ),
+        onClick = onClick
     ) {
 
         Row(
@@ -59,16 +62,22 @@ fun SettingsCard(settingIcon: Int = R.drawable.ic_about_us,settingName:Int = R.s
 
 
             Spacer(modifier = Modifier.width(8.dp))
+
             Text(
                 text = stringResource(settingName),
                 color = HeaderTextColor,
-                fontSize = 24.sp,
-
-
+                fontSize = 18.sp
             )
 
-            Spacer(modifier = Modifier.weight(1f))
 
+            Spacer(modifier = Modifier.weight(1f))
+            if (subtitleText.isNotBlank()) {
+                Text(
+                    text = subtitleText,
+                    color = HeaderTextColor.copy(alpha = 0.7f),
+                    fontSize = 14.sp
+                )
+            }
             Image(
                 painter = painterResource(R.drawable.ic_arrow),
                 contentDescription = "arrow Icon",
