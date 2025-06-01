@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,6 +57,12 @@ fun VendorProductScreen(
     ),
     navController: NavController
 ) {
+
+
+    val currencyCodeSaved by vendorProductsViewModel.currencyCode.collectAsState()
+    val currencyRateSaved by vendorProductsViewModel.currencyRate.collectAsState()
+
+
     vendorProductsViewModel.getProductsPyVendor(vendor)
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
     when (productsByVendor.value) {
@@ -65,7 +72,9 @@ fun VendorProductScreen(
         is ResponseStatus.Success -> VendorProductsOnScuccess(
             mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products),
             vendor = vendor,
-            navController
+            navController,
+            currencyCode = currencyCodeSaved,
+            currencyRate = currencyRateSaved
         )
 
         is ResponseStatus.Error -> {
@@ -76,7 +85,7 @@ fun VendorProductScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, navController: NavController) {
+fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, navController: NavController, currencyRate:String, currencyCode:String) {
     Scaffold(
         containerColor = Color(245, 245, 245),
         topBar = {
@@ -87,11 +96,11 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, 
                         fontWeight = FontWeight.Bold
                     )
                 },
-                navigationIcon = {
-                    IconButton(onClick = { /* handle back */ TODO() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
-                    }
-                },
+//                navigationIcon = {
+//                    IconButton(onClick = { /* handle back */ TODO() }) {
+//                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+//                    }
+//                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.White
                 )
@@ -105,7 +114,13 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, 
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(products.size) { index ->
-                    ProductItem(product = products[index], onProductItemClicked = { navController.navigate("ProductInfo/${products[index].id}") })
+                    ProductItem(
+                        product = products[index],
+                        currencyCode = currencyCode,
+                        currencyRate = currencyRate,
+                        onProductItemClicked = { navController.navigate("ProductInfo/${products[index].id}") }
+
+                    )
                 }
             }
         } else {
@@ -144,7 +159,7 @@ fun mapProductsToBaAbstracted(products: List<Product>): List<ProductAbstracted> 
         ProductAbstracted(
             title = product.title,
             imageUrl = product.image?.src ?: "",
-            price = "${product.variants.firstOrNull()?.price ?: "0"} EG",
+            price = "${product.variants.firstOrNull()?.price ?: "0"}",
             id = product.id
         )
     }

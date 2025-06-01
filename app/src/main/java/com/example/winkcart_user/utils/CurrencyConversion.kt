@@ -2,12 +2,19 @@ package com.example.winkcart_user.utils
 
 object CurrencyConversion {
 
-    fun convertUsdToEgp(usdAmount: Double, rate: Double): Double {
-        return usdAmount * rate
-    }
+    fun convertCurrency(amount: String, rate: String, currencyCode: String): String {
+        val amountDouble = amount.toDoubleOrNull()
+        val rateDouble = rate.toDoubleOrNull()
 
-    fun convertEgpToUsd(egpAmount: Double, rate: Double): Double {
-        return egpAmount / rate
+        if (amountDouble == null || rateDouble == null) return ""
+
+        val result = when (currencyCode.uppercase()) {
+            "USD" -> amountDouble / rateDouble
+            "EGP" -> amountDouble * rateDouble
+            else -> return ""
+        }
+
+        return String.format("%.2f", result)
     }
 
 }
