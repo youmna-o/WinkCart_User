@@ -5,8 +5,10 @@ import com.example.winkcart_user.BuildConfig
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
+import com.google.android.gms.tasks.Task
 
 import com.google.firebase.Firebase
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
@@ -49,32 +51,14 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
 
     }
 
-    override fun signUpFireBase(email: String, password: String): FirebaseUser? {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i("fireBase", "Account created successfully for ${auth.currentUser?.email}")
-                } else {
-                    Log.w("fireBase", "createUserWithEmail:failure", task.exception)
-                }
-            }
-        return auth.currentUser
+    override fun signUpFireBase(email: String, password: String): Task<AuthResult> {
+        return  return auth.createUserWithEmailAndPassword(email, password)
     }
 
-    override fun signInFireBase(
-        email: String,
-        password: String
-    ): FirebaseUser? {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i("fireBase", "logiiiiiiiiiiiiiiiin ${auth.currentUser?.email}")
-                } else {
-                    Log.w("fireBase", "logiiiiiiiiiiiiiin failure", task.exception)
-                }
-            }
-        return auth.currentUser
+    override fun signInFireBase(email: String, password: String): Task<AuthResult> {
+        return auth.signInWithEmailAndPassword(email, password)
     }
+
 
 
 }

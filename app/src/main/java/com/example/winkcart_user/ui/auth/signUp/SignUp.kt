@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.auth.signUp
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -81,7 +82,14 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
         Spacer(modifier = Modifier.height(30.dp))
         Button(
             onClick = {
-                authViewModel.signUp(email,password)
+                authViewModel.signUp(email, password){success ->
+                    if (success) {
+                        navController.navigate("home")
+                    } else {
+                        val errorMessage = null
+                        Toast.makeText(context, errorMessage ?: "حدث خطأ", Toast.LENGTH_LONG).show()
+                    }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -91,7 +99,7 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            authViewModel.signIn(email,password)
+
 
         }, modifier = Modifier
             .fillMaxWidth()

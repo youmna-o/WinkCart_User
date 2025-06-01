@@ -13,15 +13,28 @@ class AuthViewModel( private val repo: FirebaseRepo) : ViewModel(){
     var emailError = mutableStateOf<String?>(null)
     var passwordError = mutableStateOf<String?>(null)
 
-    fun signUp(email : String,password: String){
+    fun signUp(email: String, password: String, onResult: (Boolean) -> Unit) {
         if (Uservalidate(email, password)) {
-        repo.signUpFireBase(email,password)}
-    }
-    fun signIn(email : String,password: String){
-        if (Uservalidate(email, password)) {
-        repo.signInFireBase(email,password)
+            repo.signUpFireBase(email, password)
+                .addOnCompleteListener { task ->
+                    onResult(task.isSuccessful)
+                }
+        } else {
+            onResult(false)
         }
     }
+
+    fun signIn(email: String, password: String, onResult: (Boolean) -> Unit) {
+        if (Uservalidate(email, password)) {
+            repo.signInFireBase(email, password)
+                .addOnCompleteListener { task ->
+                    onResult(task.isSuccessful)
+                }
+        } else {
+            onResult(false)
+        }
+    }
+
 
 
     private fun Uservalidate(email: String, password: String): Boolean {

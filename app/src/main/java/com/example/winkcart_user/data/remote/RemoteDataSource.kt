@@ -21,9 +21,9 @@ interface RemoteDataSource {
 
     fun getReview (): String
 
-    fun signUpFireBase(email: String,password: String) : FirebaseUser?
+    fun signUpFireBase(email: String,password: String) :Task<AuthResult>
 
-    fun signInFireBase(email: String,password: String) : FirebaseUser?
+    fun signInFireBase(email: String,password: String) : Task<AuthResult>
 
 
 
