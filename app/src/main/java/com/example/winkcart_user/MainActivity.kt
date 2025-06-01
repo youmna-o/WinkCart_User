@@ -1,8 +1,13 @@
 package com.example.winkcart_user
-import android.os.Bundle
+
+
+import android.content.Context
+import android.os.Build
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -17,11 +22,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
+
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.winkcart_user.ui.auth.login.LoginScreen
 import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
+
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+
+import com.example.winkcart_user.data.local.LocalDataSourceImpl
+import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +48,9 @@ import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.settings.SettingsView
+import com.example.winkcart_user.settings.viewmodel.SettingsFactory
+import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.home.ads.ADSPager
@@ -46,6 +63,8 @@ import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScree
 
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +75,12 @@ class MainActivity : ComponentActivity() {
             var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
             var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
             WinkCart_UserTheme {
+
                 AppInit(authViewModel)
            }
 
             }
 
-           // var state = BrandsViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper()))).brandList.collectAsState()
 
 
         }
@@ -107,6 +126,15 @@ fun AppInit(authViewModel : AuthViewModel, categoriesViewModel : CategoriesViewM
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
                     VendorProductScreen(vendor = brand,navController = navController)
                 }
+                composable(NavigationRout.Settings.rout) { SettingsView(ViewModelProvider(
+                        this@MainActivity,
+                        SettingsFactory(
+                            ProductRepoImpl(
+                                RemoteDataSourceImpl(RetrofitHelper()),
+                                LocalDataSourceImpl(SettingsDaoImpl(LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)))
+                            )
+                        )
+                    )[SettingsViewModel::class.java] )
                 composable(NavigationRout.ProductInfo.route) {
                         backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId") ?: ""

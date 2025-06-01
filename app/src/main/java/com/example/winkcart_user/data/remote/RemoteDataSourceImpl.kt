@@ -2,6 +2,7 @@ package com.example.winkcart_user.data.remote
 
 import android.util.Log
 import com.example.winkcart_user.BuildConfig
+import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
@@ -25,6 +26,10 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         return flowOf(result)
     }
 
+    override suspend fun getLatestRateFromUSDToEGP(): Flow<CurrencyResponse?> {
+        val result = retrofitHelper.currencyService.getLatestRateFromUSDToEGP(apiKey = "cur_live_QrLvRdrZGY3drQOEGuVYBm1QsaJa4hAsP0WgcHiJ","EGP").body()
+        return flowOf(result)
+    }
     override suspend fun getAllProducts(): Flow<ProductResponse?> {
         val result = retrofitHelper.apiServices?.getAllProducts(token = BuildConfig.shopifyAccessToken)?.body()
         return flowOf(result)
