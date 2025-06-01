@@ -106,5 +106,8 @@ dependencies {
     //stars
     implementation("androidx.compose.material:material-icons-extended")
 
+    //pager
+   // implementation ("com.google.accompanist:accompanist-pager:0.12.0")
+
 
 }

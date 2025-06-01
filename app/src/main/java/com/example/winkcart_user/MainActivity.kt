@@ -36,6 +36,7 @@ import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.ui.home.ads.ADSPager
 import com.example.winkcart_user.ui.productInfo.ProductInfo
 
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
@@ -55,7 +56,8 @@ class MainActivity : ComponentActivity() {
             var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
             var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
             WinkCart_UserTheme {
-                AppInit(authViewModel)
+                //AppInit(authViewModel)
+                ADSPager()
            }
 
             }
