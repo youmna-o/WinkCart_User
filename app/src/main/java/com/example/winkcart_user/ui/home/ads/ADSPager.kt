@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.layout.ContentScale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -59,17 +61,24 @@ fun ADSPager() {
             HorizontalPager(
                 count = images.size,
                 state = pagerState,
+
                 modifier = Modifier.wrapContentSize()
             ) { currentPage ->
                 Card(
                     modifier = Modifier
                         .wrapContentSize()
-                        .padding(26.dp),
+                        .height(200.dp),
+
+                        //.padding(26.dp),
                     elevation = CardDefaults.cardElevation(8.dp)
                 ) {
                     Image(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+
                         painter = painterResource(id = images[currentPage]),
-                        contentDescription = null
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
                     )
                 }
             }
@@ -90,7 +99,7 @@ fun ADSPager() {
                 colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0x52373737))
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight
                     ,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),

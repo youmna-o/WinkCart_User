@@ -78,6 +78,7 @@ import com.example.winkcart_user.data.model.vendors.SmartCollection
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.ui.home.ads.ADSPager
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.ui.utils.rememberImeState
 import kotlin.math.roundToInt
@@ -181,12 +182,11 @@ fun HomeScreenSuccess(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
-                        .background(Color.Blue),
+                        .height(200.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text("ads", color = Color.White)
+                    ADSPager()
                 }
             }
 

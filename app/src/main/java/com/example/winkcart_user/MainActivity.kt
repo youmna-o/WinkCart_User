@@ -56,8 +56,7 @@ class MainActivity : ComponentActivity() {
             var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
             var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
             WinkCart_UserTheme {
-                //AppInit(authViewModel)
-                ADSPager()
+                AppInit(authViewModel)
            }
 
             }
