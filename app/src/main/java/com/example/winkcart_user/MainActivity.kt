@@ -43,6 +43,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.winkcart_user.brands.viewModel.BrandsFactory
+import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
@@ -58,6 +60,8 @@ import com.example.winkcart_user.ui.productInfo.ProductInfo
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.ui.home.main.HomeScreen
+import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
+import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
 
 
@@ -79,15 +83,45 @@ class MainActivity : ComponentActivity() {
                         RemoteDataSourceImpl(RetrofitHelper()),
                         LocalDataSourceImpl(
                             SettingsDaoImpl(
-                                LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+                                LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
                             )
                         )
                     )
                 )
             )
+            var brandFactory = BrandsFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    localDataSource =   LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                )
+            )
+            var brandViewModel =  ViewModelProvider(this,brandFactory).get(BrandsViewModel :: class.java)
+
+            var vendorFactory = VendorsProductFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    localDataSource =   LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                )
+            )
+            var vendorProductsViewModel =  ViewModelProvider(this,vendorFactory).get(VendorProductsViewModel :: class.java)
+
+
+
             WinkCart_UserTheme {
 
-                AppInit(authViewModel,settingsViewModel = settingsViewModel)
+                AppInit(
+                    authViewModel, settingsViewModel = settingsViewModel,
+                    vendorProductViewModel = vendorProductsViewModel ,
+                    brandsViewModel = brandViewModel
+                )
            }
 
             }
@@ -98,7 +132,14 @@ class MainActivity : ComponentActivity() {
     }
 
 @Composable
-fun AppInit(authViewModel : AuthViewModel, categoriesViewModel : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper()),LocalDataSourceImpl(SettingsDaoImpl(LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE))))), settingsViewModel: SettingsViewModel) {
+fun AppInit(authViewModel : AuthViewModel,
+            categoriesViewModel : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper()),LocalDataSourceImpl(SettingsDaoImpl(LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE))))),
+            settingsViewModel: SettingsViewModel,
+            vendorProductViewModel :VendorProductsViewModel,
+            brandsViewModel: BrandsViewModel
+
+
+) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -131,11 +172,14 @@ fun AppInit(authViewModel : AuthViewModel, categoriesViewModel : CategoriesViewM
                     SignUpScreen(navController = navController,authViewModel=authViewModel)
                 }
                 composable(NavigationRout.Home.route) {
-                    HomeScreen(navController = navController)
+                    HomeScreen(navController = navController,brandsViewModel=brandsViewModel)
                 }
                 composable("vendor_products/{brand}") { backStackEntry ->
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
-                    VendorProductScreen(vendor = brand,navController = navController)
+                    VendorProductScreen(
+                        vendor = brand, navController = navController,
+                        vendorProductsViewModel = vendorProductViewModel
+                    )
                 }
                 composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
 

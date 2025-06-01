@@ -7,10 +7,9 @@ object CurrencyConversion {
         val rateDouble = rate.toDoubleOrNull()
 
         if (amountDouble == null || rateDouble == null) return ""
-
         val result = when (currencyCode.uppercase()) {
             "USD" -> amountDouble / rateDouble
-            "EGP" -> amountDouble * rateDouble
+            "EGP" -> amountDouble * 1
             else -> return ""
         }
 

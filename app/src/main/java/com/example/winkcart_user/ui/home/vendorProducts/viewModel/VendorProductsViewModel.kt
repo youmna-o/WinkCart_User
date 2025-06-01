@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.home.vendorProducts.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -45,7 +46,7 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
     }
 
 
-    private fun readCurrencyCode(){
+    fun readCurrencyCode(){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.readCurrencyCode()
             result.collect{
@@ -56,12 +57,17 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
 
 
 
-    private fun readCurrencyRate(){
+    fun readCurrencyRate(){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.readCurrencyRate()
             result.collect{
                 _currencyRate.value = it
             }
         }
+    }
+}
+class VendorsProductFactory(private  val repo: ProductRepo): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return VendorProductsViewModel(repo) as T
     }
 }

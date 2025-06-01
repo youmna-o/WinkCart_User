@@ -1,6 +1,4 @@
 package com.example.winkcart_user.ui.home.vendorProducts.views
-
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,11 +38,7 @@ import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 @Composable
 fun ProductItem (product: ProductAbstracted ,currencyRate:String, currencyCode:String, onProductItemClicked : () -> Unit){
 
-
-    Log.i("TAG", "ProductItem: before : prince = ${product.price}")
     val price = convertCurrency(amount = product.price, rate = currencyRate, currencyCode = currencyCode)
-
-    Log.i("TAG", "ProductItem: after : prince = $price")
 
     Card(
         modifier = Modifier

@@ -89,22 +89,18 @@ import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
-    navController: NavController, viewModel: BrandsViewModel = BrandsViewModel(
-        repo = ProductRepoImpl(remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()),
-            LocalDataSourceImpl(SettingsDaoImpl(LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)))
-        )
-    )
+    navController: NavController, brandsViewModel: BrandsViewModel
 ) {
-    val brandsState by viewModel.brandList.collectAsState()
+    val brandsState by brandsViewModel.brandList.collectAsState()
     when (brandsState) {
         is ResponseStatus.Success -> {
-            HomeScreenSuccess(navController, viewModel)
+            HomeScreenSuccess(navController, brandsViewModel)
         }
         is ResponseStatus.Error -> {
             HomeScreenError(
                 message = (brandsState as ResponseStatus.Error).error.message
                     ?: "An unknown error occurred",
-                onRetry = { viewModel.getSmartCollections() }
+                onRetry = { brandsViewModel.getSmartCollections() }
             )
         }else -> {
             HomeScreenLoading()

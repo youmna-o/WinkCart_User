@@ -42,28 +42,15 @@ import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProducts
 
 @Composable
 fun VendorProductScreen(
-    vendor: String, vendorProductsViewModel: VendorProductsViewModel = VendorProductsViewModel(
-        ProductRepoImpl(
-            RemoteDataSourceImpl(
-                RetrofitHelper()
-            ),
-            LocalDataSourceImpl(
-                SettingsDaoImpl(
-                    LocalContext.current.getSharedPreferences(
-                        "AppSettings", Context.MODE_PRIVATE)
-                )
-            )
-        )
-    ),
+    vendor: String,
+    vendorProductsViewModel: VendorProductsViewModel ,
     navController: NavController
 ) {
-
-
-    val currencyCodeSaved by vendorProductsViewModel.currencyCode.collectAsState()
-    val currencyRateSaved by vendorProductsViewModel.currencyRate.collectAsState()
-
-
+    vendorProductsViewModel.readCurrencyRate()
+    vendorProductsViewModel.readCurrencyCode()
     vendorProductsViewModel.getProductsPyVendor(vendor)
+    var currencyCodeSaved = vendorProductsViewModel.currencyCode.collectAsState().value
+    var currencyRateSaved = vendorProductsViewModel.currencyRate.collectAsState().value
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
     when (productsByVendor.value) {
         is ResponseStatus.Loading -> {
@@ -96,11 +83,12 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, 
                         fontWeight = FontWeight.Bold
                     )
                 },
-//                navigationIcon = {
-//                    IconButton(onClick = { /* handle back */ TODO() }) {
-//                        Icon(Icons.Default.ArrowBack, contentDescription = null)
-//                    }
-//                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack()
+                    }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.White
                 )
