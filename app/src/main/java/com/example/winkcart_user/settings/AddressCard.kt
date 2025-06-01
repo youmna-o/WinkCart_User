@@ -28,7 +28,7 @@ import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.settings.Address
 import com.example.winkcart_user.ui.theme.CardBackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
-import com.example.winkcart_user.ui.theme.myPurplr
+import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 
@@ -79,7 +79,7 @@ fun AddressCard(address: Address){
 
                 Text(
                     text = stringResource(R.string.edit),
-                    color = myPurplr,
+                    color = myPurple,
                     fontSize = 18.sp
                 )
             }

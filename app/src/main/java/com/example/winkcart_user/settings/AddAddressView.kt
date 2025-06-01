@@ -36,13 +36,13 @@ fun AddAddressView() {
 
         ) {
 
-            CustomTextField(stringResource(R.string.title))
-            CustomTextField(stringResource(R.string.country))
-            CustomTextField(stringResource(R.string.address))
-            CustomTextField(stringResource(R.string.contact_person))
-            CustomTextField(stringResource(R.string.phone_number))
-            Spacer(modifier = Modifier.height(30.dp))
-            CustomButton(lable = "SAVE ADDRESS") { }
+//            CustomTextField(stringResource(R.string.title))
+//            CustomTextField(stringResource(R.string.country))
+//            CustomTextField(stringResource(R.string.address))
+//            CustomTextField(stringResource(R.string.contact_person))
+//            CustomTextField(stringResource(R.string.phone_number))
+//            Spacer(modifier = Modifier.height(30.dp))
+//            CustomButton(lable = "SAVE ADDRESS") { }
 
 
         }

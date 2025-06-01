@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 
 class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
 
-class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource) : ProductRepo {
+//class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource) : ProductRepo {
 
 
     override suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?> {

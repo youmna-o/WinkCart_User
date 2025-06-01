@@ -3,6 +3,7 @@ package com.example.winkcart_user
 
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,12 +38,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.data.local.LocalDataSourceImpl
 import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
@@ -53,7 +53,6 @@ import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
-import com.example.winkcart_user.ui.home.ads.ADSPager
 import com.example.winkcart_user.ui.productInfo.ProductInfo
 
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
@@ -74,9 +73,21 @@ class MainActivity : ComponentActivity() {
 
             var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
             var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
+            val settingsViewModel: SettingsViewModel = viewModel(
+                factory = SettingsFactory(
+                    ProductRepoImpl(
+                        RemoteDataSourceImpl(RetrofitHelper()),
+                        LocalDataSourceImpl(
+                            SettingsDaoImpl(
+                                LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+                            )
+                        )
+                    )
+                )
+            )
             WinkCart_UserTheme {
 
-                AppInit(authViewModel)
+                AppInit(authViewModel,settingsViewModel = settingsViewModel)
            }
 
             }
@@ -87,7 +98,7 @@ class MainActivity : ComponentActivity() {
     }
 
 @Composable
-fun AppInit(authViewModel : AuthViewModel, categoriesViewModel : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper())))) {
+fun AppInit(authViewModel : AuthViewModel, categoriesViewModel : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper()),LocalDataSourceImpl(SettingsDaoImpl(LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE))))), settingsViewModel: SettingsViewModel) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -126,15 +137,9 @@ fun AppInit(authViewModel : AuthViewModel, categoriesViewModel : CategoriesViewM
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
                     VendorProductScreen(vendor = brand,navController = navController)
                 }
-                composable(NavigationRout.Settings.rout) { SettingsView(ViewModelProvider(
-                        this@MainActivity,
-                        SettingsFactory(
-                            ProductRepoImpl(
-                                RemoteDataSourceImpl(RetrofitHelper()),
-                                LocalDataSourceImpl(SettingsDaoImpl(LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE)))
-                            )
-                        )
-                    )[SettingsViewModel::class.java] )
+                composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
+
+
                 composable(NavigationRout.ProductInfo.route) {
                         backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId") ?: ""

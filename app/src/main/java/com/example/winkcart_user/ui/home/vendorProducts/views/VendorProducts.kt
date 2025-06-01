@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.home.vendorProducts.views
 
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,9 +25,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.local.LocalDataSourceImpl
+import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -41,6 +45,12 @@ fun VendorProductScreen(
         ProductRepoImpl(
             RemoteDataSourceImpl(
                 RetrofitHelper()
+            ),
+            LocalDataSourceImpl(
+                SettingsDaoImpl(
+                    LocalContext.current.getSharedPreferences(
+                        "AppSettings", Context.MODE_PRIVATE)
+                )
             )
         )
     ),
