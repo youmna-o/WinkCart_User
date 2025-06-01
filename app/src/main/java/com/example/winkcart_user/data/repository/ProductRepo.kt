@@ -1,5 +1,6 @@
 package com.example.winkcart_user.data.repository
 
+import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -19,7 +20,7 @@ interface ProductRepo {
     suspend fun readCurrencyReadingDate(): Flow<String>
     suspend fun writeCurrencyReadingDate(currencyReadingDate: String)
     suspend fun getFilteredSmartCollections(): Flow<SmartCollectionsResponse?>
-    suspend fun getAllProducts() : Flow<ProductResponse?>
+    suspend fun getAllProducts() :  Flow<ProductResponse?>
 
     suspend fun getProductsByVendor(vendor : String) : Flow<ProductResponse?>
 

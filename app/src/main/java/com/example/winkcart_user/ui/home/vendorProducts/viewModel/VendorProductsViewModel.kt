@@ -23,11 +23,6 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
     private val _currencyRate = MutableStateFlow("")
     val currencyRate = _currencyRate.asStateFlow()
 
-    init {
-        readCurrencyCode()
-        readCurrencyRate()
-    }
-
     fun getProductsPyVendor (vendor : String){
         viewModelScope.launch {
             repo.getProductsByVendor(vendor)

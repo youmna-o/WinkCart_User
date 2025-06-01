@@ -1,6 +1,5 @@
 package com.example.winkcart_user.ui.productInfo
 
-import android.R
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 
@@ -40,7 +39,7 @@ fun ProductInfo(
     scrollState: ScrollState,
     viewModel: CategoriesViewModel
 ) {
-    val productState = viewModel.producs.collectAsState()
+    val productState = viewModel.products.collectAsState()
 
     var myProduct = remember(productState.value) {
         viewModel.getProduct(productID)

@@ -1,13 +1,10 @@
 package com.example.winkcart_user.ui.home.vendorProducts.views
 
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -22,23 +19,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.winkcart_user.data.ResponseStatus
-import com.example.winkcart_user.data.local.LocalDataSourceImpl
-import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.data.model.products.ProductResponse
-import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
-import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
-import com.example.winkcart_user.data.repository.ProductRepoImpl
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
+import com.example.winkcart_user.ui.utils.ProductItem
 
 @Composable
 fun VendorProductScreen(
