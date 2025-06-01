@@ -36,6 +36,7 @@ import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.ui.home.ads.ADSPager
 import com.example.winkcart_user.ui.productInfo.ProductInfo
 
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
