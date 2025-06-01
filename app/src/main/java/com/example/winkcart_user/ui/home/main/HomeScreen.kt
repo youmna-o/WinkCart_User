@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.home.main
 
+import android.content.Context
 import android.graphics.BlurMaskFilter
 import android.graphics.Paint
 import android.graphics.RectF
@@ -67,6 +68,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -74,6 +76,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.local.LocalDataSourceImpl
+import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 import com.example.winkcart_user.data.model.vendors.SmartCollection
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
@@ -85,20 +89,18 @@ import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
-    navController: NavController, viewModel: BrandsViewModel = BrandsViewModel(
-        repo = ProductRepoImpl(remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()))
-    )
+    navController: NavController, brandsViewModel: BrandsViewModel
 ) {
-    val brandsState by viewModel.brandList.collectAsState()
+    val brandsState by brandsViewModel.brandList.collectAsState()
     when (brandsState) {
         is ResponseStatus.Success -> {
-            HomeScreenSuccess(navController, viewModel)
+            HomeScreenSuccess(navController, brandsViewModel)
         }
         is ResponseStatus.Error -> {
             HomeScreenError(
                 message = (brandsState as ResponseStatus.Error).error.message
                     ?: "An unknown error occurred",
-                onRetry = { viewModel.getSmartCollections() }
+                onRetry = { brandsViewModel.getSmartCollections() }
             )
         }else -> {
             HomeScreenLoading()

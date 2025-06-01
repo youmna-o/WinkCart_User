@@ -1,5 +1,4 @@
 package com.example.winkcart_user.ui.home.vendorProducts.views
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,9 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.winkcart_user.data.model.products.ProductAbstracted
+import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 
 @Composable
-fun ProductItem (product: ProductAbstracted , onProductItemClicked : () -> Unit){
+fun ProductItem (product: ProductAbstracted ,currencyRate:String, currencyCode:String, onProductItemClicked : () -> Unit){
+
+    val price = convertCurrency(amount = product.price, rate = currencyRate, currencyCode = currencyCode)
 
     Card(
         modifier = Modifier
@@ -102,7 +104,7 @@ fun ProductItem (product: ProductAbstracted , onProductItemClicked : () -> Unit)
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = product.price,
+                            text = price + " " +currencyCode,
                             color = Color.Gray,
                             fontWeight = FontWeight.Bold
 
@@ -114,7 +116,8 @@ fun ProductItem (product: ProductAbstracted , onProductItemClicked : () -> Unit)
                         ) {
                             IconButton(
                                 onClick = { /* add to fav action  */},
-                                modifier = Modifier.size(30.dp)
+                                modifier = Modifier
+                                    .size(30.dp)
                                     .align(Alignment.CenterVertically)
                             ) {
                                 Icon(

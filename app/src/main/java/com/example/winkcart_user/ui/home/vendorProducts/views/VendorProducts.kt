@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.home.vendorProducts.views
 
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,12 +22,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.local.LocalDataSourceImpl
+import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -37,16 +42,15 @@ import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProducts
 
 @Composable
 fun VendorProductScreen(
-    vendor: String, vendorProductsViewModel: VendorProductsViewModel = VendorProductsViewModel(
-        ProductRepoImpl(
-            RemoteDataSourceImpl(
-                RetrofitHelper()
-            )
-        )
-    ),
+    vendor: String,
+    vendorProductsViewModel: VendorProductsViewModel ,
     navController: NavController
 ) {
+    vendorProductsViewModel.readCurrencyRate()
+    vendorProductsViewModel.readCurrencyCode()
     vendorProductsViewModel.getProductsPyVendor(vendor)
+    var currencyCodeSaved = vendorProductsViewModel.currencyCode.collectAsState().value
+    var currencyRateSaved = vendorProductsViewModel.currencyRate.collectAsState().value
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
     when (productsByVendor.value) {
         is ResponseStatus.Loading -> {
@@ -55,7 +59,9 @@ fun VendorProductScreen(
         is ResponseStatus.Success -> VendorProductsOnScuccess(
             mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products),
             vendor = vendor,
-            navController
+            navController,
+            currencyCode = currencyCodeSaved,
+            currencyRate = currencyRateSaved
         )
 
         is ResponseStatus.Error -> {
@@ -66,7 +72,7 @@ fun VendorProductScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, navController: NavController) {
+fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, navController: NavController, currencyRate:String, currencyCode:String) {
     Scaffold(
         containerColor = Color(245, 245, 245),
         topBar = {
@@ -78,7 +84,8 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, 
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* handle back */ TODO() }) {
+                    IconButton(onClick = { navController.popBackStack()
+                    }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 },
@@ -95,7 +102,13 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, 
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(products.size) { index ->
-                    ProductItem(product = products[index], onProductItemClicked = { navController.navigate("ProductInfo/${products[index].id}") })
+                    ProductItem(
+                        product = products[index],
+                        currencyCode = currencyCode,
+                        currencyRate = currencyRate,
+                        onProductItemClicked = { navController.navigate("ProductInfo/${products[index].id}") }
+
+                    )
                 }
             }
         } else {
@@ -134,7 +147,7 @@ fun mapProductsToBaAbstracted(products: List<Product>): List<ProductAbstracted> 
         ProductAbstracted(
             title = product.title,
             imageUrl = product.image?.src ?: "",
-            price = "${product.variants.firstOrNull()?.price ?: "0"} EG",
+            price = "${product.variants.firstOrNull()?.price ?: "0"}",
             id = product.id
         )
     }

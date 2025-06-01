@@ -1,6 +1,7 @@
 package com.example.winkcart_user.brands.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.repository.ProductRepo
@@ -37,11 +38,9 @@ class BrandsViewModel(private  val repo: ProductRepo) : ViewModel() {
                 }
         }
     }
-
-
-
-
-
-
-
+}
+class BrandsFactory(private  val repo: ProductRepo): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return BrandsViewModel(repo) as T
+    }
 }
