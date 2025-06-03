@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.home.vendorProducts.viewModel
 
+import android.icu.text.StringSearch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
@@ -22,6 +24,9 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
 
     private val _currencyRate = MutableStateFlow("")
     val currencyRate = _currencyRate.asStateFlow()
+
+//    private val mutableSearch = MutableStateFlow("")
+//    val resultSearch = mutableSearch.asStateFlow()
 
     init {
         readCurrencyCode()
@@ -44,6 +49,25 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
                 }
         }
     }
+//    fun getSearchProducts (vendor : String , searchInput: String){
+//        viewModelScope.launch {
+//            repo.getProductsByVendor(vendor)
+//                .catch { exeption ->
+//                    _productsByVendor.value = ResponseStatus.Error(exeption)
+//                }.collect{ response ->
+//                    if(response!= null){
+//                        val afterSearch = response.products
+//                            .filter { product -> product.title.contains(searchInput, ignoreCase = true)
+//                        }
+//                        _productsByVendor.value = ResponseStatus.Success(ProductResponse(products = afterSearch))
+//                    }else{
+//                        _productsByVendor.value = ResponseStatus.Error(
+//                            NullPointerException("SmartCollectionsResponse is null")
+//                        )
+//                    }
+//                }
+//        }
+//    }
 
 
     fun readCurrencyCode(){

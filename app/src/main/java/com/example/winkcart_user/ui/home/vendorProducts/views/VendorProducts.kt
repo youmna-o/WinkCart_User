@@ -6,28 +6,37 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.local.LocalDataSourceImpl
@@ -39,6 +48,12 @@ import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.ProductRepoImpl
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
+import com.example.winkcart_user.ui.theme.myPurple
+import com.example.winkcart_user.ui.utils.CustomTextField
+import com.example.winkcart_user.ui.utils.navigation.CustomSearchBar
+import org.w3c.dom.Text
+import kotlin.math.log
+import kotlin.math.tan
 
 @Composable
 fun VendorProductScreen(
@@ -46,23 +61,52 @@ fun VendorProductScreen(
     vendorProductsViewModel: VendorProductsViewModel ,
     navController: NavController
 ) {
+    var searchInput by remember { mutableStateOf("") }
+    var isSearch = false
     vendorProductsViewModel.readCurrencyRate()
     vendorProductsViewModel.readCurrencyCode()
     vendorProductsViewModel.getProductsPyVendor(vendor)
+   // vendorProductsViewModel.getSearchProducts(vendor,searchInput)
+
     var currencyCodeSaved = vendorProductsViewModel.currencyCode.collectAsState().value
     var currencyRateSaved = vendorProductsViewModel.currencyRate.collectAsState().value
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
+   // var productsByVendorAfterSearch = vendorProductsViewModel.resultSearch.collectAsState()
+
     when (productsByVendor.value) {
         is ResponseStatus.Loading -> {
             VendorProductScreenOnLoading()
         }
-        is ResponseStatus.Success -> VendorProductsOnScuccess(
-            mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products),
+
+        is ResponseStatus.Success -> {
+      //      val afterSearch = state.
+                //response.products
+//                            .filter { product -> product.title.contains(searchInput, ignoreCase = true)
+//                        }
+
+        VendorProductsOnScuccess(
+            searchInput = searchInput,
+            onSearchInputChange = {
+                searchInput = it
+                isSearch = true
+            },
+            products = mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products).filter {
+                    product -> product.title.contains(searchInput, ignoreCase = true)
+            },
+//esponse.products
+////              .filter { product -> product.title.contains(searchInput, ignoreCase = true)
+//            products = when (isSearch) {
+//                false -> mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products)
+//                true -> mapProductsToBaAbstracted((productsByVendorAfterSearch.value as ResponseStatus.Success<ProductResponse>).result.products)
+//                else -> mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products)
+//            } as List<ProductAbstracted>,
+
             vendor = vendor,
-            navController,
+            navController = navController,
             currencyCode = currencyCodeSaved,
             currencyRate = currencyRateSaved
         )
+    }
 
         is ResponseStatus.Error -> {
             VendorProductScreenOnLoading()
@@ -72,7 +116,8 @@ fun VendorProductScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, navController: NavController, currencyRate:String, currencyCode:String) {
+fun VendorProductsOnScuccess(  searchInput: String,
+                               onSearchInputChange: (String) -> Unit,products: List<ProductAbstracted>, vendor: String, navController: NavController, currencyRate:String, currencyCode:String) {
     Scaffold(
         containerColor = Color(245, 245, 245),
         topBar = {
@@ -94,46 +139,62 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, 
                 )
             )
         }
+         ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
+            CustomSearchBar(
+                searchInput = searchInput,
+                onSearchInputChange =  onSearchInputChange,
+            )
 
-    ) { padding ->
-        if (products.isNotEmpty()) {
-            LazyColumn(
-                contentPadding = padding,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                items(products.size) { index ->
+//            OutlinedTextField(
+//                leadingIcon = {Icon(imageVector = Icons.Default.Search, contentDescription = "icon", tint = myPurple)},
+//                value = searchInput,
+//                onValueChange = onSearchInputChange,
+//                label = { Text("Search Here") },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp),
+//                singleLine = true,
+//            )
 
-                    ProductItem(
-                        product = products[index],
-                        currencyCode = currencyCode,
-                        currencyRate = currencyRate,
-                        onProductItemClicked = { navController.navigate("ProductInfo/${products[index].id}") }
+            if (products.isNotEmpty()) {
+                LazyColumn {
+                    items(products.size) { index ->
+                        ProductItem(
+                            product = products[index],
+                            currencyCode = currencyCode,
+                            currencyRate = currencyRate,
+                            onProductItemClicked = { navController.navigate("ProductInfo/${products[index].id}") }
 
-                    )
+                        )
 
+                    }
                 }
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("  All products from this vendor are currently out of stock. ",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
-                    )
-                    Text(" Stay tuned for updates!",style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
-                    )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("  All products from this vendor are currently out of stock. ",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray
+                        )
+                        Text(" Stay tuned for updates!",style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray
+                        )
+                    }
                 }
-
-
-
             }
         }
+
         }
 
     }
