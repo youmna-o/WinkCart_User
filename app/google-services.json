@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "687416921904",
+    "project_id": "winkcartuser",
+    "storage_bucket": "winkcartuser.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687416921904:android:5e0852999314ea7d9082f5",
+        "android_client_info": {
+          "package_name": "com.example.winkcart_user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687416921904-ifr21qinv55f9cnlbe5q3p6v0jn06cqj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.winkcart_user",
+            "certificate_hash": "10e47c3c272f0afa48ef8846a2815aae4bfe88ba"
+          }
+        },
+        {
+          "client_id": "687416921904-5o11fbijq7c8mr9b5311v8sbe9n64o3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSiGVQ4A0qBlWdAqUSreHMOjg1TQjKbrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687416921904-5o11fbijq7c8mr9b5311v8sbe9n64o3b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

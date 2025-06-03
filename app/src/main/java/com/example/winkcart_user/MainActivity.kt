@@ -1,10 +1,14 @@
 package com.example.winkcart_user
 
+
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -15,44 +19,128 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
+
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.winkcart_user.ui.login.LoginScreen
-import com.example.winkcart_user.ui.login.SignUpScreen
+import com.example.winkcart_user.ui.auth.login.LoginScreen
+import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
 
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
+
+import com.example.winkcart_user.data.local.LocalDataSourceImpl
+import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
+
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.winkcart_user.brands.viewModel.BrandsFactory
+import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
+import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.settings.SettingsView
+import com.example.winkcart_user.settings.viewmodel.SettingsFactory
+import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
+import com.example.winkcart_user.ui.auth.AuthFactory
+import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.ui.productInfo.ProductInfo
+
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.ui.home.main.HomeScreen
+import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
+import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
 
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
+
+            var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+            var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
+            val settingsViewModel: SettingsViewModel = viewModel(
+                factory = SettingsFactory(
+                    ProductRepoImpl(
+                        RemoteDataSourceImpl(RetrofitHelper()),
+                        LocalDataSourceImpl(
+                            SettingsDaoImpl(
+                                LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                            )
+                        )
+                    )
+                )
+            )
+            var brandFactory = BrandsFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    localDataSource =   LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                )
+            )
+            var brandViewModel =  ViewModelProvider(this,brandFactory).get(BrandsViewModel :: class.java)
+
+            var vendorFactory = VendorsProductFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    localDataSource =   LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                )
+            )
+            var vendorProductsViewModel =  ViewModelProvider(this,vendorFactory).get(VendorProductsViewModel :: class.java)
+
+
+
             WinkCart_UserTheme {
-                AppInit()
+
+                AppInit(
+                    authViewModel, settingsViewModel = settingsViewModel,
+                    vendorProductViewModel = vendorProductsViewModel ,
+                    brandsViewModel = brandViewModel
+                )
            }
+
+            }
+
+
+
         }
     }
-}
+
 @Composable
-fun AppInit() {
+fun AppInit(authViewModel : AuthViewModel,
+            categoriesViewModel : CategoriesViewModel =  CategoriesViewModel(ProductRepoImpl( RemoteDataSourceImpl(RetrofitHelper()),LocalDataSourceImpl(SettingsDaoImpl(LocalContext.current.getSharedPreferences("AppSettings", Context.MODE_PRIVATE))))),
+            settingsViewModel: SettingsViewModel,
+            vendorProductViewModel :VendorProductsViewModel,
+            brandsViewModel: BrandsViewModel
+
+
+) {
+    val scroll = rememberScrollState()
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
@@ -78,17 +166,34 @@ fun AppInit() {
                 modifier = Modifier.padding(paddingValues)
             ) {
                 composable(NavigationRout.Login.route) {
-                    LoginScreen(navController = navController)
+                    LoginScreen(navController = navController , authViewModel = authViewModel)
                 }
                 composable(NavigationRout.SignUp.route) {
-                    SignUpScreen(navController = navController)
+                    SignUpScreen(navController = navController,authViewModel=authViewModel)
                 }
                 composable(NavigationRout.Home.route) {
-                    HomeScreen(navController = navController)
+                    HomeScreen(navController = navController,brandsViewModel=brandsViewModel)
                 }
                 composable("vendor_products/{brand}") { backStackEntry ->
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
-                    VendorProductScreen(vendor = brand)
+                    VendorProductScreen(
+                        vendor = brand, navController = navController,
+                        vendorProductsViewModel = vendorProductViewModel
+                    )
+                }
+                composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
+
+
+                composable(NavigationRout.ProductInfo.route) {
+                        backStackEntry ->
+                    val productId = backStackEntry.arguments?.getString("productId") ?: ""
+                    ProductInfo(
+                        productId.toLong(),
+                        navController = navController,
+                        scrollState = scroll,
+                        viewModel = categoriesViewModel,
+
+                    )
                 }
             }
         }

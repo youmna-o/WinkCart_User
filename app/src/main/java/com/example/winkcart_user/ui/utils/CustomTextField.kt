@@ -31,15 +31,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomTextField(lable: String){
-    val myText = remember { mutableStateOf(TextFieldValue("")) }
+fun CustomTextField(lable: String , input: String ,onValueChange: (String) -> Unit,isEmailError: Boolean ){
+
     Column {
         OutlinedTextField(
-            value = myText.value,
-            onValueChange = { myText.value = it },
+           value = input,
+            onValueChange = onValueChange,
             label = { Text(lable) },
             modifier = Modifier
                 .fillMaxWidth(),
+            isError = isEmailError,
             singleLine = true
         )
         Spacer(modifier = Modifier.height(16.dp))
