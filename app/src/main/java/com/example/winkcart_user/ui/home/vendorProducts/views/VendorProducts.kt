@@ -61,17 +61,19 @@ fun VendorProductScreen(
     vendorProductsViewModel: VendorProductsViewModel ,
     navController: NavController
 ) {
-    var searchInput by remember { mutableStateOf("") }
+    //var searchInput by remember { mutableStateOf("") }
     var isSearch = false
     vendorProductsViewModel.readCurrencyRate()
     vendorProductsViewModel.readCurrencyCode()
     vendorProductsViewModel.getProductsPyVendor(vendor)
    // vendorProductsViewModel.getSearchProducts(vendor,searchInput)
-
+    val searchInput by vendorProductsViewModel.searchInput.collectAsState()
     var currencyCodeSaved = vendorProductsViewModel.currencyCode.collectAsState().value
     var currencyRateSaved = vendorProductsViewModel.currencyRate.collectAsState().value
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
    // var productsByVendorAfterSearch = vendorProductsViewModel.resultSearch.collectAsState()
+    var filteredProducts  = vendorProductsViewModel.filteredProducts.collectAsState().value
+  //  var searchedInput  = vendorProductsViewModel.searchInput.collectAsState().value
 
     when (productsByVendor.value) {
         is ResponseStatus.Loading -> {
@@ -86,20 +88,14 @@ fun VendorProductScreen(
 
         VendorProductsOnScuccess(
             searchInput = searchInput,
-            onSearchInputChange = {
-                searchInput = it
-                isSearch = true
-            },
-            products = mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products).filter {
-                    product -> product.title.contains(searchInput, ignoreCase = true)
-            },
-//esponse.products
-////              .filter { product -> product.title.contains(searchInput, ignoreCase = true)
-//            products = when (isSearch) {
-//                false -> mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products)
-//                true -> mapProductsToBaAbstracted((productsByVendorAfterSearch.value as ResponseStatus.Success<ProductResponse>).result.products)
-//                else -> mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products)
-//            } as List<ProductAbstracted>,
+            onSearchInputChange =
+                {
+                    vendorProductsViewModel.onSearchInputChanged(it) }
+
+            ,
+            products = mapProductsToBaAbstracted(filteredProducts),
+                //filteredProducts,
+                //mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products),
 
             vendor = vendor,
             navController = navController,
@@ -151,16 +147,6 @@ fun VendorProductsOnScuccess(  searchInput: String,
                 onSearchInputChange =  onSearchInputChange,
             )
 
-//            OutlinedTextField(
-//                leadingIcon = {Icon(imageVector = Icons.Default.Search, contentDescription = "icon", tint = myPurple)},
-//                value = searchInput,
-//                onValueChange = onSearchInputChange,
-//                label = { Text("Search Here") },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 16.dp),
-//                singleLine = true,
-//            )
 
             if (products.isNotEmpty()) {
                 LazyColumn {
