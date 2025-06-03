@@ -15,10 +15,12 @@ interface Services {
     @GET("smart_collections.json")
     suspend fun getSmartCollections( @Header("X-Shopify-Access-Token") token: String):Response<SmartCollectionsResponse>
 
-    @GET("products.json")
-    suspend fun getAllProducts (@Header("X-Shopify-Access-Token") token: String) :Response<ProductResponse>
+    @GET("products.json?limit=250")
+    suspend fun getAllProducts(
+        @Header("X-Shopify-Access-Token") token: String
+    ): Response<ProductResponse>
 
-@GET("products.json")
+    @GET("products.json")
 suspend fun getProductsByVendor (
     @Header("X-Shopify-Access-Token") token: String,
     @Query("vendor") vendor: String

@@ -95,6 +95,7 @@ fun VendorProductsOnScuccess(products: List<ProductAbstracted>, vendor: String, 
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(products.size) { index ->
+                    Log.i("test", "VendorProductsOnScuccess:${products[index].id} ")
                     ProductItem(product = products[index], onProductItemClicked = { navController.navigate("ProductInfo/${products[index].id}") })
                 }
             }
