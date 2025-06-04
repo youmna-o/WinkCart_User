@@ -30,12 +30,16 @@ import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductResponse
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -78,12 +82,15 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
                               currencyViewModel: CurrencyViewModel) {
     currencyViewModel.readCurrencyCode()
     currencyViewModel.readCurrencyRate()
-    var currencyRate = currencyViewModel.currencyRate.collectAsState().value
-    var currencyCode = currencyViewModel.currencyCode.collectAsState().value
-     categoriesViewModel.getMenProducts()
-     categoriesViewModel.getWomenProducts()
-     categoriesViewModel.getKidsProducts()
+    categoriesViewModel.getMenProducts()
+    categoriesViewModel.getWomenProducts()
+    categoriesViewModel.getKidsProducts()
+    
+    val currencyRate = currencyViewModel.currencyRate.collectAsState().value
+    val currencyCode = currencyViewModel.currencyCode.collectAsState().value
+    val subcategories = categoriesViewModel.getALlSubCategories()
     var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedSubcategoryIndex by remember { mutableStateOf(-1) }
 
 
     Scaffold (
@@ -115,18 +122,32 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
             )
         }
     ) { paddingValues ->
-
-        var currentList : List<Product> =  when (selectedTabIndex) {
+        val baseList: List<Product> = when (selectedTabIndex) {
             0 -> (categoriesViewModel.products.value as ResponseStatus.Success<ProductResponse>).result.products
             1 -> categoriesViewModel.getWomenProducts()
             2 -> categoriesViewModel.getMenProducts()
-            else ->categoriesViewModel.getKidsProducts()
+            else -> categoriesViewModel.getKidsProducts()
+        }
+        val subcategoryList = subcategories.toList()
+        val currentList: List<Product> = if (selectedSubcategoryIndex != -1) {
+            val selectedSubcategory = subcategoryList[selectedSubcategoryIndex]
+            baseList.filter { it.product_type == selectedSubcategory }
+        } else {
+            baseList
         }
 
+
+
+
         Column(modifier = Modifier.padding(paddingValues)) {
-            CategoryTabs(selectedTabIndex = selectedTabIndex) {
-                selectedTabIndex = it
-            }
+            CategoryTabs(
+                selectedTabIndex = selectedTabIndex,
+                subcategories = subcategories,
+                selectedSubcategory = selectedSubcategoryIndex,
+                onTabSelected = { selectedTabIndex = it },
+                onSubcategorySelected = { selectedSubcategoryIndex = it }
+            )
+
 
             FilterSortRow(
                 selectedSortOption = "Price: lowest to high",
@@ -145,12 +166,15 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
     }
 }
 
+
+
 @Composable
 fun CategoryProducts(Products :List<Product>,currencyRate:String,
                      currencyCode:String,navController: NavController) {
     if (Products.isNotEmpty()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                 ,
         ) {
             items(Products.size) { index ->
                 ProductItem(
@@ -204,24 +228,54 @@ fun CategoriesScreenOnError(){
 @Composable
 fun CategoryTabs(
     selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit
+    subcategories : Set<String> ,
+    onTabSelected: (Int) -> Unit ,
+    selectedSubcategory: Int,
+    onSubcategorySelected :(Int) -> Unit
 ) {
+    var selectedSubcategoryIndex = selectedSubcategory
     val categories = listOf( "ALL","Women", "Men", "Kids")
 
-    TabRow(selectedTabIndex = selectedTabIndex) {
-        categories.forEachIndexed { index, title ->
-            Tab(
-                selected = selectedTabIndex == index,
-                onClick = { onTabSelected(index) },
-                text = {
-                    Text(
-                        text = title,
-                        fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
+    Column {
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            categories.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { onTabSelected(index) },
+                    text = {
+                        Text(
+                            text = title,
+                            fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            LazyRow(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(subcategories.toList().size ) { indxe ->
+                    FilterChip(
+                        selected =   selectedSubcategory == indxe,
+                        onClick = {
+                            onSubcategorySelected(if (selectedSubcategory == indxe) -1 else indxe)
+                        },
+                        label = { Text(subcategories.toList()[indxe] ) },
+                        shape = RoundedCornerShape(50),
+                        modifier = Modifier.padding(end = 8.dp)
                     )
                 }
-            )
+            }
         }
+
     }
+   
 }
 @Composable
 fun FilterSortRow(
