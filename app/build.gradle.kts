@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+    implementation(libs.play.services.analytics.impl)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -105,7 +106,6 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-pager:0.28.0")
     //stars
     implementation("androidx.compose.material:material-icons-extended")
-
 
 
 }
