@@ -8,8 +8,11 @@ import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.repository.ProductRepo
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
@@ -17,11 +20,23 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _productList = MutableStateFlow<ResponseStatus<ProductResponse>>(ResponseStatus.Loading)
     val products = _productList.asStateFlow()
 
+    private val _searchInput = MutableStateFlow("")
+    val searchInput = _searchInput.asStateFlow()
+
+    private val _filteredProducts = MutableStateFlow<List<Product>>(emptyList())
 
     init {
         getAllProducts()
     }
 
+    val filteredProducts = combine(_filteredProducts, _searchInput) { products, search ->
+        if (search.isBlank()) products
+        else products.filter { it.title.contains(search, ignoreCase = true) }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    fun onSearchInputChanged(input: String) {
+        _searchInput.value = input
+    }
     fun getAllProducts() {
         viewModelScope.launch {
             val products = repo.getAllProducts()
@@ -30,6 +45,7 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
             }.collect{ it
                 if (it!= null){
                     _productList.value= ResponseStatus.Success<ProductResponse>(it)
+                    _filteredProducts.value = it.products
                 }else{
                     _productList.value = ResponseStatus.Error(NullPointerException("SmartCollectionsResponse is null"))
                 }

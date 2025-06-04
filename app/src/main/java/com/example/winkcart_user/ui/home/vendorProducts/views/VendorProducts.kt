@@ -71,7 +71,7 @@ fun VendorProductScreen(
     var currencyCodeSaved = vendorProductsViewModel.currencyCode.collectAsState().value
     var currencyRateSaved = vendorProductsViewModel.currencyRate.collectAsState().value
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
-   // var productsByVendorAfterSearch = vendorProductsViewModel.resultSearch.collectAsState()
+
     var filteredProducts  = vendorProductsViewModel.filteredProducts.collectAsState().value
   //  var searchedInput  = vendorProductsViewModel.searchInput.collectAsState().value
 

@@ -51,11 +51,15 @@ import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.CurrencyViewModel
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.ui.utils.ProductItem
+import com.example.winkcart_user.ui.utils.navigation.CustomSearchBar
 
 @Composable
 fun CategoriesScreen (categoriesViewModel: CategoriesViewModel, navController: NavController, currencyViewModel: CurrencyViewModel){
 
     val allProducts by  categoriesViewModel.products.collectAsState()
+    val searchInput by categoriesViewModel.searchInput.collectAsState()
+    var filteredProducts  = categoriesViewModel.filteredProducts.collectAsState().value
+
     categoriesViewModel.getMenProducts()
     categoriesViewModel.getMenProducts()
     categoriesViewModel.getKidsProducts()
@@ -63,7 +67,10 @@ fun CategoriesScreen (categoriesViewModel: CategoriesViewModel, navController: N
 
     when (allProducts) {
         is ResponseStatus.Success<*> ->{
-            CategoriesScreenOnSuccess(categoriesViewModel,navController,currencyViewModel)
+            CategoriesScreenOnSuccess(categoriesViewModel,navController,currencyViewModel,searchInput = searchInput,
+                onSearchInputChange =
+                    {
+                        categoriesViewModel.onSearchInputChanged(it) })
         }
         is ResponseStatus.Loading ->{
             CategoriesScreenonLoading()
@@ -79,7 +86,10 @@ fun CategoriesScreen (categoriesViewModel: CategoriesViewModel, navController: N
 @Composable
 fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
                               navController: NavController,
-                              currencyViewModel: CurrencyViewModel) {
+                              currencyViewModel: CurrencyViewModel,
+                              searchInput: String,
+                              onSearchInputChange: (String) -> Unit
+                              ) {
     currencyViewModel.readCurrencyCode()
     currencyViewModel.readCurrencyRate()
     categoriesViewModel.getMenProducts()
@@ -110,15 +120,7 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.White
                 ),
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.Black
-                        )
-                    }
-                }
+
             )
         }
     ) { paddingValues ->
@@ -135,11 +137,21 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
         } else {
             baseList
         }
+        val filteredList = if (searchInput.isNotBlank()) {
+            currentList.filter { it.title.contains(searchInput, ignoreCase = true) }
+        } else {
+            currentList
+        }
 
 
 
 
         Column(modifier = Modifier.padding(paddingValues)) {
+            Spacer(modifier = Modifier.height(8.dp))
+            CustomSearchBar(
+                searchInput = searchInput,
+                onSearchInputChange =  onSearchInputChange,
+            )
             CategoryTabs(
                 selectedTabIndex = selectedTabIndex,
                 subcategories = subcategories,
@@ -157,7 +169,7 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
             )
 
             CategoryProducts(
-                currentList,
+                filteredList,
                 currencyRate = currencyRate,
                 currencyCode = currencyCode,
                 navController = navController,
