@@ -30,6 +30,7 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
     private val _currencyRate = MutableStateFlow("")
     val currencyRate = _currencyRate.asStateFlow()
 
+
     private val _searchInput = MutableStateFlow("")
     val searchInput = _searchInput.asStateFlow()
 
@@ -47,6 +48,7 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
     fun onSearchInputChanged(input: String) {
         _searchInput.value = input
     }
+
 
     fun getProductsPyVendor (vendor : String){
         viewModelScope.launch {

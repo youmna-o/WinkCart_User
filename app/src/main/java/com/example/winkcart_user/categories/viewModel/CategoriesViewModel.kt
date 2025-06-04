@@ -3,7 +3,6 @@ package com.example.winkcart_user.categories.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -16,7 +15,8 @@ import kotlinx.coroutines.launch
 class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
 
     private val _productList = MutableStateFlow<ResponseStatus<ProductResponse>>(ResponseStatus.Loading)
-    val producs = _productList.asStateFlow()
+    val products = _productList.asStateFlow()
+
 
     init {
         getAllProducts()
@@ -36,6 +36,7 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
             }
         }
     }
+
     fun getProductsList() : List<Product>? {
         val productResponse: ProductResponse? = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
         val productList = productResponse?.products
@@ -96,6 +97,7 @@ class CategoriesViewModel (private val repo: ProductRepo ) :ViewModel() {
             ?.filter { it.tags.contains("kid", ignoreCase = true) }
             ?: emptyList()
     }
+
 
 }
 class CategoryFactory(private  val repo: ProductRepo): ViewModelProvider.Factory{
