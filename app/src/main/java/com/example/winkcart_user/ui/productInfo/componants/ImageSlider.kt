@@ -29,7 +29,7 @@ fun ImageSlider(images: List<String>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(420.dp),
+            .height(400.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
