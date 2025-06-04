@@ -51,7 +51,7 @@ fun ProductInfo(
     scrollState: ScrollState,
     viewModel: CategoriesViewModel
 ) {
-    val productState = viewModel.producs.collectAsState()
+    val productState = viewModel.products.collectAsState()
 
     var myProduct = remember(productState.value) {
         viewModel.getProduct(productID)
