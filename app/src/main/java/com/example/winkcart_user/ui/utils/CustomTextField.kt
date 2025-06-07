@@ -31,7 +31,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomTextField(lable: String , input: String ,onValueChange: (String) -> Unit,isEmailError: Boolean ){
+fun CustomTextField(lable: String , input: String ,onValueChange: (String) -> Unit, isEmailError: Boolean ){
 
     Column {
         OutlinedTextField(

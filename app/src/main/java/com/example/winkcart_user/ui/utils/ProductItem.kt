@@ -1,4 +1,4 @@
-package com.example.winkcart_user.ui.home.vendorProducts.views
+package com.example.winkcart_user.ui.utils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

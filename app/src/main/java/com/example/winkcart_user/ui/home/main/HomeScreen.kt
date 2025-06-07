@@ -149,17 +149,17 @@ fun HomeScreenSuccess(
         ) {
             Spacer(Modifier.height(40.dp))
 
-            SimpleSearchBarSimple(
-                textFieldState = textFieldState,
-                onSearch = { query ->
-                    filteredBrands = if (query.isBlank()) {
-                        smartCollections
-                    } else {
-                        smartCollections.filter { it.title.contains(query, ignoreCase = true) }
-                    }
-                },
-                searchResults = allBrandTitles
-            )
+//            SimpleSearchBarSimple(
+//                textFieldState = textFieldState,
+//                onSearch = { query ->
+//                    filteredBrands = if (query.isBlank()) {
+//                        smartCollections
+//                    } else {
+//                        smartCollections.filter { it.title.contains(query, ignoreCase = true) }
+//                    }
+//                },
+//                searchResults = allBrandTitles
+//            )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -223,55 +223,55 @@ fun HomeScreenSuccess(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SimpleSearchBarSimple(
-    textFieldState: TextFieldState,
-    onSearch: (String) -> Unit,
-    searchResults: List<String>,
-    modifier: Modifier = Modifier
-) {
-    Box(modifier = modifier) {
-        SearchBar(
-            modifier = Modifier.fillMaxWidth(),
-            inputField = {
-                SearchBarDefaults.InputField(
-                    query = textFieldState.text.toString(),
-                    onQueryChange = {
-                        textFieldState.edit {
-                            replace(0, length, it)
-                        }
-                        onSearch(it)
-                    },
-                    onSearch = {
-                        onSearch(textFieldState.text.toString())
-                    },
-                    expanded = false,
-                    onExpandedChange = {  },
-                    placeholder = { Text("Search") },
-                )
-
-            },
-            expanded = false,
-            onExpandedChange = { },
-            colors = SearchBarDefaults.colors(
-                containerColor = Color.White,
-                dividerColor = Color.LightGray,
-            )
-        ) {
-            searchResults.take(3).forEach { result ->
-                ListItem(
-                    headlineContent = { Text(result) },
-                    modifier = Modifier
-                        .clickable {
-                            textFieldState.edit { replace(0, length, result) }
-                        }
-                        .fillMaxWidth()
-                )
-            }
-        }
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun SimpleSearchBarSimple(
+//    textFieldState: TextFieldState,
+//    onSearch: (String) -> Unit,
+//    searchResults: List<String>,
+//    modifier: Modifier = Modifier
+//) {
+//    Box(modifier = modifier) {
+//        SearchBar(
+//            modifier = Modifier.fillMaxWidth(),
+//            inputField = {
+//                SearchBarDefaults.InputField(
+//                    query = textFieldState.text.toString(),
+//                    onQueryChange = {
+//                        textFieldState.edit {
+//                            replace(0, length, it)
+//                        }
+//                        onSearch(it)
+//                    },
+//                    onSearch = {
+//                        onSearch(textFieldState.text.toString())
+//                    },
+//                    expanded = false,
+//                    onExpandedChange = {  },
+//                    placeholder = { Text("Search") },
+//                )
+//
+//            },
+//            expanded = false,
+//            onExpandedChange = { },
+//            colors = SearchBarDefaults.colors(
+//                containerColor = Color.White,
+//                dividerColor = Color.LightGray,
+//            )
+//        ) {
+//            searchResults.take(3).forEach { result ->
+//                ListItem(
+//                    headlineContent = { Text(result) },
+//                    modifier = Modifier
+//                        .clickable {
+//                            textFieldState.edit { replace(0, length, result) }
+//                        }
+//                        .fillMaxWidth()
+//                )
+//            }
+//        }
+//    }
+//}
 
 
 
