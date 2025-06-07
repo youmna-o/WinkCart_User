@@ -292,12 +292,12 @@ fun BottomNavigationBar(navController: NavController) {
         )
         NavigationBarItem(
             icon = {   Icon(
-                painter = painterResource(id = R.drawable.shopping_cart),
+                painter = painterResource(id = R.drawable.menu),
                 contentDescription = "category",
                 tint = Color.Gray,
                 modifier = Modifier.size(24.dp)
             ) },
-            label = { Text("Settings") },
+            label = { Text("category") },
             selected = currentRoute == NavigationRout.categories.route,
             onClick = {
                 navController.navigate(NavigationRout.categories.route) {
