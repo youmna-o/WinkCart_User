@@ -78,7 +78,7 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
                 }
         }
     }*/
-    private fun getDraftOrders(customerId: String) {
+   /* private fun getDraftOrders(customerId: String) {
         viewModelScope.launch {
             val result = repo.getAllDraftOrders()
             result
@@ -96,6 +96,23 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
                     } else {
                         _draftOrders.value = ResponseStatus.Error(
                             NullPointerException("DraftOrders is null")
+                        )
+                    }
+                }
+        }
+    }*/
+
+    fun getDraftOrders(customerId: String) {
+        viewModelScope.launch {
+            repo.getAllDraftOrders()
+                .catch { exeption ->
+                    _draftOrders.value = ResponseStatus.Error(exeption)
+                }.collect{ response ->
+                    if(response!= null){
+                        _draftOrders.value = ResponseStatus.Success(response)
+                    }else{
+                        _draftOrders.value = ResponseStatus.Error(
+                            NullPointerException("Draft Orders is null")
                         )
                     }
                 }
