@@ -65,6 +65,7 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 
 
 @Composable
@@ -174,8 +175,9 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
             FilterSortRow(
                 onApplyFilter = { min, max ->
                     currentList = baseList.filter { product ->
-                        product.variants[0].price.toFloatOrNull()!! in min..max
-                    }
+                        val priceStr = product.variants[0].price
+                        val convertedPrice = convertCurrency(priceStr, currencyRate, currencyCode).toFloatOrNull()
+                        convertedPrice != null && convertedPrice in min..max}
                    isFilterAppliedState = true
                 },
                 onResetFilter = {

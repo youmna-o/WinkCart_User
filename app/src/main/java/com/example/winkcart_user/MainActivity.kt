@@ -1,7 +1,6 @@
 package com.example.winkcart_user
 
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 
@@ -12,9 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -26,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -69,7 +65,6 @@ import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProducts
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
 
-@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : ComponentActivity() {
 
 
@@ -80,8 +75,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
-            var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
+            val authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+            val authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
             val settingsViewModel: SettingsViewModel = viewModel(
                 factory = SettingsFactory(
                     ProductRepoImpl(
@@ -94,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
-            var brandFactory = BrandsFactory(
+            val brandFactory = BrandsFactory(
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
                     localDataSource =   LocalDataSourceImpl(
@@ -104,9 +99,9 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
-            var brandViewModel =  ViewModelProvider(this,brandFactory).get(BrandsViewModel :: class.java)
+            val brandViewModel =  ViewModelProvider(this,brandFactory).get(BrandsViewModel :: class.java)
 
-            var vendorFactory = VendorsProductFactory(
+            val vendorFactory = VendorsProductFactory(
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
                     localDataSource =   LocalDataSourceImpl(
@@ -116,9 +111,9 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
-            var vendorProductsViewModel =  ViewModelProvider(this,vendorFactory).get(VendorProductsViewModel :: class.java)
+            val vendorProductsViewModel =  ViewModelProvider(this,vendorFactory).get(VendorProductsViewModel :: class.java)
 
-             var categoryFactory = CategoryFactory(
+             val categoryFactory = CategoryFactory(
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
                     localDataSource =   LocalDataSourceImpl(
@@ -128,9 +123,9 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
-            var categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(CategoriesViewModel :: class.java)
+            val categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(CategoriesViewModel :: class.java)
 
-            var currencyFactory = CurrencyFactory(
+            val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
                     localDataSource =   LocalDataSourceImpl(
@@ -140,7 +135,7 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
-            var currencyViewModel =  ViewModelProvider(this,currencyFactory).get(CurrencyViewModel :: class.java)
+            val currencyViewModel =  ViewModelProvider(this,currencyFactory).get(CurrencyViewModel :: class.java)
 
 
 
@@ -157,9 +152,6 @@ class MainActivity : ComponentActivity() {
            }
 
             }
-
-
-
         }
     }
 
@@ -179,7 +171,6 @@ fun AppInit(authViewModel : AuthViewModel,
     val currentRoute = currentBackStackEntry?.destination?.route
     val screensWithBottomBar = listOf(
         NavigationRout.Home.route,
-        NavigationRout.Profile.route,
         NavigationRout.Settings.route,
         NavigationRout.categories.route
     )
@@ -261,7 +252,7 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
-        NavigationBarItem(
+      /*  NavigationBarItem(
             icon = { Icon(Icons.Default.ThumbUp, contentDescription = "Profile") },
             label = { Text("Profile") },
             selected = currentRoute == NavigationRout.Profile.route,
@@ -274,7 +265,7 @@ fun BottomNavigationBar(navController: NavController) {
                     restoreState = true
                 }
             }
-        )
+        )*/
 
         NavigationBarItem(
             icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
