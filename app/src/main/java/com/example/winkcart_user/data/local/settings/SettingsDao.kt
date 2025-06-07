@@ -11,4 +11,7 @@ interface SettingsDao {
 
     fun readCurrencyReadingDate(): Flow<String>
     suspend fun writeCurrencyReadingDate(currencyReadingDate: String)
+
+    fun readCustomerID(): Flow<String>
+    suspend fun writeCustomerID(customerID: String)
 }

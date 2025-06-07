@@ -1,5 +1,7 @@
 package com.example.winkcart_user.data.remote
 
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -27,6 +29,11 @@ interface RemoteDataSource {
 
     fun signInFireBase(email: String,password: String) : Task<AuthResult>
 
+    suspend fun createDraftOrder(
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<Any>
+
+    suspend fun getAllDraftOrders(): Flow<DraftOrderResponse?>
 
 
 

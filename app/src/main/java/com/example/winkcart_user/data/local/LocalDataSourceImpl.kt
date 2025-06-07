@@ -28,4 +28,12 @@ class LocalDataSourceImpl(private val settingsDao: SettingsDao) : LocalDataSourc
         return settingsDao.writeCurrencyReadingDate(currencyReadingDate)
     }
 
+    override suspend fun readCustomerID(): Flow<String> {
+        return settingsDao.readCustomerID()
+    }
+
+    override suspend fun writeCustomerID(customerID: String) {
+        return settingsDao.writeCustomerID(customerID)
+    }
+
 }
