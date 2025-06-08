@@ -1,15 +1,22 @@
 package com.example.winkcart_user.ui.home.vendorProducts.viewModel
 
+import android.icu.text.StringSearch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.repository.ProductRepo
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
@@ -23,10 +30,25 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
     private val _currencyRate = MutableStateFlow("")
     val currencyRate = _currencyRate.asStateFlow()
 
+
+    private val _searchInput = MutableStateFlow("")
+    val searchInput = _searchInput.asStateFlow()
+
+    private val _filteredProducts = MutableStateFlow<List<Product>>(emptyList())
+
     init {
         readCurrencyCode()
         readCurrencyRate()
     }
+    val filteredProducts = combine(_filteredProducts, _searchInput) { products, search ->
+        if (search.isBlank()) products
+        else products.filter { it.title.contains(search, ignoreCase = true) }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    fun onSearchInputChanged(input: String) {
+        _searchInput.value = input
+    }
+
 
     fun getProductsPyVendor (vendor : String){
         viewModelScope.launch {
@@ -36,6 +58,7 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
                 }.collect{ response ->
                     if(response!= null){
                         _productsByVendor.value = ResponseStatus.Success(response)
+                        _filteredProducts.value = response.products
                     }else{
                         _productsByVendor.value = ResponseStatus.Error(
                             NullPointerException("SmartCollectionsResponse is null")
@@ -45,7 +68,6 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
         }
     }
 
-
     fun readCurrencyCode(){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.readCurrencyCode()
@@ -54,8 +76,6 @@ class VendorProductsViewModel(private  val repo: ProductRepo) : ViewModel(){
             }
         }
     }
-
-
 
     fun readCurrencyRate(){
         viewModelScope.launch (Dispatchers.IO) {

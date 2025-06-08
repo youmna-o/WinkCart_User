@@ -33,7 +33,14 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     }
 
     override suspend fun getAllProducts(): Flow<ProductResponse?> {
-        return remoteDataSource.getAllProducts()
+    return remoteDataSource.getAllProducts()
+        .map { response ->
+            response?.let {
+                val filteredproducts = it.products
+                    .distinctBy { product -> product.title }
+                ProductResponse(products = filteredproducts)
+            }
+        }
     }
 
     override suspend fun getLatestRateFromUSDToEGP(): Flow<CurrencyResponse?> {

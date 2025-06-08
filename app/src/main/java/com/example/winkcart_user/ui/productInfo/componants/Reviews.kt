@@ -31,7 +31,7 @@ fun ReviewCard(review: String , rate: Float ,starSize: Float ){
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(4.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp)),
+            .border(1.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp)),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         )
