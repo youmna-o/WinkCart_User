@@ -19,9 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,6 +28,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,16 +40,44 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 
-//@Preview
 @Composable
-fun CartItem(draftOrder: DraftOrder) {
+fun CartItem(
+    draftOrder: DraftOrder,
+    onDeleteClick: (Long) -> Unit
+) {
+
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Item") },
+            text = { Text("Are you sure you want to delete this item from the cart?") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        onDeleteClick(draftOrder.id)
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { showDeleteDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Card(
         modifier = Modifier
@@ -70,7 +101,7 @@ fun CartItem(draftOrder: DraftOrder) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 AsyncImage(
-                    model =  draftOrder.line_items[0]?.properties?.get(2)?.value,
+                    model =  draftOrder.line_items[0]?.properties?.get(3)?.value,
                     contentDescription = "product image",
                     modifier = Modifier
                         .size(100.dp)
@@ -127,7 +158,7 @@ fun CartItem(draftOrder: DraftOrder) {
 
 
                                 IconButton(
-                                    onClick = { /* delete action  */},
+                                    onClick = {  showDeleteDialog = true},
                                     modifier = Modifier
                                         .size(30.dp)
                                         .align(Alignment.CenterVertically)

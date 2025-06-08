@@ -10,9 +10,11 @@ import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface Services {
@@ -44,7 +46,11 @@ interface Services {
         @Header("X-Shopify-Access-Token") token: String,
     ): Response<DraftOrderResponse>
 
-
+    @DELETE("draft_orders/{id}.json")
+    suspend fun deleteDraftOrder(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("id") draftOrderId: Long
+    ): Response<Unit>
 }
 
 interface CurrencyService {

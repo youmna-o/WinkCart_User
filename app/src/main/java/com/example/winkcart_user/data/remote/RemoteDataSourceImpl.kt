@@ -83,4 +83,10 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     }
 
 
+    override suspend fun deleteDraftOrder(draftOrderId: Long): Flow<Unit?>{
+        val result =
+            retrofitHelper.shopifyService.deleteDraftOrder(token = BuildConfig.shopifyAccessToken, draftOrderId = draftOrderId)
+                .body()
+        return flowOf(result)
+    }
 }

@@ -26,6 +26,9 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _draftOrders = MutableStateFlow<ResponseStatus<DraftOrderResponse>>(ResponseStatus.Loading)
     val draftOrders = _draftOrders.asStateFlow()
 
+    private val _deleteDraftOrders = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
+    val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
+
     init {
         viewModelScope.launch {
             repo.readCustomerID().collect { id ->
@@ -105,8 +108,8 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     fun getDraftOrders(customerId: String) {
         viewModelScope.launch {
             repo.getAllDraftOrders()
-                .catch { exeption ->
-                    _draftOrders.value = ResponseStatus.Error(exeption)
+                .catch { exception ->
+                    _draftOrders.value = ResponseStatus.Error(exception)
                 }.collect{ response ->
                     if(response!= null){
                         _draftOrders.value = ResponseStatus.Success(response)
@@ -120,7 +123,27 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     }
 
 
-    private fun readCustomerID(){
+    fun deleteDraftOrder(draftOrderId: Long) {
+        viewModelScope.launch {
+            repo.deleteDraftOrder(draftOrderId = draftOrderId)
+                .catch { exception ->
+                    _deleteDraftOrders.value = ResponseStatus.Error(exception)
+                }.collect{ response ->
+                    if(response!= null){
+                        _deleteDraftOrders.value = ResponseStatus.Success(response)
+                        getDraftOrders(_customerID.value)
+
+                    }else{
+                        _deleteDraftOrders.value = ResponseStatus.Error(
+                            NullPointerException("Delete Draft Orders is null")
+                        )
+                    }
+                }
+        }
+    }
+
+
+    fun readCustomerID(){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.readCustomerID()
             result.collect{

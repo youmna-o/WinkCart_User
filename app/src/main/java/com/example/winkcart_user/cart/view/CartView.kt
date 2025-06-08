@@ -19,7 +19,6 @@ import com.example.winkcart_user.cart.view.components.CartItem
 
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
-import com.example.winkcart_user.ui.home.vendorProducts.views.ProductItem
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 
@@ -28,6 +27,12 @@ import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 fun CartView(viewModel: CartViewModel) {
 
     val draftOrders by viewModel.draftOrders.collectAsState()
+
+    val customerID by viewModel.customerID.collectAsState()
+
+    viewModel.readCustomerID()
+    viewModel.getDraftOrders(customerId = customerID)
+
 
     val draftOrderList = when (draftOrders) {
         is ResponseStatus.Success -> (draftOrders as ResponseStatus.Success).result.draft_orders
@@ -53,7 +58,12 @@ fun CartView(viewModel: CartViewModel) {
                        // currencyRate = currencyRate,
 
                     )*/
-                    CartItem(draftOrder = draftOrderList[index])
+                    CartItem(
+                        draftOrder = draftOrderList[index],
+                        onDeleteClick = { draftOrderId ->
+                            viewModel.deleteDraftOrder(draftOrderId)
+                        }
+                    )
 
                 }
             }

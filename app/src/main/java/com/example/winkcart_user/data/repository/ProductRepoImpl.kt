@@ -102,4 +102,8 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return  remoteDataSource.getAllDraftOrders()
     }
 
+    override suspend fun deleteDraftOrder(draftOrderId: Long): Flow<Unit?> {
+        return remoteDataSource.deleteDraftOrder(draftOrderId = draftOrderId)
+    }
+
 }
