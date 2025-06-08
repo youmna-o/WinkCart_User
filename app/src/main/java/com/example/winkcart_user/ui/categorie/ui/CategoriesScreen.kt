@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.CurrencyViewModel
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.ui.utils.ProductItem
+
 import androidx.compose.runtime.mutableStateOf
 import android.annotation.SuppressLint
 import android.util.Log
@@ -67,6 +68,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 
+import com.example.winkcart_user.ui.utils.navigation.CustomSearchBar
+
 
 @Composable
 fun CategoriesScreen (categoriesViewModel: CategoriesViewModel,
@@ -74,6 +77,9 @@ fun CategoriesScreen (categoriesViewModel: CategoriesViewModel,
                       currencyViewModel: CurrencyViewModel){
 
     val allProducts by  categoriesViewModel.products.collectAsState()
+    val searchInput by categoriesViewModel.searchInput.collectAsState()
+    var filteredProducts  = categoriesViewModel.filteredProducts.collectAsState().value
+
     categoriesViewModel.getMenProducts()
     categoriesViewModel.getMenProducts()
     categoriesViewModel.getKidsProducts()
@@ -81,7 +87,10 @@ fun CategoriesScreen (categoriesViewModel: CategoriesViewModel,
 
     when (allProducts) {
         is ResponseStatus.Success<*> ->{
-            CategoriesScreenOnSuccess(categoriesViewModel,navController,currencyViewModel)
+            CategoriesScreenOnSuccess(categoriesViewModel,navController,currencyViewModel,searchInput = searchInput,
+                onSearchInputChange =
+                    {
+                        categoriesViewModel.onSearchInputChanged(it) })
         }
         is ResponseStatus.Loading ->{
             CategoriesScreenonLoading()
@@ -97,7 +106,10 @@ fun CategoriesScreen (categoriesViewModel: CategoriesViewModel,
 @Composable
 fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
                               navController: NavController,
-                              currencyViewModel: CurrencyViewModel) {
+                              currencyViewModel: CurrencyViewModel,
+                              searchInput: String,
+                              onSearchInputChange: (String) -> Unit
+                              ) {
     currencyViewModel.readCurrencyCode()
     currencyViewModel.readCurrencyRate()
     categoriesViewModel.getMenProducts()
@@ -129,15 +141,7 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.White
                 ),
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.Black
-                        )
-                    }
-                }
+
             )
         }
     ) { paddingValues ->
@@ -156,12 +160,24 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
         }
         var currentList by remember { mutableStateOf(baseList) }
 
+        val filteredList = if (searchInput.isNotBlank()) {
+            currentList.filter { it.title.contains(searchInput, ignoreCase = true) }
+        } else {
+            currentList
+        }
+
+
         LaunchedEffect(baseList) {
             currentList = baseList
             isFilterAppliedState = false
         }
 
         Column(modifier = Modifier.padding(paddingValues)) {
+            Spacer(modifier = Modifier.height(8.dp))
+            CustomSearchBar(
+                searchInput = searchInput,
+                onSearchInputChange =  onSearchInputChange,
+            )
             CategoryTabs(
                 selectedTabIndex = selectedTabIndex,
                 subcategories = subcategories,
@@ -187,7 +203,7 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
                 isResetEnabled = isFilterAppliedState,
             )
             CategoryProducts(
-                currentList,
+                filteredList,
                 currencyRate = currencyRate,
                 currencyCode = currencyCode,
                 navController = navController,
