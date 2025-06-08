@@ -30,7 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
+import com.example.winkcart_user.data.model.customer.CustomerRequest
+import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.ui.utils.CustomSmallTextField
 import com.example.winkcart_user.ui.utils.CustomTextField
 
 
@@ -43,7 +46,8 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
     Column(modifier = Modifier
         .padding(16.dp)
         .fillMaxSize()) {
@@ -56,9 +60,28 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
         }
         //Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
-        CustomTextField(lable = "Name",input = name,onValueChange = { newName ->
-            name = newName
-        },false)
+        Row(modifier = Modifier.fillMaxWidth()) {
+            CustomSmallTextField(
+                lable = "First Name",
+                input = firstName,
+                onValueChange = { newName -> firstName = newName },
+                isEmailError = false,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
+            )
+            CustomSmallTextField(
+                lable = "Last Name",
+                input = lastName,
+                onValueChange = { newName -> lastName = newName },
+                isEmailError = false,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp)
+            )
+        }
+
+
         CustomTextField(lable = "Email",input = email,onValueChange = { newEmail ->
             email = newEmail
         },emailError != null)
@@ -82,12 +105,23 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
         Spacer(modifier = Modifier.height(30.dp))
         Button(
             onClick = {
-                authViewModel.signUp(email, password){success ->
+                authViewModel.postCustomer(CustomerRequest(
+                    first_name = firstName,
+                    last_name = lastName,
+                    email = email,
+                  //  phone = TODO(),
+                  //  verified_email = TODO(),
+                 //   addresses = TODO(),
+                    password = password,
+                    password_confirmation = password,
+                   // send_email_welcome = TODO(),
+                ))
+                authViewModel.signUp(email, password){ success ->
                     if (success) {
                         navController.navigate("home")
                     } else {
                         val errorMessage = null
-                        Toast.makeText(context, errorMessage ?: "حدث خطأ", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, errorMessage ?: "Faild", Toast.LENGTH_LONG).show()
                     }
                 }
             },

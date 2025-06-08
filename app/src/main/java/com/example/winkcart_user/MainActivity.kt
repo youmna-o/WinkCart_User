@@ -50,6 +50,7 @@ import com.example.winkcart_user.brands.viewModel.BrandsFactory
 import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.categories.viewModel.CategoryFactory
+import com.example.winkcart_user.data.local.room.MyDatabase
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
@@ -79,8 +80,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-
-            var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
+           // CityLocalDataSource(CityDataBase.getInstance(context).getCityDao())
+            val retrofitHelper = RetrofitHelper()
+            val remoteDataSource = RemoteDataSourceImpl(retrofitHelper)
+            val localDataSource =  LocalDataSourceImpl(
+                SettingsDaoImpl(
+                    LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                )
+            )
+            val authFactory = AuthFactory(
+                repo = FirebaseRepoImp(remoteDataSource),
+                customerRepo = ProductRepoImpl(remoteDataSource,localDataSource)
+            )
             var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
             val settingsViewModel: SettingsViewModel = viewModel(
                 factory = SettingsFactory(

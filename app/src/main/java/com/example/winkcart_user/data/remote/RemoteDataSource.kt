@@ -1,11 +1,15 @@
 package com.example.winkcart_user.data.remote
 
+import com.example.winkcart_user.data.model.customer.Customer
+import com.example.winkcart_user.data.model.customer.CustomerRequest
+import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 interface RemoteDataSource {
 
@@ -13,7 +17,6 @@ interface RemoteDataSource {
     suspend fun getLatestRateFromUSDToEGP() : Flow<CurrencyResponse?>
 
     suspend fun getAllProducts (): Flow<ProductResponse?>
-
 
     suspend fun getProductsByVendor(vendor : String): Flow<ProductResponse?>
 
@@ -26,6 +29,7 @@ interface RemoteDataSource {
 
     fun signInFireBase(email: String,password: String) : Task<AuthResult>
 
+    fun postCustomer (customer: CustomerRequest): Flow<CustomerResponse?>
 
 
 

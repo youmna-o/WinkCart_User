@@ -109,12 +109,17 @@ fun ProductInfo(
                 review = viewModel.getReview(),
                 starSize = 8.0f
             )
-            Row (horizontalArrangement = Arrangement.SpaceBetween){
+
 
                 CustomButton(
                     lable = "ADD To CART"
                 ) { }
+            CustomButton(
+                lable = "ADD User"
+            ) {
+
             }
+
 
         }
     }

@@ -1,6 +1,9 @@
 package com.example.winkcart_user.data.repository
 
 import com.example.winkcart_user.data.local.LocalDataSource
+import com.example.winkcart_user.data.model.customer.Customer
+import com.example.winkcart_user.data.model.customer.CustomerRequest
+import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -89,4 +92,10 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     override  fun getReview(): String {
         return remoteDataSource.getReview()
     }
+
+    override fun postCustomer(customer: CustomerRequest): Flow<CustomerResponse?> {
+        return remoteDataSource.postCustomer(customer)
+    }
+
+
 }
