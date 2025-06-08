@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
 
             val brandFactory = BrandsFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
                     localDataSource =   LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -125,7 +125,7 @@ class MainActivity : ComponentActivity() {
 
             val vendorFactory = VendorsProductFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
                     localDataSource =   LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -194,7 +194,7 @@ fun AppInit(authViewModel : AuthViewModel,
     val currentRoute = currentBackStackEntry?.destination?.route
     val screensWithBottomBar = listOf(
         NavigationRout.Home.route,
-        NavigationRout.Cart.route
+        NavigationRout.Cart.route,
         NavigationRout.Settings.route,
         NavigationRout.categories.route
     )
@@ -209,6 +209,7 @@ fun AppInit(authViewModel : AuthViewModel,
                 }
             }
         ) { paddingValues ->
+            val pa =paddingValues
             NavHost(
                 navController = navController,
                 startDestination = NavigationRout.Login.route,
@@ -312,13 +313,15 @@ fun BottomNavigationBar(navController: NavController) {
             label = { Text("Cart") },
             selected = currentRoute == NavigationRout.Cart.route,
             onClick = {
-                 navController.navigate(NavigationRout.Cart.route) {
+                navController.navigate(NavigationRout.Cart.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
                     launchSingleTop = true
                     restoreState = true
                 }
+            }
+        )
         NavigationBarItem(
             icon = {   Icon(
                 painter = painterResource(id = R.drawable.menu),

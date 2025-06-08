@@ -46,6 +46,7 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.LineItem
 import com.example.winkcart_user.data.model.draftorder.cart.Property
+import com.example.winkcart_user.ui.productInfo.componants.FavIcon
 import com.example.winkcart_user.ui.productInfo.componants.ImageSlider
 import com.example.winkcart_user.ui.productInfo.componants.LongBasicDropdownMenu
 import com.example.winkcart_user.ui.productInfo.componants.Reviews
@@ -62,7 +63,7 @@ fun ProductInfo(
     cartViewModel: CartViewModel
 ) {
     val customerID = cartViewModel.customerID.collectAsState()
-    val productState = categoriesViewModel.producs.collectAsState()
+    val productState = categoriesViewModel.products.collectAsState()
 
     var myProduct = remember(productState.value) {
         categoriesViewModel.getProduct(productID)
@@ -115,7 +116,7 @@ fun ProductInfo(
                     }?.flatMap { it.values }?.toList() ?: emptyList(),
                         onOptionSelected = { selectedColor = it }
                     )
-                   // FavIcon()
+                    FavIcon()
                 }
 
 
