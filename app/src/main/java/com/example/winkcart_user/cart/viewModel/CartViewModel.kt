@@ -8,6 +8,7 @@ import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.repository.ProductRepo
+import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,17 +27,24 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     val customerID = _customerID.asStateFlow()
 
     private val _createDraftOrderResponse = MutableStateFlow<ResponseStatus<Any>>(ResponseStatus.Loading)
-    val createDraftOrderResponse = _createDraftOrderResponse.asStateFlow()
+    //val createDraftOrderResponse = _createDraftOrderResponse.asStateFlow()
 
     private val _draftOrders = MutableStateFlow<ResponseStatus<DraftOrderResponse>>(ResponseStatus.Loading)
     val draftOrders = _draftOrders.asStateFlow()
 
     private val _deleteDraftOrders = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
-    val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
+    //val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
 
     private val _updateDraftOrder = MutableStateFlow<ResponseStatus<DraftOrderResponse>>(ResponseStatus.Loading)
-    val updateDraftOrder = _updateDraftOrder.asStateFlow()
+    //val updateDraftOrder = _updateDraftOrder.asStateFlow()
+
+    private val _totalAmount = MutableStateFlow("0.00 EGP")
+    val totalAmount = _totalAmount.asStateFlow()
+
+
     init {
+        readCurrencyCode()
+        readCurrencyRate()
         viewModelScope.launch {
             repo.readCustomerID().collect { id ->
                 _customerID.value = id
@@ -45,6 +53,45 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
+
+    private fun calculateTotalAmount() {
+        val orders = when (val currentOrders = draftOrders.value) {
+            is ResponseStatus.Success -> currentOrders.result.draft_orders
+            else -> emptyList()
+        }
+
+        val rate = currencyRate.value
+        val code = currencyCode.value
+
+        Log.i("TAG", "calculateTotalAmount: rate = $rate")
+        Log.i("TAG", "calculateTotalAmount: code = $code")
+
+        val total = orders.sumOf { draftOrder ->
+            draftOrder.line_items.sumOf { lineItem ->
+                val price = lineItem?.price?.toDoubleOrNull() ?: 0.0
+                val quantity = lineItem?.quantity ?: 0
+                price * quantity
+            }
+        }
+        Log.i("TAG", "calculateTotalAmount: total = $total")
+
+        val convertedTotal = convertCurrency(
+            amount = total.toString(),
+            rate = rate,
+            currencyCode = code
+        )
+
+        Log.i("TAG", "calculateTotalAmount: convertedTotal = $convertedTotal ")
+
+        val formatted = "$convertedTotal $code"
+        Log.i("TAG", "calculateTotalAmount: formatted = $formatted ")
+
+        _totalAmount.value = formatted
+    }
+
+    fun refreshTotalAmount() {
+        calculateTotalAmount()
+    }
 
 
 
@@ -74,6 +121,8 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
             }.collect{ it
                 if (it!= null){
                     _updateDraftOrder.value= ResponseStatus.Success<DraftOrderResponse>(it)
+                    getDraftOrders(customerId = customerID.value)
+                    refreshTotalAmount()
                 }else{
                     _updateDraftOrder.value = ResponseStatus.Error(NullPointerException("updateDraftOrder is null"))
                 }
@@ -137,6 +186,7 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
                 }.collect{ response ->
                     if(response!= null){
                         _draftOrders.value = ResponseStatus.Success(response)
+                      //  refreshTotalAmount()
                     }else{
                         _draftOrders.value = ResponseStatus.Error(
                             NullPointerException("Draft Orders is null")
