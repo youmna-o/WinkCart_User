@@ -2,6 +2,7 @@ package com.example.winkcart_user.cart.view
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,14 +12,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -26,14 +47,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.view.components.CartItem
+import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartView(viewModel: CartViewModel) {
 
@@ -43,6 +67,28 @@ fun CartView(viewModel: CartViewModel) {
     val customerID by viewModel.customerID.collectAsState()
     val totalAmount by viewModel.totalAmount.collectAsState()
     val priceRules by viewModel.priceRules.collectAsState()
+
+    var promoCode by remember { mutableStateOf("") }
+    val sheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
+    var showSheet by remember { mutableStateOf(false) }
+
+
+    /*LaunchedEffect(showSheet) {
+        if (showSheet) {
+            coroutineScope.launch {
+                sheetState.show()
+            }
+        }
+    }*/
+    LaunchedEffect(showSheet) {
+        if (showSheet) {
+            coroutineScope.launch {
+                sheetState.show()
+            }
+        }
+    }
+
 
     viewModel.refreshTotalAmount()
     viewModel.readCustomerID()
@@ -63,6 +109,37 @@ fun CartView(viewModel: CartViewModel) {
 
     Log.i("TAG", "CartView: draftOrders = ${draftOrderList.size}")
     Log.i("TAG", "CartView: priceRules = $priceRulesList")
+
+
+    // Modal Bottom Sheet
+    if (showSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showSheet = false },
+            sheetState = sheetState
+
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.your_promo_codes),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                CouponItem()
+                Spacer(modifier = Modifier.height(10.dp))
+
+                CouponItem()
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+    }
+
+
    Box(
         modifier = Modifier
             .fillMaxSize()
@@ -114,8 +191,7 @@ fun CartView(viewModel: CartViewModel) {
                }
            } else {
                Box(
-                   modifier = Modifier
-                       .fillMaxSize(),
+                   modifier = Modifier.weight(1f),
                    contentAlignment = Alignment.Center
                ) {
                    //need update with lotti or image for empty cart
@@ -135,6 +211,60 @@ fun CartView(viewModel: CartViewModel) {
                }
            }
 
+           Spacer(Modifier.height(30.dp))
+
+
+           OutlinedTextField(
+               value = promoCode,
+               onValueChange = { promoCode = it
+
+                               },
+               modifier = Modifier
+                   .fillMaxWidth(),
+               label = { Text(stringResource(R.string.Enter_your_promo_code)) },
+               trailingIcon = {
+                   /*Box(
+                       modifier = Modifier
+                           .size(36.dp)
+                           .clip(CircleShape)
+                           .background(Color.Black)
+                           .padding(6.dp)
+                   ) {
+                       Icon(
+                           imageVector = Icons.Outlined.ArrowForward,
+                           contentDescription = "Apply promo",
+                           tint = Color.White,
+                           modifier = Modifier.fillMaxSize()
+                       )
+                   }*/
+
+                   Surface(
+                       shape = CircleShape,
+                       color = Color.Black,
+                       shadowElevation = 4.dp,
+                   ) {
+
+                       IconButton(
+                           onClick = {
+                               showSheet = true
+                           },
+                           modifier = Modifier
+                               .size(36.dp)
+                       ) {
+                           Icon(
+                               imageVector = Icons.Outlined.ArrowForward,
+                               contentDescription = "Apply promo",
+                               tint = Color.White,
+                               modifier = Modifier.fillMaxSize()
+                           )
+                       }
+                   }
+
+               },
+               shape = RoundedCornerShape(12.dp)
+
+           )
+           Spacer(Modifier.height(20.dp))
 
            Row(
                modifier = Modifier
