@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.auth.signUp
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,14 +36,19 @@ import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.utils.CustomSmallTextField
 import com.example.winkcart_user.ui.utils.CustomTextField
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
-
+private val db = Firebase.firestore
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
     val emailError by authViewModel.emailError
     val passwordError by authViewModel.passwordError
     var context = LocalContext.current
+
+
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -109,21 +115,31 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
                     first_name = firstName,
                     last_name = lastName,
                     email = email,
-                  //  phone = TODO(),
-                  //  verified_email = TODO(),
-                 //   addresses = TODO(),
                     password = password,
                     password_confirmation = password,
-                   // send_email_welcome = TODO(),
                 ))
-                authViewModel.signUp(email, password){ success ->
+                authViewModel.signUp(email, password) { success ->
                     if (success) {
+                        val customersId = hashMapOf(
+                            "customerName" to firstName
+                        )
+
+                        db.collection("customers").document().set(customersId)
+                            .addOnSuccessListener {
+                                Log.i("customer", "Firestore: success")
+                            }.addOnFailureListener {
+                                Log.i("customer", "Firestore: failed")
+                            }
+
                         navController.navigate("home")
                     } else {
-                        val errorMessage = null
-                        Toast.makeText(context, errorMessage ?: "Faild", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Failed", Toast.LENGTH_LONG).show()
                     }
                 }
+
+
+
+
             },
             modifier = Modifier
                 .fillMaxWidth()
