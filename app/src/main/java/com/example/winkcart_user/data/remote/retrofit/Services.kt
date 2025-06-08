@@ -36,8 +36,15 @@ interface Services {
         @Query("vendor") vendor: String
         ) : Response<ProductResponse>
 
+
     @POST("customers.json")
     suspend fun postCustomer(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Body customerWrapper: CustomerWrapper
+    ): Response<CustomerResponse>
+
+    @POST("draft_orders.json")
+    suspend fun postDraftOrder(
         @Header("X-Shopify-Access-Token") token: String,
         @Body customerWrapper: CustomerWrapper
     ): Response<CustomerResponse>

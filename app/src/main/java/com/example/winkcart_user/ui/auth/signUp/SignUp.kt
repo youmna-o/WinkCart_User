@@ -87,7 +87,6 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
             )
         }
 
-
         CustomTextField(lable = "Email",input = email,onValueChange = { newEmail ->
             email = newEmail
         },emailError != null)
@@ -123,23 +122,17 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
                         val customersId = hashMapOf(
                             "customerName" to firstName
                         )
-
                         db.collection("customers").document().set(customersId)
                             .addOnSuccessListener {
                                 Log.i("customer", "Firestore: success")
                             }.addOnFailureListener {
                                 Log.i("customer", "Firestore: failed")
                             }
-
                         navController.navigate("home")
                     } else {
                         Toast.makeText(context, "Failed", Toast.LENGTH_LONG).show()
                     }
                 }
-
-
-
-
             },
             modifier = Modifier
                 .fillMaxWidth()
