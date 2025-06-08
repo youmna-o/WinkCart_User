@@ -1,5 +1,8 @@
 package com.example.winkcart_user.data.repository
 
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
@@ -19,6 +22,10 @@ interface ProductRepo {
 
     suspend fun readCurrencyReadingDate(): Flow<String>
     suspend fun writeCurrencyReadingDate(currencyReadingDate: String)
+
+    suspend fun readCustomerID(): Flow<String>
+    suspend fun writeCustomerID(customerID: String)
+
     suspend fun getFilteredSmartCollections(): Flow<SmartCollectionsResponse?>
     suspend fun getAllProducts() :  Flow<ProductResponse?>
 
@@ -26,6 +33,20 @@ interface ProductRepo {
 
      fun getRate() : Float
      fun getReview(): String
+
+    suspend fun createDraftOrder(
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<Any>
+
+    suspend fun getAllDraftOrders() : Flow<DraftOrderResponse?>
+    suspend fun deleteDraftOrder(draftOrderId: Long): Flow<Unit?>
+
+    suspend fun updateDraftOrder(
+        draftOrderId: Long,
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<DraftOrderResponse?>
+
+    suspend fun getPriceRules() : Flow<PriceRulesResponse?>
 
 
 }

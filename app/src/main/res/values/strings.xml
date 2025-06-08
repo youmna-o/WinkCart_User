@@ -26,5 +26,11 @@
     <string name="phone_number">Phone Number</string>
     <string name="country">Country</string>
     <string name="select_currency">Select Currency</string>
+    <string name="color">Color: </string>
+    <string name="size">Size: </string>
+    <string name="total_amount">Total amount: </string>
+    <string name="check_out">CHECK OUT</string>
+    <string name="Enter_your_promo_code">Enter your promo code</string>
+    <string name="your_promo_codes">Your Promo Codes</string>
 
 </resources>

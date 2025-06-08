@@ -18,6 +18,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
@@ -44,6 +45,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.winkcart_user.brands.viewModel.BrandsFactory
 import com.example.winkcart_user.brands.viewModel.BrandsViewModel
+import com.example.winkcart_user.cart.view.CartView
+import com.example.winkcart_user.cart.viewModel.CartFactory
+import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.categories.viewModel.CategoryFactory
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
@@ -75,12 +79,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            val authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper())))
-            val authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
+
+            var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper)))
+            var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
+
             val settingsViewModel: SettingsViewModel = viewModel(
                 factory = SettingsFactory(
                     ProductRepoImpl(
-                        RemoteDataSourceImpl(RetrofitHelper()),
+                        RemoteDataSourceImpl(RetrofitHelper),
                         LocalDataSourceImpl(
                             SettingsDaoImpl(
                                 LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -89,6 +95,22 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
+
+
+            val cartViewModel: CartViewModel = viewModel(
+                factory = CartFactory(
+                    repo = ProductRepoImpl(
+                        remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
+                        localDataSource =   LocalDataSourceImpl(
+                            SettingsDaoImpl(
+                                LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                            )
+                        )
+                    )
+                )
+            )
+            
+
             val brandFactory = BrandsFactory(
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
@@ -114,8 +136,9 @@ class MainActivity : ComponentActivity() {
             val vendorProductsViewModel =  ViewModelProvider(this,vendorFactory).get(VendorProductsViewModel :: class.java)
 
              val categoryFactory = CategoryFactory(
+
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
                     localDataSource =   LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -127,7 +150,7 @@ class MainActivity : ComponentActivity() {
 
             val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper()) ,
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
                     localDataSource =   LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -144,6 +167,7 @@ class MainActivity : ComponentActivity() {
 
                 AppInit(
                     authViewModel, settingsViewModel = settingsViewModel,
+                    cartViewModel = cartViewModel,
                     vendorProductViewModel = vendorProductsViewModel,
                     brandsViewModel = brandViewModel,
                     categoriesViewModel = categoriesViewModel,
@@ -157,13 +181,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppInit(authViewModel : AuthViewModel,
+            cartViewModel: CartViewModel,
             categoriesViewModel : CategoriesViewModel,
             settingsViewModel: SettingsViewModel,
             vendorProductViewModel :VendorProductsViewModel,
             brandsViewModel: BrandsViewModel ,
             currencyViewModel : CurrencyViewModel
-
-
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -171,6 +194,7 @@ fun AppInit(authViewModel : AuthViewModel,
     val currentRoute = currentBackStackEntry?.destination?.route
     val screensWithBottomBar = listOf(
         NavigationRout.Home.route,
+        NavigationRout.Cart.route
         NavigationRout.Settings.route,
         NavigationRout.categories.route
     )
@@ -207,8 +231,8 @@ fun AppInit(authViewModel : AuthViewModel,
                     )
                 }
                 composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
+                composable(NavigationRout.Cart.route) { CartView(cartViewModel) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
-
 
                 composable(NavigationRout.ProductInfo.route) {
                         backStackEntry ->
@@ -217,7 +241,8 @@ fun AppInit(authViewModel : AuthViewModel,
                         productId.toLong(),
                         navController = navController,
                         scrollState = scroll,
-                        viewModel = categoriesViewModel,
+                        categoriesViewModel = categoriesViewModel,
+                        cartViewModel = cartViewModel
 
                     )
                 }
@@ -281,6 +306,19 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
+
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Cart") },
+            label = { Text("Cart") },
+            selected = currentRoute == NavigationRout.Cart.route,
+            onClick = {
+                 navController.navigate(NavigationRout.Cart.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
         NavigationBarItem(
             icon = {   Icon(
                 painter = painterResource(id = R.drawable.menu),
@@ -300,6 +338,7 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
+
     }
 }
 

@@ -9,5 +9,7 @@ object Constants{
     const val CONTACT_US_EMAIL = "rofaidasobhy123@gmail.com"
     const val CONTACT_US_PHONE = "tel:+201140708568"
     const val BASE_URL_CURRENCY = "https://api.currencyapi.com/"
+    const val BASE_URL_SHOPIFY = "https://mad45-sv-and2.myshopify.com/admin/api/2025-01/"
+
 
 }
