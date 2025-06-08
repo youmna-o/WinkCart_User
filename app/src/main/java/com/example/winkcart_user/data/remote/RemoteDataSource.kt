@@ -1,5 +1,6 @@
 package com.example.winkcart_user.data.remote
 
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -41,6 +42,7 @@ interface RemoteDataSource {
         draftOrderRequest: DraftOrderRequest
     ): Flow<DraftOrderResponse?>
 
+    suspend fun getPriceRules(): Flow<PriceRulesResponse?>
 
 
 }

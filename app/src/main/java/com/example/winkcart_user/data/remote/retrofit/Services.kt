@@ -1,5 +1,6 @@
 package com.example.winkcart_user.data.remote.retrofit
 
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -58,6 +59,11 @@ interface Services {
         @Path("id") draftOrderId: Long,
         @Body draftOrder: DraftOrderRequest
     ): Response<DraftOrderResponse>
+
+    @GET("price_rules.json")
+    suspend fun getPriceRules(
+        @Header("X-Shopify-Access-Token") token: String
+    ): Response<PriceRulesResponse>
 
 }
 

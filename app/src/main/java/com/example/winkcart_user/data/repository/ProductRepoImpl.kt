@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.repository
 
 import com.example.winkcart_user.data.local.LocalDataSource
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -114,6 +115,10 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
             draftOrderId = draftOrderId,
             draftOrderRequest = draftOrderRequest
         )
+    }
+
+    override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
+        return  remoteDataSource.getPriceRules()
     }
 
 }

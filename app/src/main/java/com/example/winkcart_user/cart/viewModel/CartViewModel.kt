@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.repository.ProductRepo
@@ -40,6 +41,9 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
 
     private val _totalAmount = MutableStateFlow("0.00 EGP")
     val totalAmount = _totalAmount.asStateFlow()
+
+    private val _priceRules = MutableStateFlow<ResponseStatus<PriceRulesResponse>>(ResponseStatus.Loading)
+    val priceRules = _priceRules.asStateFlow()
 
 
     init {
@@ -244,6 +248,23 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
             result.collect{
                 _currencyRate.value = it
             }
+        }
+    }
+
+    fun getPriceRules() {
+        viewModelScope.launch {
+            repo.getPriceRules()
+                .catch { exception ->
+                    _priceRules.value = ResponseStatus.Error(exception)
+                }.collect{ response ->
+                    if(response!= null){
+                        _priceRules.value = ResponseStatus.Success(response)
+                    }else{
+                        _priceRules.value = ResponseStatus.Error(
+                            NullPointerException("Price Rules is null")
+                        )
+                    }
+                }
         }
     }
 

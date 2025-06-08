@@ -2,6 +2,7 @@ package com.example.winkcart_user.data.remote
 
 import android.util.Log
 import com.example.winkcart_user.BuildConfig
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -100,5 +101,12 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
             draftOrder = draftOrderRequest
         ).body()
         emit(response)
+    }
+
+    override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
+        val result =
+            retrofitHelper.shopifyService.getPriceRules(token = BuildConfig.shopifyAccessToken)
+                .body()
+        return flowOf(result)
     }
 }

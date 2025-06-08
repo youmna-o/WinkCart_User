@@ -11,22 +11,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +42,7 @@ fun CartView(viewModel: CartViewModel) {
     val draftOrders by viewModel.draftOrders.collectAsState()
     val customerID by viewModel.customerID.collectAsState()
     val totalAmount by viewModel.totalAmount.collectAsState()
+    val priceRules by viewModel.priceRules.collectAsState()
 
     viewModel.refreshTotalAmount()
     viewModel.readCustomerID()
@@ -55,13 +50,19 @@ fun CartView(viewModel: CartViewModel) {
 
     viewModel.readCurrencyRate()
     viewModel.readCurrencyCode()
+    viewModel.getPriceRules()
 
     val draftOrderList = when (draftOrders) {
         is ResponseStatus.Success -> (draftOrders as ResponseStatus.Success).result.draft_orders
         else -> emptyList()
     }
+    val priceRulesList = when (priceRules) {
+        is ResponseStatus.Success -> (priceRules as ResponseStatus.Success).result.price_rules
+        else -> emptyList()
+    }
 
     Log.i("TAG", "CartView: draftOrders = ${draftOrderList.size}")
+    Log.i("TAG", "CartView: priceRules = $priceRulesList")
    Box(
         modifier = Modifier
             .fillMaxSize()
