@@ -127,7 +127,7 @@ fun ProductInfo(
                                         Property("Size", selectedSize),
                                         Property("Quantity_in_Stock", "${it1.inventory_quantity}"),
                                         Property("Image", myProduct.images[0].src),
-                                        Property("SavedAt", "Cart")
+                                        Property("SavedAt",  "Cart")
                                     )
                                 )
                             }
