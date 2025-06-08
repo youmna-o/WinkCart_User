@@ -22,7 +22,6 @@ fun ImageCard(url: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp)
             .clip(RoundedCornerShape(16.dp)),
             colors = CardDefaults.cardColors(
             containerColor = Color.White
@@ -33,8 +32,8 @@ fun ImageCard(url: String) {
             contentDescription = "image",
             modifier = Modifier
                 .fillMaxSize()
-                .border(4.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp)),
-            contentScale = ContentScale.Fit
+                //.border(4.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp)),
+          //  contentScale = ContentScale.Fit
         )
     }
 }
