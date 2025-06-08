@@ -14,6 +14,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -34,7 +35,6 @@ interface Services {
         @Query("vendor") vendor: String
         ) : Response<ProductResponse>
 
-   // @Headers("Content-Type: application/json")
     @POST("draft_orders.json")
     suspend fun createDraftOrder(
         @Header("X-Shopify-Access-Token") token: String,
@@ -51,6 +51,14 @@ interface Services {
         @Header("X-Shopify-Access-Token") token: String,
         @Path("id") draftOrderId: Long
     ): Response<Unit>
+
+    @PUT("draft_orders/{id}.json")
+    suspend fun updateDraftOrder(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("id") draftOrderId: Long,
+        @Body draftOrder: DraftOrderRequest
+    ): Response<DraftOrderResponse>
+
 }
 
 interface CurrencyService {

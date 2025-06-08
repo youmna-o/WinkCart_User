@@ -1,6 +1,5 @@
 package com.example.winkcart_user.data.repository
 
-import com.example.winkcart_user.data.model.draftorder.cart.Customer
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -40,6 +39,10 @@ interface ProductRepo {
     suspend fun getAllDraftOrders() : Flow<DraftOrderResponse?>
     suspend fun deleteDraftOrder(draftOrderId: Long): Flow<Unit?>
 
+    suspend fun updateDraftOrder(
+        draftOrderId: Long,
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<DraftOrderResponse?>
 
 
 

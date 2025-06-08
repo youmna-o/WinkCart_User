@@ -29,6 +29,8 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _deleteDraftOrders = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
     val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
 
+    private val _updateDraftOrder = MutableStateFlow<ResponseStatus<DraftOrderResponse>>(ResponseStatus.Loading)
+    val updateDraftOrder = _updateDraftOrder.asStateFlow()
     init {
         viewModelScope.launch {
             repo.readCustomerID().collect { id ->
@@ -52,6 +54,23 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
                     _createDraftOrderResponse.value= ResponseStatus.Success<Any>(it)
                 }else{
                     _createDraftOrderResponse.value = ResponseStatus.Error(NullPointerException("createDraftOrderResponse is null"))
+                }
+            }
+
+        }
+    }
+
+
+    fun updateDraftOrder(draftOrderId: Long,draftOrderRequest: DraftOrderRequest) {
+        viewModelScope.launch {
+            val result = repo.updateDraftOrder(draftOrderId= draftOrderId, draftOrderRequest= draftOrderRequest)
+            result.catch {
+                _updateDraftOrder.value = ResponseStatus.Error(it)
+            }.collect{ it
+                if (it!= null){
+                    _updateDraftOrder.value= ResponseStatus.Success<DraftOrderResponse>(it)
+                }else{
+                    _updateDraftOrder.value = ResponseStatus.Error(NullPointerException("updateDraftOrder is null"))
                 }
             }
 

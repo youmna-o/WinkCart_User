@@ -49,8 +49,13 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 @Composable
 fun CartItem(
     draftOrder: DraftOrder,
-    onDeleteClick: (Long) -> Unit
+    onDeleteClick: (Long) -> Unit,
+    onQuantityChange: (DraftOrder, Int) -> Unit
 ) {
+
+    var quantity by remember {
+        mutableStateOf(draftOrder.line_items[0]?.quantity ?: 1)
+    }
 
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -221,8 +226,17 @@ fun CartItem(
                             color = Color.White,
                             shadowElevation = 4.dp,
                         ) {
+                            val decreaseEnabled = quantity > 1
+
                             IconButton(
-                                onClick = { /* decrease action  */},
+                                onClick = {
+
+                                    if (decreaseEnabled) {
+                                        quantity--
+                                        onQuantityChange(draftOrder, quantity)
+                                    }
+                                },
+                                enabled = decreaseEnabled,
                                 modifier = Modifier
                                     .size(30.dp)
                                     .align(Alignment.CenterVertically)
@@ -230,7 +244,7 @@ fun CartItem(
                                 Icon(
                                     imageVector = Icons.Outlined.Remove,
                                     contentDescription = "Decrease",
-                                    tint = Color.Gray,
+                                    tint = Color.Gray.copy(alpha = if (decreaseEnabled) 1f else 0.3f),
                                     modifier = Modifier.size(25.dp)
                                 )
                             }
@@ -240,7 +254,7 @@ fun CartItem(
                         Spacer(Modifier.width(15.dp))
 
                         Text(
-                            text = draftOrder.line_items[0]?.quantity.toString(),
+                            text = quantity.toString(),
                             color = Color.Gray,
                             fontWeight = FontWeight.Bold
 
@@ -252,8 +266,18 @@ fun CartItem(
                             color = Color.White,
                             shadowElevation = 4.dp,
                         ) {
+                            val increaseEnabled = quantity < (draftOrder.line_items[0]?.properties?.get(2)?.value?.toInt()
+                                ?: 10)
+
                             IconButton(
-                                onClick = { /* increase action  */},
+                                onClick = {
+                                    if(increaseEnabled) {
+                                        quantity++
+                                        onQuantityChange(draftOrder, quantity)
+                                    }
+                                }
+                                ,
+                                enabled = increaseEnabled,
                                 modifier = Modifier
                                     .size(30.dp)
                                     .align(Alignment.CenterVertically)
@@ -261,7 +285,7 @@ fun CartItem(
                                 Icon(
                                     imageVector = Icons.Outlined.Add,
                                     contentDescription = "Increase",
-                                    tint = Color.Gray,
+                                    tint = Color.Gray.copy(alpha = if (increaseEnabled) 1f else 0.3f),
                                     modifier = Modifier.size(25.dp)
                                 )
                             }

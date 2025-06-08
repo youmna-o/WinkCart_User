@@ -36,6 +36,11 @@ interface RemoteDataSource {
     suspend fun getAllDraftOrders(): Flow<DraftOrderResponse?>
     suspend fun deleteDraftOrder(draftOrderId: Long): Flow<Unit?>
 
+    suspend fun updateDraftOrder(
+        draftOrderId: Long,
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<DraftOrderResponse?>
+
 
 
 }

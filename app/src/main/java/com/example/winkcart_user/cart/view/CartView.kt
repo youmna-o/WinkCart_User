@@ -19,6 +19,8 @@ import com.example.winkcart_user.cart.view.components.CartItem
 
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 
@@ -27,8 +29,8 @@ import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 fun CartView(viewModel: CartViewModel) {
 
     val draftOrders by viewModel.draftOrders.collectAsState()
-
     val customerID by viewModel.customerID.collectAsState()
+
 
     viewModel.readCustomerID()
     viewModel.getDraftOrders(customerId = customerID)
@@ -62,6 +64,18 @@ fun CartView(viewModel: CartViewModel) {
                         draftOrder = draftOrderList[index],
                         onDeleteClick = { draftOrderId ->
                             viewModel.deleteDraftOrder(draftOrderId)
+                        },
+                        onQuantityChange = { updatedDraftOrder, newQuantity ->
+                            val updatedLineItem = updatedDraftOrder.line_items[0]?.copy(quantity = newQuantity)
+
+                            val updatedDraftOrderRequest = DraftOrderRequest(
+                                draft_order = draftOrderList[index].copy(line_items = listOf(updatedLineItem)),
+
+                            )
+
+
+
+                            viewModel.updateDraftOrder(updatedDraftOrder.id, updatedDraftOrderRequest)
                         }
                     )
 

@@ -89,4 +89,16 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
                 .body()
         return flowOf(result)
     }
+
+    override suspend fun updateDraftOrder(
+        draftOrderId: Long,
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<DraftOrderResponse?> = flow {
+        val response = retrofitHelper.shopifyService.updateDraftOrder(
+            token = BuildConfig.shopifyAccessToken,
+            draftOrderId = draftOrderId,
+            draftOrder = draftOrderRequest
+        ).body()
+        emit(response)
+    }
 }
