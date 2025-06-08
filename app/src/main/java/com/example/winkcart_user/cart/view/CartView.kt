@@ -16,10 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.winkcart_user.cart.view.components.CartItem
-
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
-import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
@@ -28,13 +26,16 @@ import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 @Composable
 fun CartView(viewModel: CartViewModel) {
 
+    val currencyCodeSaved by viewModel.currencyCode.collectAsState()
+    val currencyRateSaved by viewModel.currencyRate.collectAsState()
     val draftOrders by viewModel.draftOrders.collectAsState()
     val customerID by viewModel.customerID.collectAsState()
-
 
     viewModel.readCustomerID()
     viewModel.getDraftOrders(customerId = customerID)
 
+    viewModel.readCurrencyRate()
+    viewModel.readCurrencyCode()
 
     val draftOrderList = when (draftOrders) {
         is ResponseStatus.Success -> (draftOrders as ResponseStatus.Success).result.draft_orders
@@ -54,14 +55,10 @@ fun CartView(viewModel: CartViewModel) {
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(draftOrderList.size) { index ->
-                    /*CartItem(
-                        draftOrder = draftOrderList[index]
-                       // currencyCode = currencyCode,
-                       // currencyRate = currencyRate,
-
-                    )*/
                     CartItem(
                         draftOrder = draftOrderList[index],
+                        currencyCode = currencyCodeSaved,
+                        currencyRate = currencyRateSaved,
                         onDeleteClick = { draftOrderId ->
                             viewModel.deleteDraftOrder(draftOrderId)
                         },

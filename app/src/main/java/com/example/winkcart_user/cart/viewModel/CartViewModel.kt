@@ -16,6 +16,11 @@ import kotlinx.coroutines.launch
 
 class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
 
+    private val _currencyCode = MutableStateFlow("")
+    val currencyCode = _currencyCode.asStateFlow()
+
+    private val _currencyRate = MutableStateFlow("")
+    val currencyRate = _currencyRate.asStateFlow()
 
     private val _customerID = MutableStateFlow("")
     val customerID = _customerID.asStateFlow()
@@ -167,6 +172,27 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
             val result = repo.readCustomerID()
             result.collect{
                 _customerID.value = it
+            }
+        }
+    }
+
+
+    fun readCurrencyCode(){
+        viewModelScope.launch (Dispatchers.IO) {
+            val result = repo.readCurrencyCode()
+            result.collect{
+                _currencyCode.value = it
+            }
+        }
+    }
+
+
+
+    fun readCurrencyRate(){
+        viewModelScope.launch (Dispatchers.IO) {
+            val result = repo.readCurrencyRate()
+            result.collect{
+                _currencyRate.value = it
             }
         }
     }

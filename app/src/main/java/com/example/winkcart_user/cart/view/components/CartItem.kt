@@ -29,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,16 +46,27 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
+import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 
 @Composable
 fun CartItem(
     draftOrder: DraftOrder,
+    currencyRate:String,
+    currencyCode:String,
     onDeleteClick: (Long) -> Unit,
     onQuantityChange: (DraftOrder, Int) -> Unit
 ) {
 
+    val price = draftOrder.line_items[0]?.let {
+        convertCurrency(
+            amount = it.price,
+            rate = currencyRate,
+            currencyCode = currencyCode
+        )
+    }
+
     var quantity by remember {
-        mutableStateOf(draftOrder.line_items[0]?.quantity ?: 1)
+        mutableIntStateOf(draftOrder.line_items[0]?.quantity ?: 1)
     }
 
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -293,7 +305,7 @@ fun CartItem(
 
                         Spacer(modifier = Modifier.weight(1f))
                         Text(
-                            text = "90.0" + " " +"EGP",
+                            text = "$price $currencyCode",
                             color = Color.Gray,
                             fontWeight = FontWeight.Bold
 
