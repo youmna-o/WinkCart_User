@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.ArrowForward
@@ -75,6 +77,8 @@ fun CartView(viewModel: CartViewModel) {
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
+    val scroll = rememberScrollState()
+
 
     val couponImages = listOf(
         R.drawable.coupon3,
@@ -114,6 +118,7 @@ fun CartView(viewModel: CartViewModel) {
 
     // Modal Bottom Sheet
     if (showSheet) {
+
         ModalBottomSheet(
             onDismissRequest = { showSheet = false },
             sheetState = sheetState
@@ -123,6 +128,7 @@ fun CartView(viewModel: CartViewModel) {
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
+
             ) {
                 Text(
                     text = stringResource(R.string.your_promo_codes),
@@ -160,7 +166,6 @@ fun CartView(viewModel: CartViewModel) {
         }
     }
 
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -170,7 +175,7 @@ fun CartView(viewModel: CartViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-
+                    .verticalScroll(scroll)
 
             ) {
 
@@ -317,7 +322,6 @@ fun CartView(viewModel: CartViewModel) {
                 }
 
                 Spacer(Modifier.height(30.dp))
-
                 CustomButton(lable = stringResource(R.string.check_out)) {
 
                 }

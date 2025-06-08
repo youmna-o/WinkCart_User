@@ -87,7 +87,7 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
                         navController.navigate("home")
                     } else {
                         val errorMessage = null
-                        Toast.makeText(context, errorMessage ?: "حدث خطأ", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, errorMessage ?: "", Toast.LENGTH_LONG).show()
                     }
                 }
             },

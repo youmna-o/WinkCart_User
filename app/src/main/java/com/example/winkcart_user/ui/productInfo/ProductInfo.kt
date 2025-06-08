@@ -123,6 +123,16 @@ fun ProductInfo(
                 Text("${myProduct?.title}", style = MaterialTheme.typography.titleLarge)
                 Text("${myProduct?.variants?.get(0)?.price}$", style = MaterialTheme.typography.titleLarge)
                 StarRatingBar(rating = 3.0f, size = 12.0f)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(2.dp, color = Color.Gray, shape = RoundedCornerShape(16.dp)),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
+                ) {
+                    Text(myProduct?.body_html?:"", Modifier.padding(8.dp))
+                    }
 
 
             Reviews(
