@@ -1,10 +1,12 @@
 package com.example.winkcart_user.cart.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
@@ -15,6 +17,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
 
@@ -45,6 +50,23 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _priceRules = MutableStateFlow<ResponseStatus<PriceRulesResponse>>(ResponseStatus.Loading)
     val priceRules = _priceRules.asStateFlow()
 
+    //private var appliedCoupon: PriceRule? = null
+    private val _appliedCoupon = MutableStateFlow<PriceRule?>(null)
+    val appliedCoupon = _appliedCoupon.asStateFlow()
+
+    fun setAppliedCoupon(coupon: PriceRule) {
+        if (_appliedCoupon.value?.id != coupon.id) {
+            _appliedCoupon.value = coupon
+            calculateTotalAmount()
+        }
+    }
+
+
+    fun clearAppliedCoupon() {
+        _appliedCoupon.value = null
+        calculateTotalAmount()
+    }
+
 
     init {
         readCurrencyCode()
@@ -70,7 +92,7 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         Log.i("TAG", "calculateTotalAmount: rate = $rate")
         Log.i("TAG", "calculateTotalAmount: code = $code")
 
-        val total = orders.sumOf { draftOrder ->
+        var total = orders.sumOf { draftOrder ->
             draftOrder.line_items.sumOf { lineItem ->
                 val price = lineItem?.price?.toDoubleOrNull() ?: 0.0
                 val quantity = lineItem?.quantity ?: 0
@@ -79,11 +101,25 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
         Log.i("TAG", "calculateTotalAmount: total = $total")
 
+        _appliedCoupon.value?.let { coupon ->
+            if (coupon.value_type == "percentage") {
+                val discount = total * (coupon.value.replace("-", "").toDouble() / 100.0)
+                total -= discount
+            } else if (coupon.value_type == "fixed_amount") {
+                total -= coupon.value.replace("-", "").toDouble()
+            }
+        }
+
+        if (rate.isBlank() || code.isBlank()) {
+            _totalAmount.value = "0.00"
+            return
+        }
         val convertedTotal = convertCurrency(
             amount = total.toString(),
             rate = rate,
             currencyCode = code
         )
+
 
         Log.i("TAG", "calculateTotalAmount: convertedTotal = $convertedTotal ")
 
@@ -268,6 +304,20 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
+
+    fun getRemainingMonthsText(endsAt: String): String {
+        val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+        val endDate = ZonedDateTime.parse(endsAt, formatter)
+        val now = ZonedDateTime.now(endDate.zone)
+
+        val months = ChronoUnit.MONTHS.between(now.toLocalDate(), endDate.toLocalDate())
+
+        return when {
+            months <= 0 -> "< a month remaining"
+            months == 1L -> "1 month remaining"
+            else -> "$months months remaining"
+        }
+    }
 
 
 }

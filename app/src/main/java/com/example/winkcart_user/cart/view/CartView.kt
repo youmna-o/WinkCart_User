@@ -50,6 +50,7 @@ import com.example.winkcart_user.cart.view.components.CartItem
 import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
@@ -69,18 +70,18 @@ fun CartView(viewModel: CartViewModel) {
     val priceRules by viewModel.priceRules.collectAsState()
 
     var promoCode by remember { mutableStateOf("") }
+    val appliedCoupon by viewModel.appliedCoupon.collectAsState()
+
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
 
+    val couponImages = listOf(
+        R.drawable.coupon3,
+        R.drawable.coupon2,
+        R.drawable.coupon1
+    )
 
-    /*LaunchedEffect(showSheet) {
-        if (showSheet) {
-            coroutineScope.launch {
-                sheetState.show()
-            }
-        }
-    }*/
     LaunchedEffect(showSheet) {
         if (showSheet) {
             coroutineScope.launch {
@@ -128,172 +129,202 @@ fun CartView(viewModel: CartViewModel) {
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-                CouponItem()
-                Spacer(modifier = Modifier.height(10.dp))
 
-                CouponItem()
 
                 Spacer(modifier = Modifier.height(20.dp))
+
+                if (priceRulesList.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f) ,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(priceRulesList.size) { index ->
+                            CouponItem(
+                                viewModel = viewModel,
+                                priceRule = priceRulesList[index],
+                                imageID = couponImages[index],
+                                onApplyClicked = { selectedPriceRule ->
+                                    promoCode = selectedPriceRule.title
+                                    showSheet = false
+                                    viewModel.setAppliedCoupon(selectedPriceRule)
+                                    viewModel.refreshTotalAmount()
+                                }
+                            )
+                        }
+
+                    }
+                }
+
+
             }
         }
     }
 
 
-   Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundColor)
-            .padding(SCREEN_PADDING)
-    ) {
-       Column(
-           modifier = Modifier
-               .fillMaxSize()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundColor)
+                .padding(SCREEN_PADDING)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
 
 
-       ) {
+            ) {
 
-           if (draftOrderList.isNotEmpty()) {
-               LazyColumn(
-                   modifier = Modifier.weight(1f),
-               ) {
-                   items(draftOrderList.size) { index ->
-                       CartItem(
-                           draftOrder = draftOrderList[index],
-                           currencyCode = currencyCodeSaved,
-                           currencyRate = currencyRateSaved,
-                           onDeleteClick = { draftOrderId ->
-                               viewModel.deleteDraftOrder(draftOrderId)
-                           },
-                           onQuantityChange = { updatedDraftOrder, newQuantity ->
-                               val updatedLineItem =
-                                   updatedDraftOrder.line_items[0]?.copy(quantity = newQuantity)
+                if (draftOrderList.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        items(draftOrderList.size) { index ->
+                            CartItem(
+                                draftOrder = draftOrderList[index],
+                                currencyCode = currencyCodeSaved,
+                                currencyRate = currencyRateSaved,
+                                onDeleteClick = { draftOrderId ->
+                                    viewModel.deleteDraftOrder(draftOrderId)
+                                },
+                                onQuantityChange = { updatedDraftOrder, newQuantity ->
+                                    val updatedLineItem =
+                                        updatedDraftOrder.line_items[0]?.copy(quantity = newQuantity)
 
-                               val updatedDraftOrderRequest = DraftOrderRequest(
-                                   draft_order = draftOrderList[index].copy(
-                                       line_items = listOf(
-                                           updatedLineItem
-                                       )
-                                   ),
+                                    val updatedDraftOrderRequest = DraftOrderRequest(
+                                        draft_order = draftOrderList[index].copy(
+                                            line_items = listOf(
+                                                updatedLineItem
+                                            )
+                                        ),
 
-                                   )
+                                        )
 
-                               viewModel.refreshTotalAmount()
+                                    viewModel.refreshTotalAmount()
 
-                               viewModel.updateDraftOrder(
-                                   updatedDraftOrder.id,
-                                   updatedDraftOrderRequest
-                               )
-                           }
-                       )
+                                    viewModel.updateDraftOrder(
+                                        updatedDraftOrder.id,
+                                        updatedDraftOrderRequest
+                                    )
+                                }
+                            )
 
-                   }
-               }
-           } else {
-               Box(
-                   modifier = Modifier.weight(1f),
-                   contentAlignment = Alignment.Center
-               ) {
-                   //need update with lotti or image for empty cart
-                   Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                       Text(
-                           "  All products from this vendor are currently out of stock. ",
-                           style = MaterialTheme.typography.bodyMedium,
-                           color = Color.Gray
-                       )
-                       Text(
-                           " Stay tuned for updates!", style = MaterialTheme.typography.bodyMedium,
-                           color = Color.Gray
-                       )
-                   }
-
-
-               }
-           }
-
-           Spacer(Modifier.height(30.dp))
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        //need update with lotti or image for empty cart
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                "  All products from this vendor are currently out of stock. ",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
+                            Text(
+                                " Stay tuned for updates!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
+                        }
 
 
-           OutlinedTextField(
-               value = promoCode,
-               onValueChange = { promoCode = it
+                    }
+                }
 
-                               },
-               modifier = Modifier
-                   .fillMaxWidth(),
-               label = { Text(stringResource(R.string.Enter_your_promo_code)) },
-               trailingIcon = {
-                   /*Box(
-                       modifier = Modifier
-                           .size(36.dp)
-                           .clip(CircleShape)
-                           .background(Color.Black)
-                           .padding(6.dp)
-                   ) {
-                       Icon(
-                           imageVector = Icons.Outlined.ArrowForward,
-                           contentDescription = "Apply promo",
-                           tint = Color.White,
-                           modifier = Modifier.fillMaxSize()
-                       )
-                   }*/
+                Spacer(Modifier.height(30.dp))
 
-                   Surface(
-                       shape = CircleShape,
-                       color = Color.Black,
-                       shadowElevation = 4.dp,
-                   ) {
 
-                       IconButton(
-                           onClick = {
-                               showSheet = true
-                           },
-                           modifier = Modifier
-                               .size(36.dp)
-                       ) {
-                           Icon(
-                               imageVector = Icons.Outlined.ArrowForward,
-                               contentDescription = "Apply promo",
-                               tint = Color.White,
-                               modifier = Modifier.fillMaxSize()
-                           )
-                       }
-                   }
+                OutlinedTextField(
+                    value = promoCode,
+                    onValueChange = {
+                        promoCode = it
 
-               },
-               shape = RoundedCornerShape(12.dp)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    label = { Text(stringResource(R.string.Enter_your_promo_code)) },
+                    trailingIcon = {
+                        if (appliedCoupon != null) {
+                            // Show close icon
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.Red,
+                                shadowElevation = 4.dp,
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        // Clear applied coupon
+                                        promoCode = ""
+                                        viewModel.clearAppliedCoupon() // call function to clear in ViewModel
+                                    },
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Remove, // or Icons.Default.Close
+                                        contentDescription = "Remove coupon",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        } else {
+                            // Show apply arrow icon
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.Black,
+                                shadowElevation = 4.dp,
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        showSheet = true
+                                    },
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ArrowForward,
+                                        contentDescription = "Apply promo",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    ,
+                    shape = RoundedCornerShape(12.dp)
 
-           )
-           Spacer(Modifier.height(20.dp))
+                )
+                Spacer(Modifier.height(20.dp))
 
-           Row(
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .padding(top = 8.dp),
-               horizontalArrangement = Arrangement.SpaceBetween,
-               verticalAlignment = Alignment.CenterVertically
-           ) {
-               Text(
-                   text = stringResource(R.string.total_amount),
-                   color = Color.Gray,
-                   fontSize = 24.sp,
-               )
-               Text(
-                   text = totalAmount,
-                   fontWeight = FontWeight.Bold,
-                   fontSize = 24.sp,
-               )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.total_amount),
+                        color = Color.Gray,
+                        fontSize = 24.sp,
+                    )
+                    Text(
+                        text = totalAmount,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                    )
 
-           }
+                }
 
-           Spacer(Modifier.height(30.dp))
+                Spacer(Modifier.height(30.dp))
 
-           CustomButton(lable = stringResource(R.string.check_out)){
+                CustomButton(lable = stringResource(R.string.check_out)) {
 
-           }
-           Spacer(Modifier.height(10.dp))
-       }
+                }
+                Spacer(Modifier.height(10.dp))
+            }
 
-   }
+        }
 
-}
+    }
+
