@@ -1,6 +1,9 @@
 package com.example.winkcart_user.data.repository
 
 import com.example.winkcart_user.data.local.LocalDataSource
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -11,7 +14,6 @@ import com.example.winkcart_user.data.model.products.ProductResponse
 import kotlinx.coroutines.flow.Flow
 
 class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
-
 
     override suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?> {
         return  remoteDataSource.getSmartCollections()
@@ -69,6 +71,14 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         localDataSource.writeCurrencyReadingDate(currencyReadingDate)
     }
 
+    override suspend fun readCustomerID(): Flow<String> {
+        return localDataSource.readCustomerID()
+    }
+
+    override suspend fun writeCustomerID(customerID: String) {
+        localDataSource.writeCustomerID(customerID)
+    }
+
 
     override suspend fun getProductsByVendor(vendor: String): Flow<ProductResponse?> {
         return remoteDataSource.getProductsByVendor(vendor)
@@ -89,4 +99,33 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     override  fun getReview(): String {
         return remoteDataSource.getReview()
     }
+
+    override suspend fun createDraftOrder(
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<Any> {
+        return remoteDataSource.createDraftOrder(draftOrderRequest)
+    }
+
+    override suspend fun getAllDraftOrders(): Flow<DraftOrderResponse?> {
+        return  remoteDataSource.getAllDraftOrders()
+    }
+
+    override suspend fun deleteDraftOrder(draftOrderId: Long): Flow<Unit?> {
+        return remoteDataSource.deleteDraftOrder(draftOrderId = draftOrderId)
+    }
+
+    override suspend fun updateDraftOrder(
+        draftOrderId: Long,
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<DraftOrderResponse?> {
+        return remoteDataSource.updateDraftOrder(
+            draftOrderId = draftOrderId,
+            draftOrderRequest = draftOrderRequest
+        )
+    }
+
+    override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
+        return  remoteDataSource.getPriceRules()
+    }
+
 }

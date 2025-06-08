@@ -1,7 +1,6 @@
 package com.example.winkcart_user.settings.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
 class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     private val _latestRateFromUSDToEGP = MutableStateFlow<ResponseStatus<CurrencyResponse>>(
@@ -97,7 +95,6 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 }
 
 class SettingsFactory(private val repo: ProductRepo): ViewModelProvider.Factory {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun <T : ViewModel> create(modelClass: Class<T>): T{
         return SettingsViewModel(repo) as T
     }

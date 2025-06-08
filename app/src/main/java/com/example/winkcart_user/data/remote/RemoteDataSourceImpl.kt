@@ -2,6 +2,9 @@ package com.example.winkcart_user.data.remote
 
 import android.util.Log
 import com.example.winkcart_user.BuildConfig
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -12,12 +15,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSource {
   var auth = Firebase.auth
     override suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?> {
-        val result = retrofitHelper.apiServices?.getSmartCollections(token = BuildConfig.shopifyAccessToken)?.body()
+        val result = retrofitHelper.shopifyService.getSmartCollections(token = BuildConfig.shopifyAccessToken)
+            .body()
         return flowOf(result)
     }
 
@@ -26,13 +31,13 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         return flowOf(result)
     }
     override suspend fun getAllProducts(): Flow<ProductResponse?> {
-        val result = retrofitHelper.apiServices?.getAllProducts(token = BuildConfig.shopifyAccessToken)?.body()
+        val result = retrofitHelper.shopifyService.getAllProducts(token = BuildConfig.shopifyAccessToken)?.body()
         return flowOf(result)
     }
 
 
     override suspend fun getProductsByVendor( vendor : String): Flow<ProductResponse?> {
-        val  result = retrofitHelper.apiServices?.getProductsByVendor(token = BuildConfig.shopifyAccessToken , vendor = vendor)?.body()
+        val  result = retrofitHelper.shopifyService.getProductsByVendor(token = BuildConfig.shopifyAccessToken , vendor = vendor)?.body()
         return flowOf(result)
     }
 
@@ -53,6 +58,44 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         return auth.signInWithEmailAndPassword(email, password)
     }
 
+    override suspend fun createDraftOrder(
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<Any> = flow {
+            val response = retrofitHelper.shopifyService.createDraftOrder(token = BuildConfig.shopifyAccessToken, draftOrderRequest)
+            emit(response)
+    }
+
+    override suspend fun getAllDraftOrders(): Flow<DraftOrderResponse?> {
+        val result =
+            retrofitHelper.shopifyService.getAllDraftOrders(token = BuildConfig.shopifyAccessToken)
+                .body()
+        return flowOf(result)
+    }
 
 
+    override suspend fun deleteDraftOrder(draftOrderId: Long): Flow<Unit?>{
+        val result =
+            retrofitHelper.shopifyService.deleteDraftOrder(token = BuildConfig.shopifyAccessToken, draftOrderId = draftOrderId)
+                .body()
+        return flowOf(result)
+    }
+
+    override suspend fun updateDraftOrder(
+        draftOrderId: Long,
+        draftOrderRequest: DraftOrderRequest
+    ): Flow<DraftOrderResponse?> = flow {
+        val response = retrofitHelper.shopifyService.updateDraftOrder(
+            token = BuildConfig.shopifyAccessToken,
+            draftOrderId = draftOrderId,
+            draftOrder = draftOrderRequest
+        ).body()
+        emit(response)
+    }
+
+    override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
+        val result =
+            retrofitHelper.shopifyService.getPriceRules(token = BuildConfig.shopifyAccessToken)
+                .body()
+        return flowOf(result)
+    }
 }
