@@ -256,12 +256,18 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
-
+    fun writeCustomerID(id: String){
+        viewModelScope.launch (Dispatchers.IO) {
+            val result = repo.writeCustomerID(id)
+        }
+    }
     fun readCustomerID(){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.readCustomerID()
             result.collect{
+                Log.i("shared", "From Shared: ${_customerID.value}")
                 _customerID.value = it
+
             }
         }
     }

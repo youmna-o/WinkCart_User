@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
+import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.ui.auth.AuthViewModel
@@ -43,7 +44,7 @@ import com.google.firebase.ktx.Firebase
 private val db = Firebase.firestore
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
+fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , cartViewModel: CartViewModel){
     val emailError by authViewModel.emailError
     val passwordError by authViewModel.passwordError
     var context = LocalContext.current
@@ -110,34 +111,30 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
         Spacer(modifier = Modifier.height(30.dp))
         Button(
             onClick = {
-                authViewModel.postCustomer(CustomerRequest(
-                    first_name = firstName,
-                    last_name = lastName,
-                    email = email,
-                    password = password,
-                    password_confirmation = password,
-                ))
                 authViewModel.signUp(email, password) { success ->
                     if (success) {
-                        val customersId = hashMapOf(
-                            "customerName" to firstName
+                        val customerRequest = CustomerRequest(
+                            first_name = firstName,
+                            last_name = lastName,
+                            email = email,
+                            password = password,
+                            password_confirmation = password
                         )
-                        db.collection("customers").document().set(customersId)
-                            .addOnSuccessListener {
-                                Log.i("customer", "Firestore: success")
-                            }.addOnFailureListener {
-                                Log.i("customer", "Firestore: failed")
+                        authViewModel.postCustomer(customerRequest) { shopifyId ->
+                            if (shopifyId != null) {
+                                val customerMap = hashMapOf("customerId" to shopifyId)
+                                db.collection("customers").document().set(customerMap)
+                                    .addOnSuccessListener {
+                                    }
+
+                                cartViewModel.writeCustomerID(shopifyId)
+                                navController.navigate("home")
+                            } else {
+                                Toast.makeText(context, "Shopify error", Toast.LENGTH_LONG).show()
                             }
-                        navController.navigate("home")
+                        }
                     } else {
-
-                        Toast.makeText(context, "Failed", Toast.LENGTH_LONG).show()
-
-                        val errorMessage = null
-
-                //        Toast.makeText(context, errorMessage ?: "Faild", Toast.LENGTH_LONG).show()
-
-
+                        Toast.makeText(context, "Firebase SignUp Failed", Toast.LENGTH_LONG).show()
                     }
                 }
             },
@@ -147,6 +144,8 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
         ) {
             Text("SIGN UP")
         }
+
+
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
 

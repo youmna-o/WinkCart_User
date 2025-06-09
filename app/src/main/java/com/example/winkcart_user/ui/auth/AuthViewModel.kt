@@ -10,8 +10,10 @@ import com.example.winkcart_user.data.model.customer.CustomerRequest
 
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 
 
@@ -42,19 +44,24 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
         }
     }
 
-    fun postCustomer (customer: CustomerRequest){
+    fun postCustomer(
+        customerRequest: CustomerRequest,
+        onResult: (String?) -> Unit
+    ) {
         viewModelScope.launch {
-            customerRepo.postCustomer(customer).collect {
-                    response -> if(response != null){
-                Log.i("customer", "postCustomer: *************done")
-                Log.i("customer", "postCustomer: ${response.customer.id}")
-            }else{
-                Log.i("customer", "postCustomer: *************failed")
-            }
-            }
+            customerRepo.postCustomer(customerRequest)
+                .catch { e ->
+                    onResult(null)
+                }
+                .collect { response ->
+                    val customerId = response?.customer?.id?.toString()
+                    Log.i("shared", "From postCustomer:${response?.customer?.id?.toString()} ")
+                    onResult(customerId)
+                }
         }
-
     }
+
+
 
     private fun Uservalidate(email: String, password: String): Boolean {
         var isValid = true
@@ -85,6 +92,8 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
         val expression = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
         return Pattern.compile(expression).matcher(email).matches()
     }
+
+
 
 
 

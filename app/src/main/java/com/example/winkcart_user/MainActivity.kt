@@ -232,7 +232,7 @@ fun AppInit(authViewModel : AuthViewModel,
                     LoginScreen(navController = navController , authViewModel = authViewModel)
                 }
                 composable(NavigationRout.SignUp.route) {
-                    SignUpScreen(navController = navController,authViewModel=authViewModel)
+                    SignUpScreen(navController = navController,authViewModel=authViewModel, cartViewModel)
                 }
                 composable(NavigationRout.Home.route) {
                     HomeScreen(navController = navController,brandsViewModel=brandsViewModel)
@@ -291,20 +291,6 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
-      /*  NavigationBarItem(
-            icon = { Icon(Icons.Default.ThumbUp, contentDescription = "Profile") },
-            label = { Text("Profile") },
-            selected = currentRoute == NavigationRout.Profile.route,
-            onClick = {
-                navController.navigate(NavigationRout.Profile.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )*/
 
         NavigationBarItem(
             icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
