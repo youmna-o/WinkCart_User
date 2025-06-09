@@ -50,7 +50,8 @@ fun AppInit(authViewModel : AuthViewModel,
         NavigationRout.Home.route,
         NavigationRout.Cart.route,
         NavigationRout.Settings.route,
-        NavigationRout.categories.route
+        NavigationRout.categories.route,
+        NavigationRout.Favourite.route,
     )
     val showBottomBar = currentRoute in screensWithBottomBar
 
@@ -66,7 +67,12 @@ fun AppInit(authViewModel : AuthViewModel,
             val pa =paddingValues
             NavHost(
                 navController = navController,
-                startDestination = NavigationRout.Login.route,
+                startDestination = when{
+                    cartViewModel.readCustomerID()==null -> NavigationRout.Login.route
+                    cartViewModel.readCustomerID()!=null -> NavigationRout.Home.route
+                        else ->NavigationRout.Home.route
+                },
+                    //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,
                 modifier = Modifier.padding(2.dp)
             ) {
                 composable(NavigationRout.Login.route) {
