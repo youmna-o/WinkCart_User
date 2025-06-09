@@ -27,7 +27,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LongBasicDropdownMenu(lable: String ,menuItemData : List<String> ) {
+fun LongBasicDropdownMenu(lable: String,
+                          menuItemData : List<String>,
+                          onOptionSelected: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
 
 
@@ -59,7 +62,10 @@ fun LongBasicDropdownMenu(lable: String ,menuItemData : List<String> ) {
             menuItemData.forEach { option ->
                 DropdownMenuItem(
                     text = { Text(option) },
-                    onClick = { /* Do something... */ }
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
                 )
             }
         }

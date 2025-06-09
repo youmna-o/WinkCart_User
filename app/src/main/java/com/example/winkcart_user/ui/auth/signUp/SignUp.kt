@@ -130,7 +130,14 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
                             }
                         navController.navigate("home")
                     } else {
+
                         Toast.makeText(context, "Failed", Toast.LENGTH_LONG).show()
+
+                        val errorMessage = null
+
+                //        Toast.makeText(context, errorMessage ?: "Faild", Toast.LENGTH_LONG).show()
+
+
                     }
                 }
             },

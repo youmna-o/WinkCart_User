@@ -1,13 +1,13 @@
+
 package com.example.winkcart_user.ui.categorie.ui
 
-import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -36,25 +36,45 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.CurrencyViewModel
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.ui.utils.ProductItem
+
+import androidx.compose.runtime.mutableStateOf
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
+
 import com.example.winkcart_user.ui.utils.navigation.CustomSearchBar
 
+
 @Composable
-fun CategoriesScreen (categoriesViewModel: CategoriesViewModel, navController: NavController, currencyViewModel: CurrencyViewModel){
+fun CategoriesScreen (categoriesViewModel: CategoriesViewModel,
+                      navController: NavController,
+                      currencyViewModel: CurrencyViewModel){
 
     val allProducts by  categoriesViewModel.products.collectAsState()
     val searchInput by categoriesViewModel.searchInput.collectAsState()
@@ -77,7 +97,7 @@ fun CategoriesScreen (categoriesViewModel: CategoriesViewModel, navController: N
         }
 
         is ResponseStatus.Error -> {
-         CategoriesScreenOnError()
+         CategoriesScreenOnError(onRetry = {categoriesViewModel.getAllProducts()})
         }
     }
 }
@@ -95,12 +115,13 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
     categoriesViewModel.getMenProducts()
     categoriesViewModel.getWomenProducts()
     categoriesViewModel.getKidsProducts()
-    
     val currencyRate = currencyViewModel.currencyRate.collectAsState().value
     val currencyCode = currencyViewModel.currencyCode.collectAsState().value
     val subcategories = categoriesViewModel.getALlSubCategories()
-    var selectedTabIndex by remember { mutableStateOf(0) }
-    var selectedSubcategoryIndex by remember { mutableStateOf(-1) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedSubcategoryIndex by remember { mutableIntStateOf(-1) }
+    var isFilterAppliedState by remember { mutableStateOf(false) }
+
 
 
     Scaffold (
@@ -124,19 +145,21 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
             )
         }
     ) { paddingValues ->
-        val baseList: List<Product> = when (selectedTabIndex) {
+        val rowData: List<Product> = when (selectedTabIndex) {
             0 -> (categoriesViewModel.products.value as ResponseStatus.Success<ProductResponse>).result.products
             1 -> categoriesViewModel.getWomenProducts()
             2 -> categoriesViewModel.getMenProducts()
             else -> categoriesViewModel.getKidsProducts()
         }
         val subcategoryList = subcategories.toList()
-        val currentList: List<Product> = if (selectedSubcategoryIndex != -1) {
+        var baseList : List<Product> = if (selectedSubcategoryIndex != -1) {
             val selectedSubcategory = subcategoryList[selectedSubcategoryIndex]
-            baseList.filter { it.product_type == selectedSubcategory }
+            rowData.filter { it.product_type == selectedSubcategory }
         } else {
-            baseList
+            rowData
         }
+        var currentList by remember { mutableStateOf(baseList) }
+
         val filteredList = if (searchInput.isNotBlank()) {
             currentList.filter { it.title.contains(searchInput, ignoreCase = true) }
         } else {
@@ -144,7 +167,10 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
         }
 
 
-
+        LaunchedEffect(baseList) {
+            currentList = baseList
+            isFilterAppliedState = false
+        }
 
         Column(modifier = Modifier.padding(paddingValues)) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -156,18 +182,26 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
                 selectedTabIndex = selectedTabIndex,
                 subcategories = subcategories,
                 selectedSubcategory = selectedSubcategoryIndex,
-                onTabSelected = { selectedTabIndex = it },
-                onSubcategorySelected = { selectedSubcategoryIndex = it }
+                onTabSelected = { selectedTabIndex = it
+                    isFilterAppliedState = false },
+                onSubcategorySelected = { selectedSubcategoryIndex = it
+                    isFilterAppliedState = false}
             )
-
 
             FilterSortRow(
-                selectedSortOption = "Price: lowest to high",
-                onFilterClick = { /* filter sheet */ },
-                onSortClick = { /* sort options */ },
-                onToggleViewClick = { /* toggle list */ }
+                onApplyFilter = { min, max ->
+                    currentList = baseList.filter { product ->
+                        val priceStr = product.variants[0].price
+                        val convertedPrice = convertCurrency(priceStr, currencyRate, currencyCode).toFloatOrNull()
+                        convertedPrice != null && convertedPrice in min..max}
+                   isFilterAppliedState = true
+                },
+                onResetFilter = {
+                    currentList = baseList
+                    isFilterAppliedState = false
+                },
+                isResetEnabled = isFilterAppliedState,
             )
-
             CategoryProducts(
                 filteredList,
                 currencyRate = currencyRate,
@@ -177,16 +211,14 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
         }
     }
 }
-
-
-
 @Composable
 fun CategoryProducts(Products :List<Product>,currencyRate:String,
                      currencyCode:String,navController: NavController) {
     if (Products.isNotEmpty()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
-                 ,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 75.dp),
         ) {
             items(Products.size) { index ->
                 ProductItem(
@@ -198,8 +230,8 @@ fun CategoryProducts(Products :List<Product>,currencyRate:String,
                     ) ,
                     currencyCode = currencyCode,
                     currencyRate = currencyRate,
-                    onProductItemClicked = { navController.navigate("ProductInfo/${Products[index].id}") }
-
+                    onProductItemClicked = {navController
+                        .navigate("ProductInfo/${Products[index].id}") }
                 )
             }
         }
@@ -225,15 +257,44 @@ fun CategoryProducts(Products :List<Product>,currencyRate:String,
 
 @Composable
 fun CategoriesScreenonLoading(){
-    Column {
-//to do
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Loading categories...", style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }
 
 @Composable
-fun CategoriesScreenOnError(){
-    Column {
-// to do
+fun CategoriesScreenOnError(onRetry: () -> Unit = {}){
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Error,
+                contentDescription = "Error",
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Something went wrong",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = onRetry) {
+                Text("Retry")
+            }
+        }
     }
 }
 
@@ -245,7 +306,6 @@ fun CategoryTabs(
     selectedSubcategory: Int,
     onSubcategorySelected :(Int) -> Unit
 ) {
-    var selectedSubcategoryIndex = selectedSubcategory
     val categories = listOf( "ALL","Women", "Men", "Kids")
 
     Column {
@@ -285,17 +345,14 @@ fun CategoryTabs(
                 }
             }
         }
-
     }
-   
+
 }
 @Composable
-fun FilterSortRow(
-    selectedSortOption: String,
-    onFilterClick: () -> Unit,
-    onSortClick: () -> Unit,
-    onToggleViewClick: () -> Unit
-) {
+fun FilterSortRow(onApplyFilter: (minPrice: Float, maxPrice: Float) -> Unit,
+    onResetFilter: () -> Unit, isResetEnabled :Boolean ) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -303,44 +360,150 @@ fun FilterSortRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
         Row(
             modifier = Modifier
-                .clickable { onFilterClick() },
+                .clickable { showBottomSheet = true },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.FilterList,
-                contentDescription = "Filter",
+                contentDescription = "Filter by price",
                 tint = Color.Black
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(text = "Filters", style = MaterialTheme.typography.bodyMedium)
         }
 
-        Row(
-            modifier = Modifier
-                .clickable { onSortClick() },
-            verticalAlignment = Alignment.CenterVertically
+        TextButton(
+            onClick = { onResetFilter()
+                   },
+            enabled = isResetEnabled,
         ) {
-            Icon(
-                imageVector = Icons.Default.SwapVert,
-                contentDescription = "Sort",
-                tint = Color.Black
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = selectedSortOption,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Text("reset filter")
         }
+    }
 
-        IconButton(onClick = onToggleViewClick) {
-            Icon(
-                imageVector = Icons.Default.GridView,
-                contentDescription = "Toggle View",
-                tint = Color.Black
-            )
+    if (showBottomSheet) {
+        BottomSheetFilter(
+            onApplyFilter = { minPrice, maxPrice ->
+                onApplyFilter(minPrice, maxPrice)
+                showBottomSheet = false
+            },
+            onDismiss = { showBottomSheet = false }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheetFilter(
+    onApplyFilter: (minPrice: Float, maxPrice: Float) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var minPrice by remember { mutableStateOf("") }
+    var maxPrice by remember { mutableStateOf("") }
+    var minPriceError by remember { mutableStateOf<String?>(null) }
+    var maxPriceError by remember { mutableStateOf<String?>(null) }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = Color.White
+    ) {
+        Column(
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text("Filter by Price", style = MaterialTheme.typography.titleMedium)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = minPrice,
+                    onValueChange = {
+                        minPrice = it
+                        minPriceError = null
+                    },
+                    label = { Text("Min Price") },
+                    placeholder = { Text("Enter min price") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    isError = minPriceError != null,
+                    supportingText = {
+                        minPriceError?.let {
+                            Text(it, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier.weight(1f)
+                )
+
+                OutlinedTextField(
+                    value = maxPrice,
+                    onValueChange = {
+                        maxPrice = it
+                        maxPriceError = null
+                    },
+                    label = { Text("Max Price") },
+                    placeholder = { Text("Enter max price") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    isError = maxPriceError != null,
+                    supportingText = {
+                        maxPriceError?.let {
+                            Text(it, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    val min = minPrice.toFloatOrNull()
+                    val max = maxPrice.toFloatOrNull()
+
+                    minPriceError = null
+                    maxPriceError = null
+
+                    var isValid = true
+
+                    if (minPrice.isBlank()) {
+                        minPriceError = "Min price is required"
+                        isValid = false
+                    } else if (min == null) {
+                        minPriceError = "Invalid number"
+                        isValid = false
+                    }
+
+                    if (maxPrice.isBlank()) {
+                        maxPriceError = "Max price is required"
+                        isValid = false
+                    } else if (max == null) {
+                        maxPriceError = "Invalid number"
+                        isValid = false
+                    }
+
+                    if (isValid && min != null && max != null) {
+                        if (min > max) {
+                        maxPriceError = "Max price should be greater than Min price"
+                        } else {
+                            onApplyFilter(min, max)
+                            onDismiss()
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Apply Filter")
+            }
         }
     }
 }

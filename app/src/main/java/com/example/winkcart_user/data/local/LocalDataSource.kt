@@ -13,4 +13,7 @@ interface LocalDataSource {
     suspend fun readCurrencyReadingDate(): Flow<String>
     suspend fun writeCurrencyReadingDate(currencyReadingDate: String)
 
+    suspend fun readCustomerID(): Flow<String>
+    suspend fun writeCustomerID(customerID: String)
+
 }
