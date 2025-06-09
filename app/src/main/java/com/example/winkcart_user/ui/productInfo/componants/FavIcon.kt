@@ -13,14 +13,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FavIcon(){
+fun FavIcon( onClick:()-> Unit ){
     Surface(
         shape = CircleShape,
         color = Color.Black,
         shadowElevation = 4.dp,
     ) {
         IconButton(
-            onClick = { /* add to fav action  */},
+            onClick = onClick,
             modifier = Modifier
                 .size(40.dp)
         ) {

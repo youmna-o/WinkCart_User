@@ -68,7 +68,7 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     override fun postCustomer(customer: CustomerRequest): Flow<CustomerResponse?> = flow {
         val wrapped = CustomerWrapper(customer)
         try {
-            val response = retrofitHelper.apiServices?.postCustomer(
+            val response = retrofitHelper.shopifyService?.postCustomer(
                 token = BuildConfig.shopifyAccessToken,
                 customerWrapper = wrapped
             )

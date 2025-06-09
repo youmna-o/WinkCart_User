@@ -116,9 +116,39 @@ fun ProductInfo(
                     }?.flatMap { it.values }?.toList() ?: emptyList(),
                         onOptionSelected = { selectedColor = it }
                     )
-                    FavIcon()
-                }
 
+                    FavIcon(){
+                            val draftOrder = DraftOrderRequest(
+                                draft_order = DraftOrder(
+                                    line_items = listOf(
+                                        myProduct?.let {
+                                            selectedVariant?.let { it1 ->
+                                                LineItem(
+                                                    variant_id = it1.id,
+                                                    title = it.title,
+                                                    price = it.variants[0].price,
+                                                    quantity = 1,
+                                                    properties = listOf(
+                                                        Property("Color", selectedColor),
+                                                        Property("Size", selectedSize),
+                                                        Property("Quantity_in_Stock", "${it1.inventory_quantity}"),
+                                                        Property("Image", myProduct.images[0].src),
+                                                        Property("SavedAt",  "favourite")
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    ),
+                                    customer = Customer(customerID.value.toLong())
+                                )
+                            )
+                            cartViewModel.createDraftOrder(draftOrder)
+                            Log.i("fav", "ProductInfo: $draftOrder ")
+                            Log.i("fav", "customerID = ${customerID.value}")
+                        Log.i("fav", "customerID = " +
+                                "************************************")
+                    }
+                }
 
                 Text("${myProduct?.title}", style = MaterialTheme.typography.titleLarge)
                 Text("${myProduct?.variants?.get(0)?.price}$", style = MaterialTheme.typography.titleLarge)
@@ -140,12 +170,9 @@ fun ProductInfo(
                 review = categoriesViewModel.getReview(),
                 starSize = 8.0f
             )
-
             CustomButton(
                 lable = "ADD To CART"
             ) {
-
-
                 val draftOrder = DraftOrderRequest(
                     draft_order = DraftOrder(
                         line_items = listOf(
