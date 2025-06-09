@@ -1,14 +1,21 @@
 package com.example.winkcart_user.ui.auth
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.customer.CustomerRequest
 
 import com.example.winkcart_user.data.repository.FirebaseRepo
+import com.example.winkcart_user.data.repository.ProductRepoImpl
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 
-class AuthViewModel( private val repo: FirebaseRepo) : ViewModel(){
+class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : ProductRepoImpl) : ViewModel(){
 
     var emailError = mutableStateOf<String?>(null)
     var passwordError = mutableStateOf<String?>(null)
@@ -35,7 +42,19 @@ class AuthViewModel( private val repo: FirebaseRepo) : ViewModel(){
         }
     }
 
+    fun postCustomer (customer: CustomerRequest){
+        viewModelScope.launch {
+            customerRepo.postCustomer(customer).collect {
+                    response -> if(response != null){
+                Log.i("customer", "postCustomer: *************done")
+                Log.i("customer", "postCustomer: ${response.customer.id}")
+            }else{
+                Log.i("customer", "postCustomer: *************failed")
+            }
+            }
+        }
 
+    }
 
     private fun Uservalidate(email: String, password: String): Boolean {
         var isValid = true
@@ -66,12 +85,15 @@ class AuthViewModel( private val repo: FirebaseRepo) : ViewModel(){
         val expression = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
         return Pattern.compile(expression).matcher(email).matches()
     }
+
+
+
 }
 
 
-class AuthFactory(private  val  repo: FirebaseRepo): ViewModelProvider.Factory{
+class AuthFactory(private  val  repo: FirebaseRepo, private val customerRepo : ProductRepoImpl): ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AuthViewModel(repo) as T
+        return AuthViewModel(repo, customerRepo) as T
     }
 }
 

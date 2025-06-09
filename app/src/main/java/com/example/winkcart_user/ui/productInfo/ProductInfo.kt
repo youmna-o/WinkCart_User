@@ -140,6 +140,7 @@ fun ProductInfo(
                 review = categoriesViewModel.getReview(),
                 starSize = 8.0f
             )
+
             CustomButton(
                 lable = "ADD To CART"
             ) {
