@@ -3,6 +3,7 @@ package com.example.winkcart_user
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -177,7 +178,7 @@ val retrofitHelper = RetrofitHelper
 
 
             WinkCart_UserTheme {
-
+                cartViewModel.readCustomerID()
                 AppInit(
                     authViewModel, settingsViewModel = settingsViewModel,
                     cartViewModel = cartViewModel,
@@ -229,7 +230,7 @@ fun AppInit(authViewModel : AuthViewModel,
                 modifier = Modifier.padding(2.dp)
             ) {
                 composable(NavigationRout.Login.route) {
-                    LoginScreen(navController = navController , authViewModel = authViewModel)
+                    LoginScreen(navController = navController , authViewModel = authViewModel,cartViewModel)
                 }
                 composable(NavigationRout.SignUp.route) {
                     SignUpScreen(navController = navController,authViewModel=authViewModel, cartViewModel)

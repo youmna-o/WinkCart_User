@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.auth.login
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -31,14 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
+import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.ui.auth.AuthViewModel
-import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.ui.utils.CustomTextField
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
-
+private val db = Firebase.firestore
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel){
+fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cartViewModel: CartViewModel){
     var context = LocalContext.current
     val emailError by authViewModel.emailError
     val passwordError by authViewModel.passwordError
@@ -55,7 +58,11 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel){
             .padding(top = 106.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             ){ Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge)
-            TextButton({navController.navigate("home")}) { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
+            TextButton({
+                cartViewModel.writeCustomerID("")
+                cartViewModel.readCustomerID()
+                navController.navigate("home")})
+            { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
 
         }
          Spacer(modifier = Modifier.height(56.dp))
@@ -77,12 +84,32 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel){
             }
         ), textAlign = TextAlign.End)
 
-
         Spacer(modifier = Modifier.height(30.dp))
         Button(onClick = {
             authViewModel.signIn(email, password){success ->
                 if (success) {
-                    navController.navigate("home")
+                    val userEmail = email.trim()
+
+                    val docRef = db.collection("customers").document(userEmail)
+                    docRef.get()
+                        .addOnSuccessListener { document ->
+                            if (document != null) {
+                                val customerId = document.getString("customerId") ?: ""
+                                Log.d("shared", "Customer ID from Firestore: $customerId")
+                                Log.d("shared", "************ before auth")
+                                cartViewModel.readCustomerID()
+                                Log.d("shared", "DocumentSnapshot data: ${document.data}")
+                                cartViewModel.writeCustomerID("${customerId}")
+                                navController.navigate("home")
+                                cartViewModel.readCustomerID()
+                                Log.d("shared", "************ after auth")
+                            } else {
+                                Log.d("shared", "No such document")
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.d("shared", "get failed with ", exception)
+                        }
                 } else {
                     val errorMessage = null
                     Toast.makeText(context, errorMessage ?: "You Have Entered Wrong Email or Password", Toast.LENGTH_LONG).show()

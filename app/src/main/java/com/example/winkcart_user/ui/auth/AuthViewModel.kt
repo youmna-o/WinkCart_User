@@ -10,6 +10,7 @@ import com.example.winkcart_user.data.model.customer.CustomerRequest
 
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -60,7 +61,20 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
                 }
         }
     }
-
+//    authViewModel.postCustomer(customerRequest) { shopifyId ->
+//        if (shopifyId != null) {
+//            val customerMap = hashMapOf("customerId" to shopifyId)
+//            val userEmail = email.trim()
+//            db.collection("customers").document(userEmail).set(customerMap)
+//                .addOnSuccessListener {
+//                }
+//
+//            cartViewModel.writeCustomerID(shopifyId)
+//            navController.navigate("home")
+//        } else {
+//            // Toast.makeText(context, "Shopify error", Toast.LENGTH_LONG).show()
+//        }
+//    }
 
 
     private fun Uservalidate(email: String, password: String): Boolean {

@@ -1,7 +1,6 @@
 package com.example.winkcart_user.cart.viewModel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -258,7 +257,7 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
 
     fun writeCustomerID(id: String){
         viewModelScope.launch (Dispatchers.IO) {
-            val result = repo.writeCustomerID(id)
+            val result = repo.writeCustomerID(id.toString())
         }
     }
     fun readCustomerID(){

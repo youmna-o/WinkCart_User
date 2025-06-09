@@ -33,11 +33,9 @@ import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.model.customer.CustomerRequest
-import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.utils.CustomSmallTextField
 import com.example.winkcart_user.ui.utils.CustomTextField
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -63,9 +61,13 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , ca
             .padding(top = 106.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ){ Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge)
-            TextButton({navController.navigate("home")}) { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
+            TextButton({
+                //cartViewModel.writeCustomerID(null)
+                Log.d("shared", "************ after auth")
+                cartViewModel.readCustomerID()
+                navController.navigate("home")})
+            { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
         }
-        //Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
             CustomSmallTextField(
@@ -123,14 +125,19 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , ca
                         authViewModel.postCustomer(customerRequest) { shopifyId ->
                             if (shopifyId != null) {
                                 val customerMap = hashMapOf("customerId" to shopifyId)
-                                db.collection("customers").document().set(customerMap)
+                                val userEmail = email.trim()
+                                db.collection("customers").document(userEmail).set(customerMap)
                                     .addOnSuccessListener {
                                     }
-
+                                Log.d("shared", "************ before auth")
+                                cartViewModel.readCustomerID()
                                 cartViewModel.writeCustomerID(shopifyId)
+                                Log.d("shared", "************ after auth")
+                                cartViewModel.readCustomerID()
+
                                 navController.navigate("home")
                             } else {
-                                Toast.makeText(context, "Shopify error", Toast.LENGTH_LONG).show()
+                               // Toast.makeText(context, "Shopify error", Toast.LENGTH_LONG).show()
                             }
                         }
                     } else {

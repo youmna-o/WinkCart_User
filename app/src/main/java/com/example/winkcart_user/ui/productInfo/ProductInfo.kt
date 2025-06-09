@@ -204,6 +204,8 @@ fun ProductInfo(
                 Log.i("TAG", "customerID = ${customerID.value}")
 
             }
+                cartViewModel.readCustomerID()
+                Log.d("shared", "************ after auth")
 
 
         }
