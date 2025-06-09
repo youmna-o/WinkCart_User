@@ -255,7 +255,7 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
-    fun writeCustomerID(id: String){
+    fun writeCustomerID(id: String?){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.writeCustomerID(id.toString())
         }

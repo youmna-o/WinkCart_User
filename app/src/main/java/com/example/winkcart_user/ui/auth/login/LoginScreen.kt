@@ -59,7 +59,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cart
             horizontalArrangement = Arrangement.SpaceBetween,
             ){ Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge)
             TextButton({
-                cartViewModel.writeCustomerID("")
+                cartViewModel.writeCustomerID(null)
                 cartViewModel.readCustomerID()
                 navController.navigate("home")})
             { Text( "Skip", style = MaterialTheme.typography.labelSmall)}

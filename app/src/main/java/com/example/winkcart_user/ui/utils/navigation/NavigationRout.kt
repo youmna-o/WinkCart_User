@@ -18,5 +18,6 @@ package com.example.winkcart_user.ui.utils.navigation
     }
 
      object categories :NavigationRout("Categories")
+     object Favourite :NavigationRout("Favourite")
 }
 

@@ -62,7 +62,7 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , ca
             horizontalArrangement = Arrangement.SpaceBetween,
         ){ Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge)
             TextButton({
-                //cartViewModel.writeCustomerID(null)
+                cartViewModel.writeCustomerID(null)
                 Log.d("shared", "************ after auth")
                 cartViewModel.readCustomerID()
                 navController.navigate("home")})

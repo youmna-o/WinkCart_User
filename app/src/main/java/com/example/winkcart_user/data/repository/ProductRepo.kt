@@ -30,6 +30,7 @@ interface ProductRepo {
 
     suspend fun readCustomerID(): Flow<String>
     suspend fun writeCustomerID(customerID: String)
+     fun readCustomersID(): String
 
     suspend fun getFilteredSmartCollections(): Flow<SmartCollectionsResponse?>
     suspend fun getAllProducts() :  Flow<ProductResponse?>

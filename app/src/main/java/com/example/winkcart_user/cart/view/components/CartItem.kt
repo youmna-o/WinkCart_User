@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Remove
@@ -65,17 +66,13 @@ fun CartItem(
         )
     }
 
-    var quantity by remember {
-        mutableIntStateOf(draftOrder.line_items[0]?.quantity ?: 1)
-    }
-
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text("Delete Item") },
-            text = { Text("Are you sure you want to delete this item from the cart?") },
+            text = { Text("Are you sure you want to delete this item from your favourite list ?") },
             confirmButton = {
                 androidx.compose.material3.TextButton(
                     onClick = {
@@ -173,146 +170,35 @@ fun CartItem(
 
                                 Spacer(Modifier.weight(1f))
 
-
-                                IconButton(
-                                    onClick = {  showDeleteDialog = true},
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .align(Alignment.CenterVertically)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Close,
-                                        contentDescription = "Delete",
-                                        tint = Color.Gray,
-                                        modifier = Modifier.size(25.dp)
-                                    )
-                                }
-
                             }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.color),
-                                    color = Color.Gray,
-                                    fontSize = 12.sp,
-                                )
-                                draftOrder.line_items[0]?.properties?.get(0)?.let {
-                                    Text(
-                                        text = it.value,
-                                        fontSize = 12.sp
-                                    )
-                                }
 
-                                Spacer(Modifier.width(10.dp))
-
-                                Text(
-                                    text = stringResource(R.string.size),
-                                    color = Color.Gray,
-                                    fontSize = 12.sp,
-                                )
-                                draftOrder.line_items[0]?.properties?.get(1)?.let {
-                                    Text(
-                                        text = it.value,
-                                        fontSize = 12.sp
-                                    )
-                                }
-
-
-                            }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(4.dp))
+                       Row {
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = Color.White,
-                            shadowElevation = 4.dp,
-                        ) {
-                            val decreaseEnabled = quantity > 1
+                           Text(
+                               text = "$price $currencyCode",
+                               color = Color.Gray,
+                               fontWeight = FontWeight.Bold
 
-                            IconButton(
-                                onClick = {
-
-                                    if (decreaseEnabled) {
-                                        quantity--
-                                        onQuantityChange(draftOrder, quantity)
-                                    }
-                                },
-                                enabled = decreaseEnabled,
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .align(Alignment.CenterVertically)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Remove,
-                                    contentDescription = "Decrease",
-                                    tint = Color.Gray.copy(alpha = if (decreaseEnabled) 1f else 0.3f),
-                                    modifier = Modifier.size(25.dp)
-                                )
-                            }
-                        }
-
-
-                        Spacer(Modifier.width(15.dp))
-
-                        Text(
-                            text = quantity.toString(),
-                            color = Color.Gray,
-                            fontWeight = FontWeight.Bold
-
-                        )
-                        Spacer(Modifier.width(15.dp))
-
-                        Surface(
-                            shape = CircleShape,
-                            color = Color.White,
-                            shadowElevation = 4.dp,
-                        ) {
-                            val increaseEnabled = quantity < (draftOrder.line_items[0]?.properties?.get(2)?.value?.toInt()
-                                ?: 10)
-
-                            IconButton(
-                                onClick = {
-                                    if(increaseEnabled) {
-                                        quantity++
-                                        onQuantityChange(draftOrder, quantity)
-                                    }
-                                }
-                                ,
-                                enabled = increaseEnabled,
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .align(Alignment.CenterVertically)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Add,
-                                    contentDescription = "Increase",
-                                    tint = Color.Gray.copy(alpha = if (increaseEnabled) 1f else 0.3f),
-                                    modifier = Modifier.size(25.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(
-                            text = "$price $currencyCode",
-                            color = Color.Gray,
-                            fontWeight = FontWeight.Bold
-
-                        )
-
-                    }
-
+                           )
+                           Spacer(modifier = Modifier.weight(1f))
+                           IconButton(
+                               onClick = {  showDeleteDialog = true},
+                               modifier = Modifier
+                                   .size(30.dp)
+                                   .align(Alignment.CenterVertically)
+                           ) {
+                               Icon(
+                                   imageVector = Icons.Default.Delete,
+                                   contentDescription = "Delete",
+                                   tint = Color.Gray,
+                                   modifier = Modifier.size(25.dp)
+                               )
+                           }
+                       }
                     Spacer(modifier = Modifier.height(10.dp))
 
                 }

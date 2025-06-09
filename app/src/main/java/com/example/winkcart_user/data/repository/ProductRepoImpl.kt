@@ -86,6 +86,10 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         localDataSource.writeCustomerID(customerID)
     }
 
+    override fun readCustomersID(): String {
+        return localDataSource.readCustomersID()
+    }
+
 
     override suspend fun getProductsByVendor(vendor: String): Flow<ProductResponse?> {
         return remoteDataSource.getProductsByVendor(vendor)
