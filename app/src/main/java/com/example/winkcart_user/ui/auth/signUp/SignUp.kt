@@ -1,6 +1,7 @@
 package com.example.winkcart_user.ui.auth.signUp
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,20 +32,40 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
+import com.example.winkcart_user.cart.viewModel.CartViewModel
+import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.ui.utils.CustomSmallTextField
 import com.example.winkcart_user.ui.utils.CustomTextField
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
-
+private val db = Firebase.firestore
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
+fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , cartViewModel: CartViewModel){
     val emailError by authViewModel.emailError
     val passwordError by authViewModel.passwordError
     var context = LocalContext.current
 
+    var showVerificationDialog by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+
+    if (showVerificationDialog) {
+        AlertDialog(
+            onDismissRequest = { showVerificationDialog = false },
+            title = { Text(" Email Verification") },
+            text = { Text("We've sent you a verification link to your email. Please click the link to finish Registration") },
+            confirmButton = {
+                Button(onClick = { showVerificationDialog = false }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
     Column(modifier = Modifier
         .padding(16.dp)
         .fillMaxSize()) {
@@ -52,13 +74,35 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
             .padding(top = 106.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ){ Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge)
-            TextButton({navController.navigate("home")}) { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
+            TextButton({
+                cartViewModel.writeCustomerID(null)
+                Log.d("shared", "************ after auth")
+                cartViewModel.readCustomerID()
+                navController.navigate("home")})
+            { Text( "Skip", style = MaterialTheme.typography.labelSmall)}
         }
-        //Text("Sign UP To WinkCart", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 106.dp))
         Spacer(modifier = Modifier.height(56.dp))
-        CustomTextField(lable = "Name",input = name,onValueChange = { newName ->
-            name = newName
-        },false)
+        Row(modifier = Modifier.fillMaxWidth()) {
+            CustomSmallTextField(
+                lable = "First Name",
+                input = firstName,
+                onValueChange = { newName -> firstName = newName },
+                isEmailError = false,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
+            )
+            CustomSmallTextField(
+                lable = "Last Name",
+                input = lastName,
+                onValueChange = { newName -> lastName = newName },
+                isEmailError = false,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp)
+            )
+        }
+
         CustomTextField(lable = "Email",input = email,onValueChange = { newEmail ->
             email = newEmail
         },emailError != null)
@@ -78,22 +122,43 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel){
 
             }), textAlign = TextAlign.End)
 
-
         Spacer(modifier = Modifier.height(30.dp))
         Button(
             onClick = {
-                authViewModel.signUp(email, password){success ->
-                    if (success) {
-                        navController.navigate("home")
-                    } else {
-                        val errorMessage = null
-                        Toast.makeText(context, errorMessage ?: "", Toast.LENGTH_LONG).show()
+                authViewModel.signUp(
+                    email = email,
+                    password = password,
+                    onVerificationSent = { verificationSent ->
+                        if (verificationSent) {
+                            showVerificationDialog = true
+                        } else {
+                            Toast.makeText(context, "Failed To Send verification ", Toast.LENGTH_LONG).show()
+                        }
+                    },
+                    onVerified = { verifiedUser ->
+                        verifiedUser?.let { user ->
+                            val customerRequest = CustomerRequest(
+                                first_name = firstName,
+                                last_name = lastName,
+                                email = email,
+                                password = password,
+                                password_confirmation = password
+                            )
+                            authViewModel.postCustomer(customerRequest) { shopifyId ->
+                                if (shopifyId != null) {
+                                    val customerMap = hashMapOf("customerId" to shopifyId)
+                                    db.collection("customers").document(email.trim()).set(customerMap)
+                                    cartViewModel.writeCustomerID(shopifyId)
+                                }
+                            }
+                            navController.navigate("home")
+                        }
                     }
-                }
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(48.dp)
         ) {
             Text("SIGN UP")
         }

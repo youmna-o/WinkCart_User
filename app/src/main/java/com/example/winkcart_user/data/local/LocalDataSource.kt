@@ -15,5 +15,5 @@ interface LocalDataSource {
 
     suspend fun readCustomerID(): Flow<String>
     suspend fun writeCustomerID(customerID: String)
-
+     fun readCustomersID(): String
 }

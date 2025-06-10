@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
@@ -45,4 +47,23 @@ fun CustomTextField(lable: String , input: String ,onValueChange: (String) -> Un
         )
         Spacer(modifier = Modifier.height(16.dp))
     }
+}
+
+@Composable
+fun CustomSmallTextField(
+    lable: String,
+    input: String,
+    onValueChange: (String) -> Unit,
+    isEmailError: Boolean,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = input,
+        onValueChange = onValueChange,
+        label = { Text(lable) },
+        isError = isEmailError,
+        singleLine = true,
+        modifier = modifier
+            .padding(bottom = 8.dp)
+    )
 }
