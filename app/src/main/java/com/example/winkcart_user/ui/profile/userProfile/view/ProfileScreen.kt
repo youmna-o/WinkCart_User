@@ -111,8 +111,8 @@ fun ProfileScreen(navController: NavController) {
 
             ProfileMenuItem(
                 title = "Settings",
-                subtitle = "Notifications, password",
-                onClick = { /*  */ }
+                subtitle = "addresses,about us etc ",
+                onClick = { navController.navigate("Settings") }
             )
 
         }

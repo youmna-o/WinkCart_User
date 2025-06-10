@@ -2,52 +2,20 @@ package com.example.winkcart_user
 
 
 import android.os.Bundle
-import android.util.Log
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.winkcart_user.ui.auth.login.LoginScreen
-import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
-
 import com.example.winkcart_user.data.local.LocalDataSourceImpl
 import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.get
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsFactory
 import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
-import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartFactory
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
@@ -56,39 +24,40 @@ import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
-import com.example.winkcart_user.settings.SettingsView
+import com.example.winkcart_user.favourite.FavouriteFactory
+import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
-import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
-import com.example.winkcart_user.ui.productInfo.ProductInfo
-
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
-import com.example.winkcart_user.ui.utils.navigation.NavigationRout
-import com.example.winkcart_user.ui.home.main.view.HomeScreen
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
-import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
-import com.example.winkcart_user.ui.profile.orders.view.OrderDetailsScreen
-import com.example.winkcart_user.ui.profile.orders.view.OrdersScreen
-import com.example.winkcart_user.ui.profile.orders.view.OrdersScreenOnSucc
+
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
-import com.example.winkcart_user.ui.profile.userProfile.view.ProfileScreen
 
 class MainActivity : ComponentActivity() {
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
+        val retrofitHelper = RetrofitHelper
+            val remoteDataSource = RemoteDataSourceImpl(retrofitHelper)
+            val localDataSource =  LocalDataSourceImpl(
+                SettingsDaoImpl(
+                    LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                )
+            )
+            val authFactory = AuthFactory(
+                repo = FirebaseRepoImp(remoteDataSource),
+                customerRepo = ProductRepoImpl(remoteDataSource,localDataSource)
+            )
 
 
-            var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper)))
+           // var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper)))
             var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
 
             val settingsViewModel: SettingsViewModel = viewModel(
@@ -117,7 +86,20 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
-            
+            val favViewModel: FavouriteViewModel = viewModel(
+                factory = FavouriteFactory(
+                    repo = ProductRepoImpl(
+                        remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
+                        localDataSource =   LocalDataSourceImpl(
+                            SettingsDaoImpl(
+                                LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                            )
+                        )
+                    )
+                )
+            )
+
+
 
             val brandFactory = BrandsFactory(
                 repo = ProductRepoImpl(
@@ -186,7 +168,7 @@ class MainActivity : ComponentActivity() {
 
 
             WinkCart_UserTheme {
-
+                cartViewModel.readCustomerID()
                 AppInit(
                     authViewModel, settingsViewModel = settingsViewModel,
                     cartViewModel = cartViewModel,
@@ -195,12 +177,14 @@ class MainActivity : ComponentActivity() {
                     categoriesViewModel = categoriesViewModel,
                     currencyViewModel = currencyViewModel,
                     ordersViewModel = ordersViewModel,
+                    favouriteViewModel = favViewModel,
                 )
            }
 
             }
         }
     }
+/*
 
 @Composable
 fun AppInit(authViewModel : AuthViewModel,
@@ -244,7 +228,10 @@ fun AppInit(authViewModel : AuthViewModel,
                 modifier = Modifier.padding(2.dp)
             ) {
                 composable(NavigationRout.Login.route) {
-                    LoginScreen(navController = navController , authViewModel = authViewModel)
+                    LoginScreen(
+                        navController = navController, authViewModel = authViewModel,
+                        cartViewModel = TODO()
+                    )
                 }
                 composable(NavigationRout.SignUp.route) {
                     SignUpScreen(navController = navController,authViewModel=authViewModel)
@@ -279,112 +266,15 @@ fun AppInit(authViewModel : AuthViewModel,
                         scrollState = scroll,
                         categoriesViewModel = categoriesViewModel,
                         cartViewModel = cartViewModel
+                  //  currencyViewModel = currencyViewModel,
+                   // favouriteViewModel = favViewModel
+                )
+           }
 
-                    )
-                }
             }
         }
     }
 
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry?.destination?.route
-
-    NavigationBar(containerColor = Color.White) {
-        NavigationBarItem(
-            icon = {  Icon(
-                painter = painterResource(id = R.drawable.home),
-                contentDescription = "category",
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
-            ) },
-            label = { Text("Home") },
-            selected = currentRoute == NavigationRout.Home.route,
-            onClick = {
-                navController.navigate(NavigationRout.Home.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
-        NavigationBarItem(
-            icon = {   Icon(
-                painter = painterResource(id = R.drawable.menu),
-                contentDescription = "category",
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
-            ) },
-            label = { Text("category") },
-            selected = currentRoute == NavigationRout.categories.route,
-            onClick = {
-                navController.navigate(NavigationRout.categories.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Cart") },
-            label = { Text("Cart") },
-            selected = currentRoute == NavigationRout.Cart.route,
-            onClick = {
-                navController.navigate(NavigationRout.Cart.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
-        NavigationBarItem(
-            icon = {  Icon(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = "profile",
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
-            )
-            },
-            label = { Text("Profile") },
-            selected = currentRoute == NavigationRout.Profile.route,
-            onClick = {
-                navController.navigate(NavigationRout.Profile.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
-
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-            label = { Text("Settings") },
-            selected = currentRoute == NavigationRout.Settings.route,
-            onClick = {
-                navController.navigate(NavigationRout.Settings.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
-
-
-
-
     }
-}
 
+*/

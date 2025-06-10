@@ -1,5 +1,9 @@
 package com.example.winkcart_user.data.repository
 
+
+import com.example.winkcart_user.data.model.customer.Customer
+import com.example.winkcart_user.data.model.customer.CustomerRequest
+import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
@@ -12,6 +16,7 @@ import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepo {
+
     suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?>
     suspend fun getLatestRateFromUSDToEGP(): Flow<CurrencyResponse?>
 
@@ -26,6 +31,7 @@ interface ProductRepo {
 
     suspend fun readCustomerID(): Flow<String>
     suspend fun writeCustomerID(customerID: String)
+     fun readCustomersID(): String
 
     suspend fun getFilteredSmartCollections(): Flow<SmartCollectionsResponse?>
     suspend fun getAllProducts() :  Flow<ProductResponse?>
@@ -34,6 +40,9 @@ interface ProductRepo {
 
      fun getRate() : Float
      fun getReview(): String
+
+
+    fun postCustomer (customer: CustomerRequest): Flow<CustomerResponse?>
 
     suspend fun createDraftOrder(
         draftOrderRequest: DraftOrderRequest
@@ -50,6 +59,7 @@ interface ProductRepo {
     suspend fun getPriceRules() : Flow<PriceRulesResponse?>
     suspend fun getUserOrders(customerID: Long) : Flow<OrdersResponse?>
     suspend fun getSpecificOrderDetails(orderId: Long) : Flow<OrderDetailsResponse?>
+
 
 
 }
