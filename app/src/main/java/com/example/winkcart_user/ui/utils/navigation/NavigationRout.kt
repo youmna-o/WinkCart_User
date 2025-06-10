@@ -8,6 +8,8 @@ package com.example.winkcart_user.ui.utils.navigation
      data object Cart :NavigationRout("Cart")
      object Home : NavigationRout("home")
      data object Orders : NavigationRout("orders")
+     data object Profile : NavigationRout("Profile")
+     data object OrderDetails : NavigationRout("OrderDetails/{orderId}")
 
      object VendorProducts : NavigationRout("vendor_products/{vendorName}") {
          fun createRoute(vendorName: String) = "vendor_products/$vendorName"

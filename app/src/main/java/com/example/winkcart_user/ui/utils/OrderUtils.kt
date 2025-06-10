@@ -12,3 +12,9 @@ fun calculateTotalAfterDiscount(lineItems: List<LineItem>): Double {
         (price - discount) * item.quantity
     }
 }
+
+fun formatDate(isoDateTime: String): String {
+    return java.time.LocalDate.parse(isoDateTime.substringBefore('T'))
+        .format(java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy"))
+}
+

@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.profile.orders.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,13 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.data.model.orders.Order
-import java.text.SimpleDateFormat
-import java.util.Locale
 import com.example.winkcart_user.ui.utils.calculateQuantities
 import com.example.winkcart_user.ui.utils.calculateTotalAfterDiscount
+import com.example.winkcart_user.ui.utils.formatDate
 
+// in all orders screen , represent an order
 @Composable
-fun OrderCard(order: Order) {
+fun OrderCard(order: Order, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,7 +40,6 @@ fun OrderCard(order: Order) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Header with order number and status
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -53,9 +53,7 @@ fun OrderCard(order: Order) {
                         color = Color.Black
                     )
                     Text(
-                        text = /* SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(order.createdAt.toString())
-                            ?.toString()
-                            ?:*/ "",
+                        text = formatDate(order.createdAt ?: ""),
                         fontSize = 14.sp,
                         color = Color.Gray,
                         modifier = Modifier.padding(top = 2.dp)
@@ -69,26 +67,24 @@ fun OrderCard(order: Order) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-/*
-            OrderDetailRow("Tracking number:", order.)
-*/
-            OrderDetailRow("Quantity:", calculateQuantities(order.lineItems).toString())
-            OrderDetailRow("Total Price:" , calculateTotalAfterDiscount(order.lineItems ).toString())
+            OrderDetailRow("Quantity:", "${calculateQuantities(order.lineItems)} unit")
+            OrderDetailRow(
+                "Total Price:",
+                "${calculateTotalAfterDiscount(order.lineItems)} ${order.currency}"
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = { /* Handle details click */ },
+                onClick = onClick,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color.Black
                 ),
-                border = ButtonDefaults.outlinedButtonBorder.copy(
-                    width = 1.dp
-                )
+                border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp)
             ) {
                 Text(
                     text = "Details",
@@ -111,13 +107,14 @@ fun OrderDetailRow(label: String, value: String) {
         Text(
             text = label,
             fontSize = 14.sp,
-            color = Color.Gray
+            fontWeight = FontWeight.Medium,
+            color = Color.Black
         )
         Text(
             text = value,
             fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color.Black
+            color = Color.Gray,
+
         )
     }
 }

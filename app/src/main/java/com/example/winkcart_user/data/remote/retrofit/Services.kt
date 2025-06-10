@@ -3,7 +3,8 @@ package com.example.winkcart_user.data.remote.retrofit
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
-import com.example.winkcart_user.data.model.orders.OrderResponse
+import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrdersResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -28,8 +29,6 @@ interface Services {
     suspend fun getAllProducts(
         @Header("X-Shopify-Access-Token") token: String
     ): Response<ProductResponse>
-
-
 
     @GET("products.json")
     suspend fun getProductsByVendor (
@@ -69,9 +68,16 @@ interface Services {
 
     @GET("orders.json")
     suspend fun getUserOrders (
-    @Header("X-Shopify-Access-Token") token: String ,
+    @Header("X-Shopify-Access-Token") token: String,
     @Query("customer_id") customerId: Long
-    ) :Response<OrderResponse>
+    ) :Response<OrdersResponse>
+
+    @GET("orders/{orderId}.json")
+    suspend fun getOrderDetails(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("orderId") orderID:Long):Response<OrderDetailsResponse>
+
+
 }
 
 interface CurrencyService {

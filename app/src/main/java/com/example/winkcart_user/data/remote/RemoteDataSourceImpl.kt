@@ -5,7 +5,8 @@ import com.example.winkcart_user.BuildConfig
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
-import com.example.winkcart_user.data.model.orders.OrderResponse
+import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrdersResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -85,7 +86,8 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         draftOrderId: Long,
         draftOrderRequest: DraftOrderRequest
     ): Flow<DraftOrderResponse?> = flow {
-        val response = retrofitHelper.shopifyService.updateDraftOrder(
+        val response = retrofitHelper
+            .shopifyService.updateDraftOrder(
             token = BuildConfig.shopifyAccessToken,
             draftOrderId = draftOrderId,
             draftOrder = draftOrderRequest
@@ -95,13 +97,27 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
 
     override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
         val result =
-            retrofitHelper.shopifyService.getPriceRules(token = BuildConfig.shopifyAccessToken)
+            retrofitHelper.shopifyService
+                .getPriceRules(token = BuildConfig.shopifyAccessToken)
                 .body()
         return flowOf(result)
     }
 
-    override suspend fun getOrdes(customerId: Long): Flow<OrderResponse?> {
-        val response =  retrofitHelper.shopifyService.getUserOrders(token = BuildConfig.shopifyAccessToken, customerId = customerId ).body()
+    override suspend fun getOrders(customerId: Long): Flow<OrdersResponse?> {
+        val response =  retrofitHelper.shopifyService
+            .getUserOrders(token = BuildConfig.shopifyAccessToken,
+                customerId = customerId ).body()
         return flowOf(response)
+    }
+
+    override suspend fun getSpecificOrderDEtails(orderId: Long): Flow<OrderDetailsResponse?> {
+        var response = retrofitHelper.shopifyService.getOrderDetails(
+            BuildConfig.shopifyAccessToken,orderId).body()
+        var result = retrofitHelper.shopifyService.getOrderDetails(
+            BuildConfig.shopifyAccessToken,orderId)
+        Log.i("TAG", "getSpecificOrderDEtails: ${result.raw()}")
+        Log.i("TAG", "getSpecificOrderDEtails: ${result.body()}")
+        return flowOf(response)
+
     }
 }

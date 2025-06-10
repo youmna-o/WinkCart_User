@@ -2,6 +2,7 @@ package com.example.winkcart_user
 
 
 import android.os.Bundle
+import android.util.Log
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,9 +18,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -67,10 +70,12 @@ import com.example.winkcart_user.ui.home.main.view.HomeScreen
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
+import com.example.winkcart_user.ui.profile.orders.view.OrderDetailsScreen
 import com.example.winkcart_user.ui.profile.orders.view.OrdersScreen
 import com.example.winkcart_user.ui.profile.orders.view.OrdersScreenOnSucc
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
+import com.example.winkcart_user.ui.profile.userProfile.view.ProfileScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -215,9 +220,13 @@ fun AppInit(authViewModel : AuthViewModel,
         NavigationRout.Home.route,
         NavigationRout.Cart.route,
         NavigationRout.Settings.route,
-        NavigationRout.categories.route
+        NavigationRout.categories.route,
+        NavigationRout.Profile.route
     )
     val showBottomBar = currentRoute in screensWithBottomBar
+    LaunchedEffect(currentRoute) {
+        Log.i("BottomBar", "Current Route: $currentRoute | Show BottomBar: $showBottomBar")
+    }
 
     WinkCart_UserTheme{
         Scaffold(
@@ -244,22 +253,23 @@ fun AppInit(authViewModel : AuthViewModel,
                     HomeScreen(navController = navController,brandsViewModel=brandsViewModel)
                 }
                 composable(NavigationRout.Orders.route) {
-OrdersScreen(
-    navController = navController,
-    ordersViewModel = ordersViewModel
-)
+                    OrdersScreen(navController = navController, ordersViewModel = ordersViewModel)
                 }
-                composable("vendor_products/{brand}") { backStackEntry ->
-                    val brand = backStackEntry.arguments?.getString("brand") ?: ""
-                    VendorProductScreen(
-                        vendor = brand, navController = navController,
-                        vendorProductsViewModel = vendorProductViewModel
-                    )
+                composable(NavigationRout.categories.route) {
+                    CategoriesScreen(categoriesViewModel,navController,currencyViewModel)
                 }
+
                 composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
                 composable(NavigationRout.Cart.route) { CartView(cartViewModel) }
-                composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
-
+                composable(NavigationRout.Profile.route) { ProfileScreen(navController) }
+                composable("vendor_products/{brand}") { backStackEntry ->
+                    val brand = backStackEntry.arguments?.getString("brand") ?: ""
+                    VendorProductScreen(brand, navController = navController, vendorProductsViewModel = vendorProductViewModel)
+                }
+                composable(NavigationRout.OrderDetails.route) { backStackEntry ->
+                    val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
+                   OrderDetailsScreen(navController,ordersViewModel,orderId.toLong())
+                }
                 composable(NavigationRout.ProductInfo.route) {
                         backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId") ?: ""
@@ -303,50 +313,6 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
-      /*  NavigationBarItem(
-            icon = { Icon(Icons.Default.ThumbUp, contentDescription = "Profile") },
-            label = { Text("Profile") },
-            selected = currentRoute == NavigationRout.Profile.route,
-            onClick = {
-                navController.navigate(NavigationRout.Profile.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )*/
-
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-            label = { Text("Settings") },
-            selected = currentRoute == NavigationRout.Settings.route,
-            onClick = {
-                navController.navigate(NavigationRout.Settings.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
-
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Cart") },
-            label = { Text("Cart") },
-            selected = currentRoute == NavigationRout.Cart.route,
-            onClick = {
-                navController.navigate(NavigationRout.Cart.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )
         NavigationBarItem(
             icon = {   Icon(
                 painter = painterResource(id = R.drawable.menu),
@@ -367,16 +333,11 @@ fun BottomNavigationBar(navController: NavController) {
             }
         )
         NavigationBarItem(
-            icon = {   Icon(
-                painter = painterResource(id = R.drawable.menu),
-                contentDescription = "orders",
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
-            ) },
-            label = { Text("orders") },
-            selected = currentRoute == NavigationRout.Orders.route,
+            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Cart") },
+            label = { Text("Cart") },
+            selected = currentRoute == NavigationRout.Cart.route,
             onClick = {
-                navController.navigate(NavigationRout.Orders.route) {
+                navController.navigate(NavigationRout.Cart.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
@@ -385,6 +346,44 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
+        NavigationBarItem(
+            icon = {  Icon(
+                painter = painterResource(id = R.drawable.profile),
+                contentDescription = "profile",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            )
+            },
+            label = { Text("Profile") },
+            selected = currentRoute == NavigationRout.Profile.route,
+            onClick = {
+                navController.navigate(NavigationRout.Profile.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+            label = { Text("Settings") },
+            selected = currentRoute == NavigationRout.Settings.route,
+            onClick = {
+                navController.navigate(NavigationRout.Settings.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+
+
+
 
     }
 }

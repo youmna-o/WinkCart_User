@@ -1,9 +1,9 @@
 package com.example.winkcart_user.ui.profile.orders.view
 
-import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,22 +42,22 @@ import com.example.winkcart_user.BottomNavigationBar
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.orders.Order
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
+import com.example.winkcart_user.ui.utils.formatDate
 
 @Composable
-fun OrdersScreen(navController: NavController, ordersViewModel: OrdersViewModel) {
-    ordersViewModel.getUserOrders()
-    var orders = ordersViewModel.ordersList.collectAsState().value
-    when (orders) {
-        is ResponseStatus.Success<*> -> {
-            OrdersScreenOnSuccess(navController, (orders as ResponseStatus.Success).result.orders)
-        }
+fun OrderDetailsScreen (navController: NavController, ordersViewModel: OrdersViewModel,orderID :Long){
 
-        is ResponseStatus.Loading -> {
-            OrdersScreenLoading()
+    ordersViewModel.getOrderDetails(orderID)
+    val orderDetails = ordersViewModel.orderDetails.collectAsState().value
+    when (orderDetails) {
+        is ResponseStatus.Success<*> ->{
+            OrderDetailsScreenOnSuccess((orderDetails as ResponseStatus.Success).result.order,navController)
         }
-
+        is ResponseStatus.Loading ->{
+            OrderDetailsScreenOnLoading()
+        }
         is ResponseStatus.Error -> {
-            OrdersScreenOnError({ ordersViewModel.getUserOrders() })
+            OrderDetailsScreenOnError({ ordersViewModel.getOrderDetails(orderId = orderID) })
         }
     }
 }
@@ -62,8 +65,8 @@ fun OrdersScreen(navController: NavController, ordersViewModel: OrdersViewModel)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrdersScreenOnSuccess(navController: NavController, orders: List<Order>) {
-    Scaffold(
+fun OrderDetailsScreenOnSuccess(order:Order,navController: NavController){
+    Scaffold (
         topBar = {
             TopAppBar(
                 title = {
@@ -95,31 +98,64 @@ fun OrdersScreenOnSuccess(navController: NavController, orders: List<Order>) {
         },
         bottomBar = {
             BottomNavigationBar(
-                navController = navController
+                navController =navController
             )
         },
         containerColor = Color(0xFFF5F5F5)
-    ) { paddingValues ->
+    ) { padding ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(vertical = 8.dp)
+                .padding(16.dp)
         ) {
-            items(orders.size) { index ->
-                OrderCard(order = orders[index], onClick = {
-                    navController.navigate("OrderDetails/${orders[index].id}")
-                    Log.i("TAG", "OrdersScreenOnSucc ORDER CARD: ${orders[index].id} ")
+            item {
+                Spacer(modifier = Modifier.height(padding.calculateTopPadding()))
+                Column {
+                    Text("Order №${order.id}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Row( modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            text = formatDate(order.createdAt),
+                            color = Color.Gray,
+                            fontSize = 14.sp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Delivered",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF4CAF50)
+                        )                }
+
                 }
-                )
-                Log.i("TAG", "OrdersScreenOnSucc: ${orders[index].id} ")
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("${order.lineItems.size} items", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }
+
+            items(order.lineItems.size) { index ->
+                val product = order.lineItems[index]
+                OrderItemCard(product.title,product.quantity,product.price,order.currency)
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Order information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                OrderInfoRow("Shipping Address:", "${order.shippingAddress.city}, ${order.shippingAddress.country}")
+                OrderInfoRow("Total Amount:", "${order.currentTotalPrice} ${order.currency}")
+                OrderInfoRow("Discount:", "${order.currentTotalDiscounts} ${order.currency}" )
             }
         }
+
     }
+
 }
 
+
 @Composable
-fun OrdersScreenLoading() {
+fun OrderDetailsScreenOnLoading(){
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -134,7 +170,7 @@ fun OrdersScreenLoading() {
 }
 
 @Composable
-fun OrdersScreenOnError(onRetry: () -> Unit = {}) {
+fun OrderDetailsScreenOnError(onRetry: () -> Unit = {}){
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -160,3 +196,5 @@ fun OrdersScreenOnError(onRetry: () -> Unit = {}) {
         }
     }
 }
+
+

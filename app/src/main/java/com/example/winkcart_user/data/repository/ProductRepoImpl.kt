@@ -4,9 +4,9 @@ import com.example.winkcart_user.data.local.LocalDataSource
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
-import com.example.winkcart_user.data.model.orders.OrderResponse
+import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrdersResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
-import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.map
@@ -129,8 +129,12 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return  remoteDataSource.getPriceRules()
     }
 
-    override suspend fun getUserOrders(customerID: Long): Flow<OrderResponse?> {
-        return remoteDataSource.getOrdes(customerID)
+    override suspend fun getUserOrders(customerID: Long): Flow<OrdersResponse?> {
+        return remoteDataSource.getOrders(customerID)
+    }
+
+    override suspend fun getSpecificOrderDetails(orderId: Long): Flow<OrderDetailsResponse?> {
+        return remoteDataSource.getSpecificOrderDEtails(orderId)
     }
 
 }
