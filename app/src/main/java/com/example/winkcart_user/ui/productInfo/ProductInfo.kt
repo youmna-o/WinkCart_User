@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.productInfo
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
@@ -47,13 +48,16 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.LineItem
 import com.example.winkcart_user.data.model.draftorder.cart.Property
+import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.ui.productInfo.componants.FavIcon
 import com.example.winkcart_user.ui.productInfo.componants.ImageSlider
 import com.example.winkcart_user.ui.productInfo.componants.LongBasicDropdownMenu
 import com.example.winkcart_user.ui.productInfo.componants.Reviews
 import com.example.winkcart_user.ui.productInfo.componants.StarRatingBar
+import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.ui.utils.CustomButton
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductInfo(
@@ -61,21 +65,20 @@ fun ProductInfo(
     navController: NavController,
     scrollState: ScrollState,
     categoriesViewModel: CategoriesViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    favouriteViewModel: FavouriteViewModel,
 ) {
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
     var myProduct = remember(productState.value) {
         categoriesViewModel.getProduct(productID)
     }
-    val draftedOrders = cartViewModel.draftProductTitles.collectAsState()
+    val draftedOrders = favouriteViewModel.draftProductTitles.collectAsState()
     val isDraft = draftedOrders.value.contains(myProduct?.title)
 
     var selectedSize by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf("") }
-    //val draftTitles by viewModel.draftProductTitles.collectAsState()
 
-    //val isInDraft = draftTitles.contains(product.title)
     val selectedVariant = remember(selectedSize, selectedColor) {
         myProduct?.variants?.find { variant ->
             variant.option1 == selectedSize && variant.option2 == selectedColor
@@ -119,6 +122,28 @@ fun ProductInfo(
                     }?.flatMap { it.values }?.toList() ?: emptyList(),
                         onOptionSelected = { selectedColor = it }
                     )
+                    @Composable
+                    fun FavIcon(onClick : ()-> Unit){
+                        Surface(
+                            shape = CircleShape,
+                            color = Color.Black,
+                            shadowElevation = 4.dp,
+                        ) {
+                            IconButton(
+                                onClick = onClick,
+                                modifier = Modifier
+                                    .size(40.dp)
+                            ) {
+                                Icon(
+
+                                    imageVector = Icons.Outlined.FavoriteBorder,
+                                    contentDescription = "Add to favorites",
+                                    tint = Color.Gray,
+                                    modifier = Modifier.size(25.dp)
+                                )
+                            }
+                        }
+                    }
                     IconButton(onClick = {
                         if (!isDraft && myProduct != null) {
                             val draftOrder = DraftOrderRequest(
@@ -146,15 +171,15 @@ fun ProductInfo(
                                     customer = Customer(customerID.value.toLong())
                                 )
                             )
-                            cartViewModel.createDraftFavouriteOrder(customerID.value, draftOrder)
-                             //cartViewModel.createDraftOrder( draftOrder)
+                            favouriteViewModel.createDraftFavouriteOrder(customerID.value, draftOrder)
 
                         }
                     }) {
+
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "Favorite Icon",
-                            tint = if (isDraft) Color.Red else Color.Gray)
+                            tint = if (isDraft) myPurple else Color.Gray)
                     }
                 }
 

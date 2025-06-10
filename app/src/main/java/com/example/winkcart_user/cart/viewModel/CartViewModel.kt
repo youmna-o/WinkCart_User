@@ -55,8 +55,8 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _appliedCoupon = MutableStateFlow<PriceRule?>(null)
     val appliedCoupon = _appliedCoupon.asStateFlow()
 
-    private val _draftProductTitles = MutableStateFlow<Set<String>>(emptySet())
-    val draftProductTitles = _draftProductTitles.asStateFlow()
+//    private val _draftProductTitles = MutableStateFlow<Set<String>>(emptySet())
+//    val draftProductTitles = _draftProductTitles.asStateFlow()
 
 
     fun setAppliedCoupon(coupon: PriceRule) {
