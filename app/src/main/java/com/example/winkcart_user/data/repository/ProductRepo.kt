@@ -3,6 +3,7 @@ package com.example.winkcart_user.data.repository
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
+import com.example.winkcart_user.data.model.orders.OrderResponse
 import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
@@ -47,6 +48,7 @@ interface ProductRepo {
     ): Flow<DraftOrderResponse?>
 
     suspend fun getPriceRules() : Flow<PriceRulesResponse?>
+    suspend fun getUserOrders(customerID: Long) : Flow<OrderResponse?>
 
 
 }

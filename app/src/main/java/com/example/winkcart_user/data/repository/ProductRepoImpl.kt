@@ -4,6 +4,7 @@ import com.example.winkcart_user.data.local.LocalDataSource
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
+import com.example.winkcart_user.data.model.orders.OrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -126,6 +127,10 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
 
     override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
         return  remoteDataSource.getPriceRules()
+    }
+
+    override suspend fun getUserOrders(customerID: Long): Flow<OrderResponse?> {
+        return remoteDataSource.getOrdes(customerID)
     }
 
 }

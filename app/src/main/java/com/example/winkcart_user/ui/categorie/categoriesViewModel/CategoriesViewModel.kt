@@ -1,10 +1,9 @@
-package com.example.winkcart_user.categories.viewModel
+package com.example.winkcart_user.ui.categorie.categoriesViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
-import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.repository.ProductRepo

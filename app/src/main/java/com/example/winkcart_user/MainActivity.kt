@@ -1,13 +1,11 @@
 package com.example.winkcart_user
 
 
-import android.os.Build
 import android.os.Bundle
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -39,17 +37,18 @@ import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.get
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.winkcart_user.brands.viewModel.BrandsFactory
-import com.example.winkcart_user.brands.viewModel.BrandsViewModel
+import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsFactory
+import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartFactory
 import com.example.winkcart_user.cart.viewModel.CartViewModel
-import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
-import com.example.winkcart_user.categories.viewModel.CategoryFactory
+import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
+import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoryFactory
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
@@ -64,10 +63,14 @@ import com.example.winkcart_user.ui.productInfo.ProductInfo
 
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
-import com.example.winkcart_user.ui.home.main.HomeScreen
+import com.example.winkcart_user.ui.home.main.view.HomeScreen
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
+import com.example.winkcart_user.ui.profile.orders.view.OrdersScreen
+import com.example.winkcart_user.ui.profile.orders.view.OrdersScreenOnSucc
+import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
+import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -146,7 +149,8 @@ class MainActivity : ComponentActivity() {
                     )
                 )
             )
-            val categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(CategoriesViewModel :: class.java)
+            val categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(
+                CategoriesViewModel :: class.java)
 
             val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
@@ -162,6 +166,19 @@ class MainActivity : ComponentActivity() {
 
 
 
+            val ordersFactory = OrdersFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
+                    localDataSource =   LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                )
+            )
+            val ordersViewModel = ViewModelProvider(this,ordersFactory).get(OrdersViewModel::class.java)
+
+
 
             WinkCart_UserTheme {
 
@@ -171,7 +188,8 @@ class MainActivity : ComponentActivity() {
                     vendorProductViewModel = vendorProductsViewModel,
                     brandsViewModel = brandViewModel,
                     categoriesViewModel = categoriesViewModel,
-                    currencyViewModel = currencyViewModel
+                    currencyViewModel = currencyViewModel,
+                    ordersViewModel = ordersViewModel,
                 )
            }
 
@@ -185,8 +203,9 @@ fun AppInit(authViewModel : AuthViewModel,
             categoriesViewModel : CategoriesViewModel,
             settingsViewModel: SettingsViewModel,
             vendorProductViewModel :VendorProductsViewModel,
-            brandsViewModel: BrandsViewModel ,
-            currencyViewModel : CurrencyViewModel
+            brandsViewModel: BrandsViewModel,
+            currencyViewModel : CurrencyViewModel,
+            ordersViewModel: OrdersViewModel
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -223,6 +242,12 @@ fun AppInit(authViewModel : AuthViewModel,
                 }
                 composable(NavigationRout.Home.route) {
                     HomeScreen(navController = navController,brandsViewModel=brandsViewModel)
+                }
+                composable(NavigationRout.Orders.route) {
+OrdersScreen(
+    navController = navController,
+    ordersViewModel = ordersViewModel
+)
                 }
                 composable("vendor_products/{brand}") { backStackEntry ->
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
@@ -333,6 +358,25 @@ fun BottomNavigationBar(navController: NavController) {
             selected = currentRoute == NavigationRout.categories.route,
             onClick = {
                 navController.navigate(NavigationRout.categories.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+        NavigationBarItem(
+            icon = {   Icon(
+                painter = painterResource(id = R.drawable.menu),
+                contentDescription = "orders",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            ) },
+            label = { Text("orders") },
+            selected = currentRoute == NavigationRout.Orders.route,
+            onClick = {
+                navController.navigate(NavigationRout.Orders.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
