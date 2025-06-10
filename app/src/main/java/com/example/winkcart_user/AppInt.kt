@@ -67,7 +67,7 @@ fun AppInit(authViewModel : AuthViewModel,
             val pa =paddingValues
             NavHost(
                 navController = navController,
-                startDestination = 
+                startDestination = //NavigationRout.Login.route,
                 when{
                     cartViewModel.readCustomerID()==null -> NavigationRout.SignUp.route
                     cartViewModel.readCustomerID()!=null -> NavigationRout.Home.route

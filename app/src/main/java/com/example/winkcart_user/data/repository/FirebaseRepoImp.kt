@@ -29,4 +29,9 @@ class FirebaseRepoImp(private  val remoteDataSource: RemoteDataSource) : Firebas
             }
             ?: onComplete(false)
     }
+
+    override fun firebaseAuthWithGoogle(idToken: String): Task<AuthResult> {
+        return remoteDataSource.firebaseAuthWithGoogle(idToken)
+    }
+
 }

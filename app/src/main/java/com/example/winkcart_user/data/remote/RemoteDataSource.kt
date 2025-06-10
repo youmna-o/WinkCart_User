@@ -37,7 +37,10 @@ interface RemoteDataSource {
 
     fun postCustomer (customer: CustomerRequest): Flow<CustomerResponse?>
 
-    suspend fun createDraftOrder(
+    fun firebaseAuthWithGoogle(idToken: String): Task<AuthResult>
+
+
+        suspend fun createDraftOrder(
         draftOrderRequest: DraftOrderRequest
     ): Flow<Any>
 

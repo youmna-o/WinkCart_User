@@ -29,33 +29,13 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
     var emailError = mutableStateOf<String?>(null)
     var passwordError = mutableStateOf<String?>(null)
 
-//    fun signUp(email: String, password: String, onResult: (Boolean) -> Unit) {
-//        if (Uservalidate(email, password)) {
-//            repo.signUpFireBase(email, password)
-//                .addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        repo.sendEmailVerification { verificationSent ->
-//                            if (verificationSent) {
-//                                Log.i("email", "signUp: success link email")
-//                            } else {
-//                                Log.i("email", "signUp: failed link email")                            }
-//                            onResult(task.isSuccessful)
-//                        }
-//                    } else {
-//                        onResult(false)
-//                    }
-//                }
-//        } else {
-//            onResult(false)
-//        }
-//    }
-fun signUp(
-    email: String,
-    password: String,
-    onVerificationSent: (Boolean) -> Unit,
-    onVerified: (FirebaseUser?) -> Unit
-) {
-    if (Uservalidate(email, password)) {
+     fun signUp(
+         email: String,
+         password: String,
+         onVerificationSent: (Boolean) -> Unit,
+         onVerified: (FirebaseUser?) -> Unit
+     ) {
+         if (Uservalidate(email, password)) {
         repo.signUpFireBase(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -70,7 +50,6 @@ fun signUp(
                             }
                         } else {
                                 Log.i("email", "signUp: failed link email")
-
                             onVerificationSent(false)
                         }
                     }
@@ -82,6 +61,7 @@ fun signUp(
         onVerificationSent(false)
     }
 }
+
     private fun holdEmailVerification(email: String, onVerified: (FirebaseUser?) -> Unit) {
         val handler = Handler(Looper.getMainLooper())
         val checkVerificationRunnable = object : Runnable {
@@ -108,6 +88,13 @@ fun signUp(
             onResult(false)
         }
     }
+    fun signInWithGoogle(idToken: String, onResult: (Boolean) -> Unit) {
+        repo.firebaseAuthWithGoogle(idToken)
+            .addOnCompleteListener { task ->
+                onResult(task.isSuccessful)
+            }
+    }
+
 
     fun postCustomer(
         customerRequest: CustomerRequest,
