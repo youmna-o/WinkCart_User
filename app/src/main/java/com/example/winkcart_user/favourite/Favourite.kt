@@ -68,7 +68,7 @@ fun Favourite(viewModel: FavouriteViewModel) {
                     modifier = Modifier.weight(1f),
                 ) {
                     items(draftOrderList.size) { index ->
-                        CartItem(
+                       FavItem(
                             draftOrder = draftOrderList[index],
                             currencyCode = currencyCodeSaved,
                             currencyRate = currencyRateSaved,

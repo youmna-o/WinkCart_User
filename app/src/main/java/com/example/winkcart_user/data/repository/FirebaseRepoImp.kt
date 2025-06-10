@@ -2,8 +2,10 @@ package com.example.winkcart_user.data.repository
 
 import com.example.winkcart_user.data.remote.RemoteDataSource
 import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 
 class FirebaseRepoImp(private  val remoteDataSource: RemoteDataSource) : FirebaseRepo{
     override fun signUpFireBase(
@@ -18,5 +20,13 @@ class FirebaseRepoImp(private  val remoteDataSource: RemoteDataSource) : Firebas
         password: String
     ): Task<AuthResult>{
         return remoteDataSource.signInFireBase(email,password)
+    }
+    override fun sendEmailVerification(onComplete: (Boolean) -> Unit) {
+        val user = Firebase.auth.currentUser
+        user?.sendEmailVerification()
+            ?.addOnCompleteListener { task ->
+                onComplete(task.isSuccessful)
+            }
+            ?: onComplete(false)
     }
 }

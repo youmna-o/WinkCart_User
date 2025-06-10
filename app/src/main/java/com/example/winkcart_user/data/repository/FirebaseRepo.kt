@@ -7,4 +7,5 @@ import com.google.firebase.auth.FirebaseUser
 interface FirebaseRepo {
     fun signUpFireBase(email: String, password: String): Task<AuthResult>
     fun signInFireBase(email: String, password: String): Task<AuthResult>
+    fun sendEmailVerification(onComplete: (Boolean) -> Unit)
 }

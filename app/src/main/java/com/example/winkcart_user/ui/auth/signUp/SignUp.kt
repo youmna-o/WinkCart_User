@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,12 +48,24 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , ca
     val passwordError by authViewModel.passwordError
     var context = LocalContext.current
 
-
-
+    var showVerificationDialog by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
+
+    if (showVerificationDialog) {
+        AlertDialog(
+            onDismissRequest = { showVerificationDialog = false },
+            title = { Text(" Email Verification") },
+            text = { Text("We've sent you a verification link to your email. Please click the link to finish Registration") },
+            confirmButton = {
+                Button(onClick = { showVerificationDialog = false }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
     Column(modifier = Modifier
         .padding(16.dp)
         .fillMaxSize()) {
@@ -109,50 +122,46 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , ca
 
             }), textAlign = TextAlign.End)
 
-
         Spacer(modifier = Modifier.height(30.dp))
         Button(
             onClick = {
-                authViewModel.signUp(email, password) { success ->
-                    if (success) {
-                        val customerRequest = CustomerRequest(
-                            first_name = firstName,
-                            last_name = lastName,
-                            email = email,
-                            password = password,
-                            password_confirmation = password
-                        )
-                        authViewModel.postCustomer(customerRequest) { shopifyId ->
-                            if (shopifyId != null) {
-                                val customerMap = hashMapOf("customerId" to shopifyId)
-                                val userEmail = email.trim()
-                                db.collection("customers").document(userEmail).set(customerMap)
-                                    .addOnSuccessListener {
-                                    }
-                                Log.d("shared", "************ before auth")
-                                cartViewModel.readCustomerID()
-                                cartViewModel.writeCustomerID(shopifyId)
-                                Log.d("shared", "************ after auth")
-                                cartViewModel.readCustomerID()
-
-                                navController.navigate("home")
-                            } else {
-                               // Toast.makeText(context, "Shopify error", Toast.LENGTH_LONG).show()
-                            }
+                authViewModel.signUp(
+                    email = email,
+                    password = password,
+                    onVerificationSent = { verificationSent ->
+                        if (verificationSent) {
+                            showVerificationDialog = true
+                        } else {
+                            Toast.makeText(context, "Failed To Send verification ", Toast.LENGTH_LONG).show()
                         }
-                    } else {
-                        Toast.makeText(context, "Firebase SignUp Failed", Toast.LENGTH_LONG).show()
+                    },
+                    onVerified = { verifiedUser ->
+                        verifiedUser?.let { user ->
+                            val customerRequest = CustomerRequest(
+                                first_name = firstName,
+                                last_name = lastName,
+                                email = email,
+                                password = password,
+                                password_confirmation = password
+                            )
+                            authViewModel.postCustomer(customerRequest) { shopifyId ->
+                                if (shopifyId != null) {
+                                    val customerMap = hashMapOf("customerId" to shopifyId)
+                                    db.collection("customers").document(email.trim()).set(customerMap)
+                                    cartViewModel.writeCustomerID(shopifyId)
+                                }
+                            }
+                            navController.navigate("home")
+                        }
                     }
-                }
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(48.dp)
         ) {
             Text("SIGN UP")
         }
-
-
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
 

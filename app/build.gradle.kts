@@ -97,6 +97,12 @@ dependencies {
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+
+    // Import the BoM for the Firebase platform
+
+
+    // Also add the dependency for the Google Play services library and specify its version
 
     //glide
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
