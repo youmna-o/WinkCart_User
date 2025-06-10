@@ -39,10 +39,6 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
     val priceRules = _priceRules.asStateFlow()
 
 
-
-
-
-
     init {
         readCurrencyCode()
         readCurrencyRate()
@@ -54,7 +50,6 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
-
     fun readCurrencyCode(){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.readCurrencyCode()
@@ -63,7 +58,6 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
             }
         }
     }
-
 
     fun getDraftOrders(customerId: String) {
         viewModelScope.launch {
@@ -107,7 +101,6 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
             }
         }
     }
-
 
 
     fun deleteDraftOrder(draftOrderId: Long) {

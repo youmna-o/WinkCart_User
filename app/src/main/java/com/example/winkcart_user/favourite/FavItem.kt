@@ -146,6 +146,16 @@ fun FavItem(
                                 .padding(end = 8.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
+                            draftOrder.line_items[0]?.let {
+                                Text(
+                                    text = it.title,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.widthIn(max = 200.dp)
+                                )
+                            }
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
@@ -179,25 +189,10 @@ fun FavItem(
 
 
                             }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                draftOrder.line_items[0]?.let {
-                                    Text(
-                                        text = it.title,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.widthIn(max = 200.dp)
-                                    )
-                                }
 
-                                Spacer(Modifier.weight(1f))
 
-                            }
+
+
 
                         }
                     }

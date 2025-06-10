@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -64,20 +65,22 @@ fun ProductInfo(
 ) {
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
-
     var myProduct = remember(productState.value) {
         categoriesViewModel.getProduct(productID)
     }
+    val draftedOrders = cartViewModel.draftProductTitles.collectAsState()
+    val isDraft = draftedOrders.value.contains(myProduct?.title)
 
     var selectedSize by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf("") }
+    //val draftTitles by viewModel.draftProductTitles.collectAsState()
 
+    //val isInDraft = draftTitles.contains(product.title)
     val selectedVariant = remember(selectedSize, selectedColor) {
         myProduct?.variants?.find { variant ->
             variant.option1 == selectedSize && variant.option2 == selectedColor
         }
     }
-
 
         Scaffold( topBar = {
             CenterAlignedTopAppBar(
@@ -116,39 +119,44 @@ fun ProductInfo(
                     }?.flatMap { it.values }?.toList() ?: emptyList(),
                         onOptionSelected = { selectedColor = it }
                     )
-                    FavIcon(){
-                        Log.i("customer", "customerID = ****************")
-                        val draftOrder = DraftOrderRequest(
-                            draft_order = DraftOrder(
-                                line_items = listOf(
-                                    myProduct?.let {
-                                        selectedVariant?.let { it1 ->
+                    IconButton(onClick = {
+                        if (!isDraft && myProduct != null) {
+                            val draftOrder = DraftOrderRequest(
+                                draft_order = DraftOrder(
+                                    line_items = listOfNotNull(
+                                        selectedVariant?.let { variant ->
                                             LineItem(
-                                                variant_id = it1.id,
-                                                title = it.title,
-                                                price = it.variants[0].price,
+                                                variant_id = variant.id,
+                                                title = myProduct.title,
+                                                price = variant.price,
                                                 quantity = 1,
                                                 properties = listOf(
                                                     Property("Color", selectedColor),
                                                     Property("Size", selectedSize),
-                                                    Property("Quantity_in_Stock", "${it1.inventory_quantity}"),
+                                                    Property(
+                                                        "Quantity_in_Stock",
+                                                        "${variant.inventory_quantity}"
+                                                    ),
                                                     Property("Image", myProduct.images[0].src),
-                                                    Property("SavedAt",  "Favourite")
+                                                    Property("SavedAt", "Favourite")
                                                 )
                                             )
                                         }
-                                    }
-                                ),
-                                customer = Customer(customerID.value.toLong())
+                                    ),
+                                    customer = Customer(customerID.value.toLong())
+                                )
                             )
-                        )
-                        cartViewModel.createDraftOrder(draftOrder)
-                        Log.i("customer", "ProductInfo: $draftOrder ")
-                        Log.i("customer", "customerID = ${customerID.value}")
-                        Log.i("customer", "customerID = ****************")
+                            cartViewModel.createDraftFavouriteOrder(customerID.value, draftOrder)
+                             //cartViewModel.createDraftOrder( draftOrder)
+
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Favorite Icon",
+                            tint = if (isDraft) Color.Red else Color.Gray)
                     }
                 }
-
 
                 Text("${myProduct?.title}", style = MaterialTheme.typography.titleLarge)
                 Text("${myProduct?.variants?.get(0)?.price}$", style = MaterialTheme.typography.titleLarge)
@@ -174,7 +182,6 @@ fun ProductInfo(
             CustomButton(
                 lable = "ADD To CART"
             ) {
-
                 val draftOrder = DraftOrderRequest(
                     draft_order = DraftOrder(
                         line_items = listOf(
@@ -199,7 +206,9 @@ fun ProductInfo(
                         customer = Customer(customerID.value.toLong())
                     )
                 )
-                cartViewModel.createDraftOrder(draftOrder)
+               // cartViewModel.createDraftOrder( draftOrder)
+
+                  cartViewModel.createDraftCartOrder(customerID.value,draftOrder)
                 Log.i("TAG", "ProductInfo: $draftOrder ")
                 Log.i("TAG", "customerID = ${customerID.value}")
 

@@ -69,8 +69,8 @@ fun AppInit(authViewModel : AuthViewModel,
                 navController = navController,
                 startDestination = //NavigationRout.Login.route,
                 when{
-                    cartViewModel.readCustomerID()==null -> NavigationRout.SignUp.route
-                    cartViewModel.readCustomerID()!=null -> NavigationRout.Home.route
+                    cartViewModel.readCustomerID().toString() == "" -> NavigationRout.SignUp.route
+                    cartViewModel.readCustomerID().toString()!= "" ->  NavigationRout.Home.route
                         else ->NavigationRout.Login.route
                 },
                     //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,

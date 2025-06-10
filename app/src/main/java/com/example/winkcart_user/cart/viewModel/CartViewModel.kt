@@ -13,8 +13,10 @@ import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -52,6 +54,10 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     //private var appliedCoupon: PriceRule? = null
     private val _appliedCoupon = MutableStateFlow<PriceRule?>(null)
     val appliedCoupon = _appliedCoupon.asStateFlow()
+
+    private val _draftProductTitles = MutableStateFlow<Set<String>>(emptySet())
+    val draftProductTitles = _draftProductTitles.asStateFlow()
+
 
     fun setAppliedCoupon(coupon: PriceRule) {
         if (_appliedCoupon.value?.id != coupon.id) {
@@ -119,7 +125,6 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
             currencyCode = code
         )
 
-
         Log.i("TAG", "calculateTotalAmount: convertedTotal = $convertedTotal ")
 
         val formatted = "$convertedTotal $code"
@@ -133,23 +138,94 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     }
 
 
-
-
-    fun createDraftOrder(draftOrderRequest: DraftOrderRequest) {
+    fun createDraftCartOrder(customerId: String, draftOrderRequest: DraftOrderRequest) {
         viewModelScope.launch {
-            val result = repo.createDraftOrder(draftOrderRequest)
-            result.catch {
-                _createDraftOrderResponse.value = ResponseStatus.Error(it)
-            }.collect{ it
-                if (it!= null){
-                    _createDraftOrderResponse.value= ResponseStatus.Success<Any>(it)
-                }else{
-                    _createDraftOrderResponse.value = ResponseStatus.Error(NullPointerException("createDraftOrderResponse is null"))
+            val existingOrders = repo.getAllDraftOrders()
+                .firstOrNull()
+
+            if (existingOrders != null) {
+                    val isAlreadyExist = existingOrders.draft_orders.any { existingOrder ->
+                        existingOrder.customer?.id == customerId.toLong() &&
+                                existingOrder.line_items.map { it?.title }.toSet() == draftOrderRequest.draft_order.line_items.map { it?.title }.toSet() &&
+                                existingOrder.line_items.any { lineItem ->
+                                    lineItem?.properties?.any { prop ->
+                                        prop.name == "SavedAt" && prop.value == "Cart"
+                                    } == true
+                                }
+                    }
+                if (isAlreadyExist) {
+                    _createDraftOrderResponse.value = ResponseStatus.Error(Exception("Draft order already exists"))
+                    return@launch
                 }
             }
 
+            repo.createDraftOrder(draftOrderRequest)
+                .catch {
+                    _createDraftOrderResponse.value = ResponseStatus.Error(it)
+                }
+                .collect { response ->
+                    if (response != null) {
+                        _createDraftOrderResponse.value = ResponseStatus.Success(response)
+                    } else {
+                        _createDraftOrderResponse.value = ResponseStatus.Error(
+                            NullPointerException("createDraftOrderResponse is null")
+                        )
+                    }
+                }
         }
     }
+
+    fun createDraftFavouriteOrder(customerId: String, draftOrderRequest: DraftOrderRequest) {
+        viewModelScope.launch {
+            val existingOrders = repo.getAllDraftOrders()
+                .firstOrNull()
+
+            if (existingOrders != null) {
+                val isAlreadyExist = existingOrders.draft_orders.any { existingOrder ->
+                    existingOrder.customer?.id == customerId.toLong() &&
+                            existingOrder.line_items.map { it?.title }.toSet() == draftOrderRequest.draft_order.line_items.map { it?.title }.toSet() &&
+                            existingOrder.line_items.any { lineItem ->
+                                lineItem?.properties?.any { prop ->
+                                    prop.name == "SavedAt" && prop.value == "Favourite"
+                                } == true
+                            }
+                }
+                if (isAlreadyExist) {
+                    _createDraftOrderResponse.value = ResponseStatus.Error(Exception("Draft order already exists"))
+                    return@launch
+                }
+            }
+
+            repo.createDraftOrder(draftOrderRequest)
+                .catch {
+                    _createDraftOrderResponse.value = ResponseStatus.Error(it)
+                }
+                .collect { response ->
+                    if (response != null) {
+                        _createDraftOrderResponse.value = ResponseStatus.Success(response)
+                    } else {
+                        _createDraftOrderResponse.value = ResponseStatus.Error(
+                            NullPointerException("createDraftOrderResponse is null")
+                        )
+                    }
+                }
+        }
+    }
+//    fun createDraftOrder(draftOrderRequest: DraftOrderRequest) {
+//        viewModelScope.launch {
+//            val result = repo.createDraftOrder(draftOrderRequest)
+//            result.catch {
+//                _createDraftOrderResponse.value = ResponseStatus.Error(it)
+//            }.collect{ it
+//                if (it!= null){
+//                    _createDraftOrderResponse.value= ResponseStatus.Success<Any>(it)
+//                }else{
+//                    _createDraftOrderResponse.value = ResponseStatus.Error(NullPointerException("createDraftOrderResponse is null"))
+//                }
+//            }
+//
+//        }
+//    }
 
 
     fun updateDraftOrder(draftOrderId: Long,draftOrderRequest: DraftOrderRequest) {
@@ -170,71 +246,69 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
-  /*  private fun getDraftOrders(customerId: String) {
-        viewModelScope.launch {
-            val result = repo.getAllDraftOrders()
-            result
-                .catch {
-                    _draftOrders.value = ResponseStatus.Error(it)
-                }
-                .collect { response ->
-                    if (response != null) {
-                        val filtered = response.draft_orders.filter {
-                            it.customer.id.toString() == customerId
-                        }
-                        _draftOrders.value = ResponseStatus.Success(
-                            DraftOrderResponse(draft_orders = filtered)
-                        )
-                    } else {
-                        _draftOrders.value = ResponseStatus.Error(
-                            NullPointerException("DraftOrders is null")
-                        )
-                    }
-                }
-        }
-    }*/
-   /* private fun getDraftOrders(customerId: String) {
-        viewModelScope.launch {
-            val result = repo.getAllDraftOrders()
-            result
-                .catch {
-                    _draftOrders.value = ResponseStatus.Error(it)
-                }
-                .collect { response ->
-                    if (response != null) {
 
-                        _draftOrders.value = ResponseStatus.Success(
-                            DraftOrderResponse(draft_orders = response.draft_orders)
+//    fun getDraftOrders(customerId: String) {
+//        viewModelScope.launch {
+//            repo.getAllDraftOrders()
+//                .catch { exception ->
+//                    _draftOrders.value = ResponseStatus.Error(exception)
+//                }.collect{ response ->
+//                    if(response!= null){
+//                        _draftOrders.value = ResponseStatus.Success(response)
+//                        val titles = response.draft_orders
+//                            .flatMap { it.line_items }.map { it!!.title }.toSet()
+//                            _draftProductTitles.value = titles
+//
+//                    }else{
+//                        _draftOrders.value = ResponseStatus.Error(
+//                            NullPointerException("Draft Orders is null")
+//                        )
+//                    }
+//                }
+//        }
+//    }
+fun getDraftOrders(customerId: String) {
+    viewModelScope.launch {
+        try {
+            val storedCustomerIdStr = repo.readCustomersID()
+            val storedCustomerId = storedCustomerIdStr?.toLongOrNull()
 
-                        )
-                        Log.i("TAG", "getDraftOrders: ${response.draft_orders[0].customer.id} ")
-                    } else {
-                        _draftOrders.value = ResponseStatus.Error(
-                            NullPointerException("DraftOrders is null")
-                        )
-                    }
-                }
-        }
-    }*/
+            if (storedCustomerId == null) {
+                _draftOrders.value = ResponseStatus.Error(
+                    IllegalStateException("Invalid customer ID: $storedCustomerIdStr")
+                )
+                return@launch //stop running
+            }
 
-    fun getDraftOrders(customerId: String) {
-        viewModelScope.launch {
             repo.getAllDraftOrders()
                 .catch { exception ->
                     _draftOrders.value = ResponseStatus.Error(exception)
-                }.collect{ response ->
-                    if(response!= null){
-                        _draftOrders.value = ResponseStatus.Success(response)
-                      //  refreshTotalAmount()
-                    }else{
+                }
+                .collect { response ->
+                    if (response != null) {
+                        val matchingDraftOrders = response.draft_orders
+                            .filter { it.customer.id == storedCustomerId }
+                            .filter { draftOrder ->
+                                draftOrder.line_items.any { lineItem ->
+                                    lineItem!!.properties.any { prop ->
+                                        prop.name == "SavedAt" && prop.value == "Cart"
+                                    }
+                                }
+                            }
+                        _draftOrders.value = ResponseStatus.Success(
+                            response.copy(draft_orders = matchingDraftOrders)
+                        )
+                    } else {
                         _draftOrders.value = ResponseStatus.Error(
                             NullPointerException("Draft Orders is null")
                         )
                     }
                 }
+        } catch (e: Exception) {
+            _draftOrders.value = ResponseStatus.Error(e)
         }
     }
-
+}
 
     fun deleteDraftOrder(draftOrderId: Long) {
         viewModelScope.launch {
