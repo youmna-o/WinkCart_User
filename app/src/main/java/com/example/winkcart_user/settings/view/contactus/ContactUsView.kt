@@ -1,4 +1,4 @@
-package com.example.winkcart_user.settings
+package com.example.winkcart_user.settings.view.contactus
 
 import android.content.Intent
 import androidx.compose.foundation.background

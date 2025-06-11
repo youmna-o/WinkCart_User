@@ -7,6 +7,7 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.retrofit.MockDataSource
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
@@ -97,5 +98,17 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
             retrofitHelper.shopifyService.getPriceRules(token = BuildConfig.shopifyAccessToken)
                 .body()
         return flowOf(result)
+    }
+
+    override suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any> = flow {
+        val response = retrofitHelper.shopifyService.addCustomerAddress(
+            token = BuildConfig.shopifyAccessToken,
+            customerId = customerId,
+            request = customerAddressRequest
+        )
+        emit(response)
     }
 }

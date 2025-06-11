@@ -6,6 +6,7 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 
 
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -64,6 +65,13 @@ interface Services {
     suspend fun getPriceRules(
         @Header("X-Shopify-Access-Token") token: String
     ): Response<PriceRulesResponse>
+
+    @POST("customers/{customer_id}/addresses.json")
+    suspend fun addCustomerAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Body request: CustomerAddressRequest
+    ): Response<Any>
 
 }
 

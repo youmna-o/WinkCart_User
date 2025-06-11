@@ -5,6 +5,7 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -42,6 +43,11 @@ interface RemoteDataSource {
     ): Flow<DraftOrderResponse?>
 
     suspend fun getPriceRules(): Flow<PriceRulesResponse?>
+
+    suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any>
 
 
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.R
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import com.example.winkcart_user.data.model.settings.Address
-import com.example.winkcart_user.settings.AddFAB
+import com.example.winkcart_user.ui.utils.AddFAB
 import com.example.winkcart_user.ui.theme.BackgroundColor
 
 

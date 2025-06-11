@@ -52,9 +52,9 @@ import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
-import com.example.winkcart_user.settings.AboutUsView
-import com.example.winkcart_user.settings.ContactUsView
-import com.example.winkcart_user.settings.SettingsView
+import com.example.winkcart_user.settings.view.aboutus.AboutUsView
+import com.example.winkcart_user.settings.view.contactus.ContactUsView
+import com.example.winkcart_user.settings.view.SettingsView
 import com.example.winkcart_user.settings.view.address.AddAddressView
 import com.example.winkcart_user.settings.view.address.AddressView
 import com.example.winkcart_user.settings.viewmodel.SettingsFactory
@@ -264,6 +264,7 @@ fun AppInit(authViewModel : AuthViewModel,
                     )
                 }
                 composable(NavigationRout.AddAddress.route) { AddAddressView(
+                    viewModel = settingsViewModel,
                     backAction = {navController.popBackStack()}
                 ) }
                 composable(NavigationRout.ContactUs.route) { ContactUsView() }

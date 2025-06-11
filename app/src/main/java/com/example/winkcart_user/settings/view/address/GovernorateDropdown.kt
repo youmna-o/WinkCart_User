@@ -26,13 +26,12 @@ import com.example.winkcart_user.settings.enums.Governorate
 
 @Composable
 fun GovernorateDropdown(
-    selectedGovernorate: Governorate?,
+    selectedGovernorate: String,
     onGovernorateSelected: (Governorate) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val selectedText = selectedGovernorate?.let { stringResource(it.stringResId) } ?: ""
-    var inputText by remember { mutableStateOf(selectedText) }
+    var inputText by remember { mutableStateOf(selectedGovernorate) }
 
     val filteredGovernorates = Governorate.getAll().filter {
         stringResource(it.stringResId).contains(inputText, ignoreCase = true)

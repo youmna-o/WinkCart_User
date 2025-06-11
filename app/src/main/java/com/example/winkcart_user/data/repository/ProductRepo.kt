@@ -7,6 +7,8 @@ import com.example.winkcart_user.data.model.products.ProductAbstracted
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddress
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
@@ -49,5 +51,9 @@ interface ProductRepo {
 
     suspend fun getPriceRules() : Flow<PriceRulesResponse?>
 
+    suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any>
 
 }

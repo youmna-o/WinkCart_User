@@ -10,6 +10,7 @@ import com.example.winkcart_user.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.map
 
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
 
@@ -126,6 +127,16 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
 
     override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
         return  remoteDataSource.getPriceRules()
+    }
+
+    override suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any> {
+        return remoteDataSource.addCustomerAddress(
+            customerId = customerId,
+            customerAddressRequest = customerAddressRequest
+        )
     }
 
 }
