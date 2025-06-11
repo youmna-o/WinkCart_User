@@ -28,7 +28,7 @@ import com.example.winkcart_user.ui.theme.HeaderTextColor
 
 @Preview
 @Composable
-private fun AboutUsView() {
+fun AboutUsView() {
     Box(
         modifier = Modifier
             .fillMaxSize()

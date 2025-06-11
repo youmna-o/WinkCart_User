@@ -1,13 +1,11 @@
 package com.example.winkcart_user
 
 
-import android.os.Build
 import android.os.Bundle
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -54,14 +52,17 @@ import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.settings.AboutUsView
+import com.example.winkcart_user.settings.ContactUsView
 import com.example.winkcart_user.settings.SettingsView
+import com.example.winkcart_user.settings.view.address.AddAddressView
+import com.example.winkcart_user.settings.view.address.AddressView
 import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
 import com.example.winkcart_user.ui.productInfo.ProductInfo
-
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.ui.home.main.HomeScreen
@@ -231,7 +232,15 @@ fun AppInit(authViewModel : AuthViewModel,
                         vendorProductsViewModel = vendorProductViewModel
                     )
                 }
-                composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
+                composable(NavigationRout.Settings.route) {
+                    SettingsView(
+                        viewModel = settingsViewModel,
+                        addressAction = {navController.navigate(NavigationRout.Address.route)},
+                        contactUsAction = {navController.navigate(NavigationRout.ContactUs.route)},
+                        aboutUsAction = {navController.navigate(NavigationRout.AboutUs.route)},
+                        backAction = {navController.popBackStack()}
+                    )
+                }
                 composable(NavigationRout.Cart.route) { CartView(cartViewModel) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
 
@@ -247,6 +256,19 @@ fun AppInit(authViewModel : AuthViewModel,
 
                     )
                 }
+
+                composable(NavigationRout.Address.route) {
+                    AddressView(
+                        addAction = {navController.navigate(NavigationRout.AddAddress.route)},
+                        backAction = {navController.popBackStack()}
+                    )
+                }
+                composable(NavigationRout.AddAddress.route) { AddAddressView(
+                    backAction = {navController.popBackStack()}
+                ) }
+                composable(NavigationRout.ContactUs.route) { ContactUsView() }
+                composable(NavigationRout.AboutUs.route) { AboutUsView() }
+
             }
         }
     }

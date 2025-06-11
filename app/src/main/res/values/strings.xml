@@ -25,6 +25,7 @@
     <string name="contact_person">Contact Person</string>
     <string name="phone_number">Phone Number</string>
     <string name="country">Country</string>
+    <string name="city">City</string>
     <string name="select_currency">Select Currency</string>
     <string name="color">Color: </string>
     <string name="size">Size: </string>
@@ -32,5 +33,45 @@
     <string name="check_out">CHECK OUT</string>
     <string name="Enter_your_promo_code">Enter your promo code</string>
     <string name="your_promo_codes">Your Promo Codes</string>
+    <string name="egypt">Egypt</string>
+
+
+    <string name="governorate">Governorate</string>
+
+    <string name="governorate_cairo">Cairo</string>
+    <string name="governorate_alexandria">Alexandria</string>
+    <string name="governorate_giza">Giza</string>
+    <string name="governorate_port_said">Port Said</string>
+    <string name="governorate_suez">Suez</string>
+    <string name="governorate_luxor">Luxor</string>
+    <string name="governorate_aswan">Aswan</string>
+    <string name="governorate_ismailia">Ismailia</string>
+    <string name="governorate_red_sea">Red Sea</string>
+    <string name="governorate_new_valley">New Valley</string>
+    <string name="governorate_matruh">Matruh</string>
+    <string name="governorate_south_sinai">South Sinai</string>
+    <string name="governorate_north_sinai">North Sinai</string>
+    <string name="governorate_faiyum">Faiyum</string>
+    <string name="governorate_beni_suef">Beni Suef</string>
+    <string name="governorate_minya">Minya</string>
+    <string name="governorate_asyut">Asyut</string>
+    <string name="governorate_sohag">Sohag</string>
+    <string name="governorate_qena">Qena</string>
+    <string name="governorate_damietta">Damietta</string>
+    <string name="governorate_sharqia">Sharqia</string>
+    <string name="governorate_dakahlia">Dakahlia</string>
+    <string name="governorate_kafr_el_sheikh">Kafr El Sheikh</string>
+    <string name="governorate_beheira">Beheira</string>
+    <string name="governorate_monufia">Monufia</string>
+    <string name="governorate_gharbia">Gharbia</string>
+
+
+    <string name="currency_egp">EGP</string>
+    <string name="currency_usd">USD</string>
+
+    <string name="add_address">Add Address</string>
+    <string name="no_results_found">No results found</string>
+
+
 
 </resources>

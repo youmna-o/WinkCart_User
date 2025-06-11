@@ -6,6 +6,12 @@ package com.example.winkcart_user.ui.utils.navigation
      object  SignUp : NavigationRout("SignUp")
      data object Settings :NavigationRout("Settings")
      data object Cart :NavigationRout("Cart")
+     data object Address :NavigationRout("Address")
+     data object AddAddress :NavigationRout("AddAddress")
+     data object EditAddress :NavigationRout("EditAddress")
+     data object AboutUs :NavigationRout("AboutUs")
+     data object ContactUs :NavigationRout("ContactUs")
+
 
      object Home : NavigationRout("home")
 

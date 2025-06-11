@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.repository.ProductRepo
+import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -71,9 +72,9 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
         }
     }
 
-    fun writeCurrencyCode(currencyCode:String){
+    fun writeCurrencyCode(currencyCode:Currency){
         viewModelScope.launch (Dispatchers.IO) {
-            _currencyCode.value = currencyCode
+            _currencyCode.value = currencyCode.name
             repo.writeCurrencyCode(currencyCode)
 
         }

@@ -5,12 +5,12 @@ import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
-import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.map
 
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
 
 class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
@@ -51,7 +51,7 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return localDataSource.readCurrencyCode()
     }
 
-    override suspend fun writeCurrencyCode(currencyCode: String) {
+    override suspend fun writeCurrencyCode(currencyCode: Currency) {
         localDataSource.writeCurrencyCode(currencyCode)
     }
 

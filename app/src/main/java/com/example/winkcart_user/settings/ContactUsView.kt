@@ -27,7 +27,7 @@ import androidx.core.net.toUri
 
 @Preview
 @Composable
-private fun ContactUsScreen() {
+fun ContactUsView() {
     val localContext = LocalContext.current
     Box(
         modifier = Modifier

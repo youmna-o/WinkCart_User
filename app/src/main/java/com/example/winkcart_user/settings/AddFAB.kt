@@ -15,13 +15,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-@Preview
-fun AddFAB(/*action : ()-> Unit*/) {
+fun AddFAB(action : ()-> Unit) {
     Box (modifier = Modifier.fillMaxSize()){
         FloatingActionButton(
 
@@ -36,7 +34,7 @@ fun AddFAB(/*action : ()-> Unit*/) {
 
 
 
-            ,onClick = {/*action()*/}
+            ,onClick = {action()}
         ) {
             Text(text = "+",color = Color.White, fontSize = 36.sp, fontWeight = FontWeight.W300)
 
