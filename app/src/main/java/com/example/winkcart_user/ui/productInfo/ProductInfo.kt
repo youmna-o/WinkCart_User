@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.productInfo
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,13 +48,16 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.LineItem
 import com.example.winkcart_user.data.model.draftorder.cart.Property
+import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.ui.productInfo.componants.FavIcon
 import com.example.winkcart_user.ui.productInfo.componants.ImageSlider
 import com.example.winkcart_user.ui.productInfo.componants.LongBasicDropdownMenu
 import com.example.winkcart_user.ui.productInfo.componants.Reviews
 import com.example.winkcart_user.ui.productInfo.componants.StarRatingBar
+import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.ui.utils.CustomButton
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductInfo(
@@ -60,14 +65,16 @@ fun ProductInfo(
     navController: NavController,
     scrollState: ScrollState,
     categoriesViewModel: CategoriesViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    favouriteViewModel: FavouriteViewModel,
 ) {
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
-
     var myProduct = remember(productState.value) {
         categoriesViewModel.getProduct(productID)
     }
+    val draftedOrders = favouriteViewModel.draftProductTitles.collectAsState()
+    val isDraft = draftedOrders.value.contains(myProduct?.title)
 
     var selectedSize by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf("") }
@@ -77,7 +84,6 @@ fun ProductInfo(
             variant.option1 == selectedSize && variant.option2 == selectedColor
         }
     }
-
 
         Scaffold( topBar = {
             CenterAlignedTopAppBar(
@@ -116,39 +122,66 @@ fun ProductInfo(
                     }?.flatMap { it.values }?.toList() ?: emptyList(),
                         onOptionSelected = { selectedColor = it }
                     )
-                    FavIcon(){
-                        Log.i("customer", "customerID = ****************")
-                        val draftOrder = DraftOrderRequest(
-                            draft_order = DraftOrder(
-                                line_items = listOf(
-                                    myProduct?.let {
-                                        selectedVariant?.let { it1 ->
+                    @Composable
+                    fun FavIcon(onClick : ()-> Unit){
+                        Surface(
+                            shape = CircleShape,
+                            color = Color.Black,
+                            shadowElevation = 4.dp,
+                        ) {
+                            IconButton(
+                                onClick = onClick,
+                                modifier = Modifier
+                                    .size(40.dp)
+                            ) {
+                                Icon(
+
+                                    imageVector = Icons.Outlined.FavoriteBorder,
+                                    contentDescription = "Add to favorites",
+                                    tint = Color.Gray,
+                                    modifier = Modifier.size(25.dp)
+                                )
+                            }
+                        }
+                    }
+                    IconButton(onClick = {
+                        if (!isDraft && myProduct != null) {
+                            val draftOrder = DraftOrderRequest(
+                                draft_order = DraftOrder(
+                                    line_items = listOfNotNull(
+                                        selectedVariant?.let { variant ->
                                             LineItem(
-                                                variant_id = it1.id,
-                                                title = it.title,
-                                                price = it.variants[0].price,
+                                                variant_id = variant.id,
+                                                title = myProduct.title,
+                                                price = variant.price,
                                                 quantity = 1,
                                                 properties = listOf(
                                                     Property("Color", selectedColor),
                                                     Property("Size", selectedSize),
-                                                    Property("Quantity_in_Stock", "${it1.inventory_quantity}"),
+                                                    Property(
+                                                        "Quantity_in_Stock",
+                                                        "${variant.inventory_quantity}"
+                                                    ),
                                                     Property("Image", myProduct.images[0].src),
-                                                    Property("SavedAt",  "Favourite")
+                                                    Property("SavedAt", "Favourite")
                                                 )
                                             )
                                         }
-                                    }
-                                ),
-                                customer = Customer(customerID.value.toLong())
+                                    ),
+                                    customer = Customer(customerID.value.toLong())
+                                )
                             )
-                        )
-                        cartViewModel.createDraftOrder(draftOrder)
-                        Log.i("customer", "ProductInfo: $draftOrder ")
-                        Log.i("customer", "customerID = ${customerID.value}")
-                        Log.i("customer", "customerID = ****************")
+                            favouriteViewModel.createDraftFavouriteOrder(customerID.value, draftOrder)
+
+                        }
+                    }) {
+
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Favorite Icon",
+                            tint = if (isDraft) myPurple else Color.Gray)
                     }
                 }
-
 
                 Text("${myProduct?.title}", style = MaterialTheme.typography.titleLarge)
                 Text("${myProduct?.variants?.get(0)?.price}$", style = MaterialTheme.typography.titleLarge)
@@ -174,7 +207,6 @@ fun ProductInfo(
             CustomButton(
                 lable = "ADD To CART"
             ) {
-
                 val draftOrder = DraftOrderRequest(
                     draft_order = DraftOrder(
                         line_items = listOf(
@@ -199,7 +231,9 @@ fun ProductInfo(
                         customer = Customer(customerID.value.toLong())
                     )
                 )
-                cartViewModel.createDraftOrder(draftOrder)
+               // cartViewModel.createDraftOrder( draftOrder)
+
+                  cartViewModel.createDraftCartOrder(customerID.value,draftOrder)
                 Log.i("TAG", "ProductInfo: $draftOrder ")
                 Log.i("TAG", "customerID = ${customerID.value}")
 
