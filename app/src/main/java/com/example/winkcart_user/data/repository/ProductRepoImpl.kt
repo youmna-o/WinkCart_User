@@ -112,7 +112,6 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return remoteDataSource.getReview()
     }
 
-
     override fun postCustomer(customer: CustomerRequest): Flow<CustomerResponse?> {
         return remoteDataSource.postCustomer(customer)
     }

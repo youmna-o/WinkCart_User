@@ -93,11 +93,6 @@ fun OrdersScreenOnSuccess(navController: NavController, orders: List<Order>) {
                 )
             )
         },
-        bottomBar = {
-            BottomNavigationBar(
-                navController = navController
-            )
-        },
         containerColor = Color(0xFFF5F5F5)
     ) { paddingValues ->
         LazyColumn(
