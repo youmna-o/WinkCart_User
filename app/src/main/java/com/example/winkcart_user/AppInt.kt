@@ -111,7 +111,8 @@ fun AppInit(authViewModel : AuthViewModel,
                         navController = navController,
                         scrollState = scroll,
                         categoriesViewModel = categoriesViewModel,
-                        cartViewModel = cartViewModel
+                        cartViewModel = cartViewModel,
+                        favouriteViewModel= favouriteViewModel,
 
                     )
                 }
