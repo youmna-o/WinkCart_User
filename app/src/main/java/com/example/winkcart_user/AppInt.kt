@@ -57,6 +57,7 @@ fun AppInit(authViewModel : AuthViewModel,
         NavigationRout.Settings.route,
         NavigationRout.categories.route,
         NavigationRout.Favourite.route,
+        NavigationRout.Profile.route
     )
     val showBottomBar = currentRoute in screensWithBottomBar
 
