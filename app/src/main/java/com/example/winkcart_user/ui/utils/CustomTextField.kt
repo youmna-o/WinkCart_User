@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,32 +30,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-
 @Composable
-fun CustomTextField(lable: String , input: String ,onValueChange: (String) -> Unit, isEmailError: Boolean ){
-
-    Column {
+fun CustomTextField(
+    lable: String,
+    input: String,
+    onValueChange: (String) -> Unit,
+    isError: Boolean,
+    isPassword: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
         OutlinedTextField(
-           value = input,
+            value = input,
             onValueChange = onValueChange,
             label = { Text(lable) },
-            modifier = Modifier
-                .fillMaxWidth(),
-            isError = isEmailError,
-            singleLine = true
+            modifier = Modifier.fillMaxWidth(),
+            isError = isError,
+            singleLine = true,
+            visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default
         )
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
-
 @Composable
 fun CustomSmallTextField(
     lable: String,
     input: String,
     onValueChange: (String) -> Unit,
     isEmailError: Boolean,
+
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(

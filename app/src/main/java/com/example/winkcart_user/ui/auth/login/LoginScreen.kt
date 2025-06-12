@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,8 +47,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 @Composable
 fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cartViewModel: CartViewModel) {
-    val emailError by authViewModel.emailError
-    val passwordError by authViewModel.passwordError
+    val emailError by authViewModel.emailError.collectAsState()
+    val passwordError by authViewModel.passwordError.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -102,7 +103,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cart
         CustomTextField("Email", email, { email = it }, emailError != null)
         emailError?.let { Text(it, color = Color.Red, fontSize = 12.sp) }
 
-        CustomTextField("Password", password, { password = it }, passwordError != null)
+        CustomTextField("Password", password, { password = it }, passwordError != null, isPassword = true )
         passwordError?.let { Text(it, color = Color.Red, fontSize = 12.sp) }
 
         Text("Create New Account", modifier = Modifier

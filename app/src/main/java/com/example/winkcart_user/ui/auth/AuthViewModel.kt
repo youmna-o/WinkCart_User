@@ -3,31 +3,32 @@ package com.example.winkcart_user.ui.auth
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.customer.CustomerRequest
-
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.utils.Constants
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
-
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 import java.util.regex.Pattern
 
 
 class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : ProductRepoImpl) : ViewModel(){
 
-    var emailError = mutableStateOf<String?>(null)
-    var passwordError = mutableStateOf<String?>(null)
+
+    private val _emailError = MutableStateFlow("")
+    val emailError = _emailError.asStateFlow()
+    private val _passwordError  = MutableStateFlow("")
+    val passwordError  = _passwordError .asStateFlow()
 
      fun signUp(
          email: String,
@@ -35,7 +36,7 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
          onVerificationSent: (Boolean) -> Unit,
          onVerified: (FirebaseUser?) -> Unit
      ) {
-         if (Uservalidate(email, password)) {
+         if (isValidInputsData(email, password)) {
         repo.signUpFireBase(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -79,7 +80,7 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
         handler.post(checkVerificationRunnable)
     }
     fun signIn(email: String, password: String, onResult: (Boolean) -> Unit) {
-        if (Uservalidate(email, password)) {
+        if (isValidInputsData(email, password)) {
             repo.signInFireBase(email, password)
                 .addOnCompleteListener { task ->
                     onResult(task.isSuccessful)
@@ -115,35 +116,42 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
 
 
 
-    private fun Uservalidate(email: String, password: String): Boolean {
+    private fun isValidInputsData(email: String, password: String): Boolean {
         var isValid = true
         if (email.isBlank()) {
-            emailError.value = "Email is required"
+            _emailError.value = "Email is required"
             isValid = false
         } else if (!isEmailValid(email)) {
-            emailError.value = "Invalid email format"
+            _emailError.value  = "Invalid email format"
             isValid = false
         } else {
-            emailError.value = null
+            _emailError.value  = ""
         }
 
         if (password.isBlank()) {
-            passwordError.value = "Password is required"
+            _passwordError.value = "Password is required"
             isValid = false
         } else if (password.length < 6) {
-            passwordError.value = "Password must be at least 6 characters"
+            _passwordError.value = "Password must be at least 6 characters"
+            isValid = false
+        } else if (!isPasswordValid(password)) {
+            _passwordError.value = "Password must contain uppercase, lowercase, digit, and symbol"
             isValid = false
         } else {
-            passwordError.value = null
+            _passwordError.value = ""
         }
-
         return isValid
     }
 
     fun isEmailValid(email: String): Boolean {
-        val expression = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        val expression = Constants.Email_Regix
         return Pattern.compile(expression).matcher(email).matches()
     }
+    fun isPasswordValid(password: String): Boolean {
+        val passwordRegex = Constants.Email_Regix
+        return Pattern.compile(passwordRegex).matcher(password).matches()
+    }
+
 
 
 

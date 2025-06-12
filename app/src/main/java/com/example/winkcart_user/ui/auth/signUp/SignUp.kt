@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,8 +45,8 @@ private val db = Firebase.firestore
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , cartViewModel: CartViewModel){
-    val emailError by authViewModel.emailError
-    val passwordError by authViewModel.passwordError
+    val emailError by authViewModel.emailError.collectAsState()
+    val passwordError by authViewModel.passwordError.collectAsState()
     var context = LocalContext.current
 
     var showVerificationDialog by remember { mutableStateOf(false) }
@@ -111,7 +112,7 @@ fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , ca
         }
         CustomTextField(lable = "Password",input = password,onValueChange = { newPassword ->
             password = newPassword
-        },passwordError != null)
+        },passwordError != null, isPassword = true)
         if (passwordError != null) {
             Text(passwordError ?: "", color = Color.Red, fontSize = 12.sp)
         }

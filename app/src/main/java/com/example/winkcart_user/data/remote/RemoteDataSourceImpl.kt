@@ -19,6 +19,7 @@ import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +27,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSource {
-  var auth = Firebase.auth
+  //var auth = Firebase.auth
     override suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?> {
         val result = retrofitHelper.shopifyService.getSmartCollections(token = BuildConfig.shopifyAccessToken)
             .body()
@@ -58,11 +59,11 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     }
 
     override fun signUpFireBase(email: String, password: String): Task<AuthResult> {
-        return  return auth.createUserWithEmailAndPassword(email, password)
+        return  return FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
     }
 
     override fun signInFireBase(email: String, password: String): Task<AuthResult> {
-        return auth.signInWithEmailAndPassword(email, password)
+        return FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
     }
      override fun firebaseAuthWithGoogle(idToken: String): Task<AuthResult> {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
