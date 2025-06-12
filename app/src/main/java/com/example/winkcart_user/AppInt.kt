@@ -12,10 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartViewModel
-import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
 import com.example.winkcart_user.favourite.Favourite
 import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.settings.SettingsView
@@ -23,11 +21,17 @@ import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.auth.login.LoginScreen
 import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
+import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
-import com.example.winkcart_user.ui.home.main.HomeScreen
+import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
+import com.example.winkcart_user.ui.home.main.view.HomeScreen
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
 import com.example.winkcart_user.ui.productInfo.ProductInfo
+import com.example.winkcart_user.ui.profile.orders.view.OrderDetailsScreen
+import com.example.winkcart_user.ui.profile.orders.view.OrdersScreen
+import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
+import com.example.winkcart_user.ui.profile.userProfile.view.ProfileScreen
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import kotlin.collections.contains
@@ -40,7 +44,8 @@ fun AppInit(authViewModel : AuthViewModel,
             vendorProductViewModel :VendorProductsViewModel,
             brandsViewModel: BrandsViewModel ,
             currencyViewModel : CurrencyViewModel,
-            favouriteViewModel: FavouriteViewModel
+            favouriteViewModel: FavouriteViewModel,
+            ordersViewModel : OrdersViewModel
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -52,6 +57,7 @@ fun AppInit(authViewModel : AuthViewModel,
         NavigationRout.Settings.route,
         NavigationRout.categories.route,
         NavigationRout.Favourite.route,
+        NavigationRout.Profile.route
     )
     val showBottomBar = currentRoute in screensWithBottomBar
 
@@ -69,8 +75,8 @@ fun AppInit(authViewModel : AuthViewModel,
                 navController = navController,
                 startDestination = //NavigationRout.Login.route,
                 when{
-                    cartViewModel.readCustomerID().toString() == "" -> NavigationRout.SignUp.route
-                    cartViewModel.readCustomerID().toString()!= "" ->  NavigationRout.Home.route
+                    cartViewModel.readCustomerID()==null -> NavigationRout.SignUp.route
+                    cartViewModel.readCustomerID()!=null -> NavigationRout.Home.route
                         else ->NavigationRout.Login.route
                 },
                     //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,
@@ -92,6 +98,7 @@ fun AppInit(authViewModel : AuthViewModel,
                         vendorProductsViewModel = vendorProductViewModel
                     )
                 }
+                composable(NavigationRout.Profile.route) { ProfileScreen(navController) }
                 composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
                 composable(NavigationRout.Cart.route) { CartView(cartViewModel) }
                 composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel) }
@@ -105,9 +112,16 @@ fun AppInit(authViewModel : AuthViewModel,
                         scrollState = scroll,
                         categoriesViewModel = categoriesViewModel,
                         cartViewModel = cartViewModel,
-                        favouriteViewModel= favouriteViewModel,
+                      //  favouriteViewModel= favouriteViewModel,
 
                     )
+                }
+                composable(NavigationRout.OrderDetails.route) { backStackEntry ->
+                    val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
+                    OrderDetailsScreen(navController,ordersViewModel,orderId.toLong())
+                }
+                composable(NavigationRout.Orders.route) {
+                    OrdersScreen(navController = navController, ordersViewModel = ordersViewModel)
                 }
             }
         }

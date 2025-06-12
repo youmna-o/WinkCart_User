@@ -8,6 +8,8 @@ import com.example.winkcart_user.data.model.customer.CustomerWrapper
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
+import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrdersResponse
 
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
@@ -39,8 +41,6 @@ interface Services {
     suspend fun getAllProducts(
         @Header("X-Shopify-Access-Token") token: String
     ): Response<ProductResponse>
-
-
 
     @GET("products.json")
     suspend fun getProductsByVendor (
@@ -91,6 +91,19 @@ interface Services {
     suspend fun getPriceRules(
         @Header("X-Shopify-Access-Token") token: String
     ): Response<PriceRulesResponse>
+
+
+    @GET("orders.json")
+    suspend fun getUserOrders (
+    @Header("X-Shopify-Access-Token") token: String,
+    @Query("customer_id") customerId: Long
+    ) :Response<OrdersResponse>
+
+    @GET("orders/{orderId}.json")
+    suspend fun getOrderDetails(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("orderId") orderID:Long):Response<OrderDetailsResponse>
+
 
 }
 

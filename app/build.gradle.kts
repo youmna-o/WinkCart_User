@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.play.services.analytics.impl)
     implementation(libs.firebase.firestore)
+    implementation(libs.androidx.benchmark.macro)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,6 +91,7 @@ dependencies {
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
     //firebase
+    // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     //auth
     implementation("com.google.firebase:firebase-auth")

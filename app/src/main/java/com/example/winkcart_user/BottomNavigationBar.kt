@@ -45,13 +45,17 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
-
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-            label = { Text("Settings") },
-            selected = currentRoute == NavigationRout.Settings.route,
+            icon = {   Icon(
+                painter = painterResource(id = R.drawable.menu),
+                contentDescription = "category",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            ) },
+            label = { Text("category") },
+            selected = currentRoute == NavigationRout.categories.route,
             onClick = {
-                navController.navigate(NavigationRout.Settings.route) {
+                navController.navigate(NavigationRout.categories.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
@@ -89,17 +93,19 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
+
+
         NavigationBarItem(
-            icon = {   Icon(
-                painter = painterResource(id = R.drawable.menu),
-                contentDescription = "category",
+            icon = { Icon(
+                painter = painterResource(id = R.drawable.profile),
+                contentDescription = "profile",
                 tint = Color.Gray,
                 modifier = Modifier.size(24.dp)
             ) },
-            label = { Text("category") },
-            selected = currentRoute == NavigationRout.categories.route,
+            label = { Text("Settings") },
+            selected = currentRoute == NavigationRout.Profile.route,
             onClick = {
-                navController.navigate(NavigationRout.categories.route) {
+                navController.navigate(NavigationRout.Profile.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
@@ -108,6 +114,21 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
+
+     /*   NavigationBarItem(
+            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+            label = { Text("Settings") },
+            selected = currentRoute == NavigationRout.Settings.route,
+            onClick = {
+                navController.navigate(NavigationRout.Settings.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )*/
 
     }
 }
