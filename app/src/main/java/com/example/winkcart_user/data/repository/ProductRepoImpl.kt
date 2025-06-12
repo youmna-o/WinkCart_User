@@ -150,4 +150,26 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         )
     }
 
+    override suspend fun getCustomerAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<CustomerAddressRequest?> {
+        return remoteDataSource.getCustomerAddress(
+            customerId = customerId,
+            addressId = addressId
+        )
+    }
+
+    override suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?> {
+        return remoteDataSource.updateCustomerAddress(
+            customerId = customerId,
+            addressId = addressId,
+            customerAddressRequest = customerAddressRequest
+        )
+    }
+
 }

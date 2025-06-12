@@ -18,7 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -248,7 +248,6 @@ fun CartView(viewModel: CartViewModel) {
                     label = { Text(stringResource(R.string.Enter_your_promo_code)) },
                     trailingIcon = {
                         if (appliedCoupon != null) {
-                            // Show close icon
                             Surface(
                                 shape = CircleShape,
                                 color = Color.Red,
@@ -256,21 +255,19 @@ fun CartView(viewModel: CartViewModel) {
                             ) {
                                 IconButton(
                                     onClick = {
-                                        // Clear applied coupon
                                         promoCode = ""
-                                        viewModel.clearAppliedCoupon() // call function to clear in ViewModel
+                                        viewModel.clearAppliedCoupon()
                                     },
                                     modifier = Modifier.size(36.dp)
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Outlined.Remove, // or Icons.Default.Close
+                                        imageVector = Icons.Outlined.Remove,
                                         contentDescription = "Remove coupon",
                                         tint = Color.White
                                     )
                                 }
                             }
                         } else {
-                            // Show apply arrow icon
                             Surface(
                                 shape = CircleShape,
                                 color = Color.Black,
@@ -283,7 +280,7 @@ fun CartView(viewModel: CartViewModel) {
                                     modifier = Modifier.size(36.dp)
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Outlined.ArrowForward,
+                                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
                                         contentDescription = "Apply promo",
                                         tint = Color.White
                                     )

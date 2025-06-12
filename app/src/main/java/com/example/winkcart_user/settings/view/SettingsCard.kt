@@ -30,7 +30,8 @@ import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 fun SettingsCard(settingIcon: Int = R.drawable.ic_about_us,
                  settingName:Int = R.string.about_us,
                  subtitleText: String = "",
-                 onClick: () -> Unit = {}){
+                 onClick: () -> Unit = {}
+){
 
     Card(
         shape = RoundedCornerShape(CARD_CARD_CORNER_RADIUS),

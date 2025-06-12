@@ -87,7 +87,21 @@ interface Services {
         @Path("address_id") addressId: Long
     ): Response<Unit>
 
+    @GET("customers/{customer_id}/addresses/{address_id}.json")
+    suspend fun getCustomerAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Path("address_id") addressId: Long
+    ): Response<CustomerAddressRequest>
 
+
+    @PUT("customers/{customer_id}/addresses/{address_id}.json")
+    suspend fun updateCustomerAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Path("address_id") addressId: Long,
+        @Body addressUpdateRequest: CustomerAddressRequest
+    ): Response<Any>
 }
 
 interface CurrencyService {

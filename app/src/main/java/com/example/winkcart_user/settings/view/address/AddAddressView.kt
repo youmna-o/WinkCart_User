@@ -60,15 +60,6 @@ fun AddAddressView(
     var phoneNumber by remember { mutableStateOf("") }
     var country by remember { mutableStateOf(savedCountry) }
 
-
-
-   /* var titleError by remember { mutableStateOf(false) }
-    var governorateError by remember { mutableStateOf(false) }
-    var addressError by remember { mutableStateOf(false) }
-    var contactPersonError by remember { mutableStateOf(false) }
-    var phoneError by remember { mutableStateOf(false) }*/
-
-
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(
@@ -214,7 +205,7 @@ fun AddAddressView(
                         val customerAddressRequest = CustomerAddressRequest(
                             CustomerAddress(
                                 title = title,
-                                city = selectedGovernorate,
+                                city = selectedGovernorate.lowercase().replaceFirstChar { it.uppercaseChar() },
                                 country = country,
                                 address = address,
                                 name = contactPerson,

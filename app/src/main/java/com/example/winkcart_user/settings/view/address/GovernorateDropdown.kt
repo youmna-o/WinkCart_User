@@ -31,7 +31,7 @@ fun GovernorateDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    var inputText by remember { mutableStateOf(selectedGovernorate) }
+    var inputText by remember(selectedGovernorate) { mutableStateOf(selectedGovernorate) }
 
     val filteredGovernorates = Governorate.getAll().filter {
         stringResource(it.stringResId).contains(inputText, ignoreCase = true)

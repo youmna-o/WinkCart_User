@@ -2,6 +2,7 @@ package com.example.winkcart_user.settings.view.address
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,7 +34,10 @@ import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 
 @Composable
-fun AddressCard(address: CustomerAddress, defaultCheckAction: ()-> Unit ){
+fun AddressCard(
+    customerId: Long,
+    address: CustomerAddress, defaultCheckAction: ()-> Unit, editAction: (Long, Long) -> Unit
+){
 
     Log.i("TAG", "AddressCard: $address")
     Card(
@@ -79,7 +83,10 @@ fun AddressCard(address: CustomerAddress, defaultCheckAction: ()-> Unit ){
                 Text(
                     text = stringResource(R.string.edit),
                     color = myPurple,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    modifier = Modifier.clickable {
+                        editAction.invoke(customerId,address.id)
+                    }
                 )
             }
 

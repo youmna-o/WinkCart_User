@@ -6,6 +6,7 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -84,13 +85,13 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     override suspend fun updateDraftOrder(
         draftOrderId: Long,
         draftOrderRequest: DraftOrderRequest
-    ): Flow<DraftOrderResponse?> = flow {
+    ): Flow<DraftOrderResponse?> {
         val response = retrofitHelper.shopifyService.updateDraftOrder(
             token = BuildConfig.shopifyAccessToken,
             draftOrderId = draftOrderId,
             draftOrder = draftOrderRequest
         ).body()
-        emit(response)
+        return flowOf(response)
     }
 
     override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
@@ -103,21 +104,21 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     override suspend fun addCustomerAddress(
         customerId: Long,
         customerAddressRequest: CustomerAddressRequest
-    ): Flow<Any> = flow {
+    ): Flow<Any> {
         val response = retrofitHelper.shopifyService.addCustomerAddress(
             token = BuildConfig.shopifyAccessToken,
             customerId = customerId,
             request = customerAddressRequest
         )
-        emit(response)
+        return flowOf(response)
     }
 
-    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> = flow {
+    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> {
         val response = retrofitHelper.shopifyService.getCustomerAddresses(
             token = BuildConfig.shopifyAccessToken,
             customerId = customerId
         ).body()
-        emit(response)
+        return flowOf(response)
     }
 
     override suspend fun setDefaultAddress(customerId: Long, addressId: Long): Flow<Unit?> {
@@ -128,6 +129,34 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
                 addressId = addressId
             ).body()
         return flowOf(result)
+    }
+
+    override suspend fun getCustomerAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<CustomerAddressRequest?> {
+        val response =
+            retrofitHelper.shopifyService.getCustomerAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId
+            ).body()
+        return flowOf(response)
+    }
+
+    override suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?> {
+        val response =
+            retrofitHelper.shopifyService.updateCustomerAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId,
+                addressUpdateRequest = customerAddressRequest
+            ).body()
+        return flowOf(response)
     }
 
 }

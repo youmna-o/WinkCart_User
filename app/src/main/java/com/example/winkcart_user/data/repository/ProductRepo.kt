@@ -64,4 +64,12 @@ interface ProductRepo {
         addressId: Long
     ): Flow<Unit?>
 
+    suspend fun getCustomerAddress(customerId: Long, addressId: Long): Flow<CustomerAddressRequest?>
+
+    suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?>
+
 }

@@ -76,6 +76,8 @@
 
     <string name="you_have_not_added_any_addresses_yet">You have not added any addresses yet.</string>
     <string name="add_a_new_address_to_make_delivery_easier">Add a new address to make delivery easier.</string>
+    <string name="save_changes">SAVE CHANGES</string>
+    <string name="edit_address">Edit Address</string>
 
 
 

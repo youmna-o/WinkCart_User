@@ -41,7 +41,8 @@ import com.example.winkcart_user.ui.theme.BackgroundColor
 fun AddressView(
     viewModel: SettingsViewModel,
     addAction : ()-> Unit,
-    backAction : () -> Unit
+    backAction : () -> Unit,
+    editAction : (Long, Long) -> Unit
 ) {
     val customerId by viewModel.customerID.collectAsState()
     LaunchedEffect(customerId) {
@@ -91,12 +92,15 @@ fun AddressView(
                         LazyColumn {
                             items(addresses.size) { index ->
                                 AddressCard(
+                                    customerId = customerId.toLong(),
                                     address = addresses[index],
                                     defaultCheckAction = { viewModel.setDefaultAddress(
                                         customerId = customerId.toLong(),
                                         addressId = addresses[index].id
                                         )
-                                    }
+                                    },
+                                    editAction = editAction
+
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
                             }

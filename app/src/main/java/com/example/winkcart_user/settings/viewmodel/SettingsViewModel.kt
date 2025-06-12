@@ -45,7 +45,11 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
     private val _defaultCity = MutableStateFlow<ResponseStatus<String>>(ResponseStatus.Loading)
     val defaultCity = _defaultCity.asStateFlow()
 
+    private val _customerAddress = MutableStateFlow<ResponseStatus<CustomerAddressRequest>>(ResponseStatus.Loading)
+    val customerAddress = _customerAddress.asStateFlow()
 
+    private val _customerAddressUpdateResponse = MutableStateFlow<ResponseStatus<Any>>(ResponseStatus.Loading)
+    val customerAddressUpdateResponse = _customerAddressUpdateResponse.asStateFlow()
 
     init {
         readCustomerID()
@@ -217,6 +221,43 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
         }
     }
 
+    fun getCustomerAddress(customerId: Long, addressId: Long) {
+        viewModelScope.launch {
+            repo.getCustomerAddress(customerId, addressId)
+                .catch { exception ->
+                    _customerAddress.value = ResponseStatus.Error(exception)
+                }.collect{ response ->
+                    if(response!= null){
+                        _customerAddress.value = ResponseStatus.Success(response)
+
+
+                    }else{
+                        _customerAddress.value = ResponseStatus.Error(
+                            NullPointerException("Customer Address is null")
+                        )
+                    }
+                }
+        }
+    }
+
+    fun updateCustomerAddress(customerId: Long, addressId: Long, customerAddressRequest: CustomerAddressRequest) {
+        viewModelScope.launch {
+            repo.updateCustomerAddress(customerId, addressId, customerAddressRequest)
+                .catch { exception ->
+                    _customerAddressUpdateResponse.value = ResponseStatus.Error(exception)
+                }.collect{ response ->
+                    if(response!= null){
+                        _customerAddressUpdateResponse.value = ResponseStatus.Success(response)
+
+
+                    }else{
+                        _customerAddressUpdateResponse.value = ResponseStatus.Error(
+                            NullPointerException("Customer Address update response is null")
+                        )
+                    }
+                }
+        }
+    }
 }
 
 class SettingsFactory(private val repo: ProductRepo): ViewModelProvider.Factory {

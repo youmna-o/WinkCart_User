@@ -27,20 +27,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.winkcart_user.ui.auth.login.LoginScreen
 import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
-
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
-
 import com.example.winkcart_user.data.local.LocalDataSourceImpl
 import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
-
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.example.winkcart_user.brands.viewModel.BrandsFactory
 import com.example.winkcart_user.brands.viewModel.BrandsViewModel
 import com.example.winkcart_user.cart.view.CartView
@@ -57,6 +56,7 @@ import com.example.winkcart_user.settings.view.contactus.ContactUsView
 import com.example.winkcart_user.settings.view.SettingsView
 import com.example.winkcart_user.settings.view.address.AddAddressView
 import com.example.winkcart_user.settings.view.address.AddressView
+import com.example.winkcart_user.settings.view.address.EditAddressView
 import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthFactory
@@ -261,7 +261,14 @@ fun AppInit(authViewModel : AuthViewModel,
                     AddressView(
                         viewModel = settingsViewModel,
                         addAction = {navController.navigate(NavigationRout.AddAddress.route)},
-                        backAction = {navController.popBackStack()}
+                        backAction = {navController.popBackStack()},
+                        editAction = { customerId, addressId ->
+                            navController.navigate(
+                                NavigationRout.EditAddress.createRoute(customerId, addressId)
+                            )
+                            navController.currentBackStackEntry?.savedStateHandle?.set("addressId", addressId)
+                        }
+
                     )
                 }
                 composable(NavigationRout.AddAddress.route) { AddAddressView(
@@ -270,6 +277,26 @@ fun AppInit(authViewModel : AuthViewModel,
                 ) }
                 composable(NavigationRout.ContactUs.route) { ContactUsView() }
                 composable(NavigationRout.AboutUs.route) { AboutUsView() }
+
+                composable(
+                    route = NavigationRout.EditAddress.route,
+                    arguments = listOf(
+                        navArgument("customerId") { type = NavType.LongType },
+                        navArgument("addressId") { type = NavType.LongType }
+                    )
+                ) { backStackEntry ->
+                    val customerId = backStackEntry.arguments?.getLong("customerId") ?: return@composable
+                    val addressId = backStackEntry.arguments?.getLong("addressId") ?: return@composable
+
+                    EditAddressView(
+                        customerId = customerId,
+                        addressId = addressId,
+                        viewModel = settingsViewModel,
+                        backAction = {navController.popBackStack()}
+                    )
+                }
+
+
 
             }
         }
