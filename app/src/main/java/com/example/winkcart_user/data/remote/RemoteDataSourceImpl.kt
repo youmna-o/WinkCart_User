@@ -1,6 +1,5 @@
 package com.example.winkcart_user.data.remote
 
-import android.util.Log
 import com.example.winkcart_user.BuildConfig
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
@@ -8,6 +7,7 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.retrofit.MockDataSource
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
@@ -111,4 +111,13 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         )
         emit(response)
     }
+
+    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> = flow {
+        val response = retrofitHelper.shopifyService.getCustomerAddresses(
+            token = BuildConfig.shopifyAccessToken,
+            customerId = customerId
+        ).body()
+        emit(response)
+    }
+
 }

@@ -259,6 +259,7 @@ fun AppInit(authViewModel : AuthViewModel,
 
                 composable(NavigationRout.Address.route) {
                     AddressView(
+                        viewModel = settingsViewModel,
                         addAction = {navController.navigate(NavigationRout.AddAddress.route)},
                         backAction = {navController.popBackStack()}
                     )

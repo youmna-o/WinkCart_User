@@ -7,6 +7,7 @@ import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 
 
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -72,6 +73,12 @@ interface Services {
         @Path("customer_id") customerId: Long,
         @Body request: CustomerAddressRequest
     ): Response<Any>
+
+    @GET("customers/{customer_id}/addresses.json")
+    suspend fun getCustomerAddresses(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long
+    ): Response<CustomerAddressesResponse>
 
 }
 

@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.settings.enums.Currency
@@ -31,8 +33,12 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     private val _customerID = MutableStateFlow("")
     val customerID = _customerID.asStateFlow()
+
     private val _formValidationState = MutableStateFlow(AddressFormValidationState())
     val formValidationState = _formValidationState.asStateFlow()
+
+    private val _customerAddresses = MutableStateFlow<ResponseStatus<CustomerAddressesResponse>>(ResponseStatus.Loading)
+    val customerAddresses = _customerAddresses.asStateFlow()
 
 
     init {
@@ -159,6 +165,24 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
             }
         }
     }
+
+    fun getCustomerAddresses(customerId: Long) {
+        viewModelScope.launch {
+            repo.getCustomerAddresses(customerId)
+                .catch { exception ->
+                    _customerAddresses.value = ResponseStatus.Error(exception)
+                }.collect{ response ->
+                    if(response!= null){
+                        _customerAddresses.value = ResponseStatus.Success(response)
+                    }else{
+                        _customerAddresses.value = ResponseStatus.Error(
+                            NullPointerException("Customer Addresses is null")
+                        )
+                    }
+                }
+        }
+    }
+
 }
 
 class SettingsFactory(private val repo: ProductRepo): ViewModelProvider.Factory {

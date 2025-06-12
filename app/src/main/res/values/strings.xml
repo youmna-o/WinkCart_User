@@ -74,6 +74,9 @@
     <string name="save_address">SAVE ADDRESS</string>
     <string name="enter_a_valid_egyptian_phone_number">Enter a valid Egyptian phone number</string>
 
+    <string name="you_have_not_added_any_addresses_yet">You have not added any addresses yet.</string>
+    <string name="add_a_new_address_to_make_delivery_easier">Add a new address to make delivery easier.</string>
+
 
 
 </resources>

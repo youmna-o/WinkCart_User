@@ -8,9 +8,9 @@ import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.map
-
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
 
@@ -137,6 +137,10 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
             customerId = customerId,
             customerAddressRequest = customerAddressRequest
         )
+    }
+
+    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> {
+        return remoteDataSource.getCustomerAddresses(customerId = customerId)
     }
 
 }

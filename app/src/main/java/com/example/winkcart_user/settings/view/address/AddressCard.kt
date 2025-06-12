@@ -1,5 +1,6 @@
 package com.example.winkcart_user.settings.view.address
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,11 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
-import com.example.winkcart_user.data.model.settings.Address
+import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.ui.theme.CardBackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
 import com.example.winkcart_user.ui.theme.myPurple
@@ -33,13 +33,14 @@ import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 
 @Composable
-fun AddressCard(address: Address){
+fun AddressCard(address: CustomerAddress){
 
+    Log.i("TAG", "AddressCard: $address")
     Card(
         shape = RoundedCornerShape(CARD_CARD_CORNER_RADIUS),
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp),
+            .height(220.dp),
         colors = CardDefaults.cardColors(
             containerColor = CardBackgroundColor
         ),
@@ -66,8 +67,6 @@ fun AddressCard(address: Address){
 
                 )
 
-
-
                 Text(
                     text = address.title,
                     color = HeaderTextColor,
@@ -89,7 +88,7 @@ fun AddressCard(address: Address){
 
             Column(modifier = Modifier.padding(start = 24.dp)) {
                 Text(
-                    text = address.contactPerson,
+                    text = address.name,
                     color = HeaderTextColor,
                     fontSize = 16.sp
 
@@ -122,7 +121,7 @@ fun AddressCard(address: Address){
             ){
 
                 Checkbox(
-                    checked = true,
+                    checked = address.default,
                     onCheckedChange = { },
                     colors = CheckboxDefaults.colors(
                         checkedColor = Color.Black,
@@ -130,7 +129,7 @@ fun AddressCard(address: Address){
                         checkmarkColor = Color.White
                     )
 
-                    )
+                )
 
                 Text(
                     text = stringResource(R.string.address_card_checkbox_text),
@@ -144,11 +143,3 @@ fun AddressCard(address: Address){
 
 }
 
-
-@Preview
-@Composable
-private fun Preview_AddressCard() {
-
-    AddressCard(Address(title = "Home", country = "Egypt", address = "Chino Hills, CA 91709, United States", phone = "+20 114 070 8568", contactPerson = "Rofaida Sobhy"))
-    
-}

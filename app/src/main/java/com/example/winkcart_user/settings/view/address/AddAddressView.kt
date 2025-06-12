@@ -218,7 +218,7 @@ fun AddAddressView(
                                 country = country,
                                 address = address,
                                 name = contactPerson,
-                                phone = phoneNumber,
+                                phone = "+20 $phoneNumber",
                             )
                         )
                         viewModel.addCustomerAddress(

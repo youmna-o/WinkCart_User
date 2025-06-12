@@ -9,6 +9,7 @@ import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
@@ -55,5 +56,8 @@ interface ProductRepo {
         customerId: Long,
         customerAddressRequest: CustomerAddressRequest
     ): Flow<Any>
+
+    suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?>
+
 
 }
