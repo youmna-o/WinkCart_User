@@ -33,7 +33,7 @@ import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 
 @Composable
-fun AddressCard(address: CustomerAddress){
+fun AddressCard(address: CustomerAddress, defaultCheckAction: ()-> Unit ){
 
     Log.i("TAG", "AddressCard: $address")
     Card(
@@ -122,7 +122,7 @@ fun AddressCard(address: CustomerAddress){
 
                 Checkbox(
                     checked = address.default,
-                    onCheckedChange = { },
+                    onCheckedChange = { defaultCheckAction.invoke() },
                     colors = CheckboxDefaults.colors(
                         checkedColor = Color.Black,
                         uncheckedColor = Color.Black,

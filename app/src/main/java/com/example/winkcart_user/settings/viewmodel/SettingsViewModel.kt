@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
-import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -29,7 +28,7 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
     val currencyCode = _currencyCode.asStateFlow()
 
     private val _addCustomerAddressResponse = MutableStateFlow<ResponseStatus<Any>>(ResponseStatus.Loading)
-    val addCustomerAddressResponse = _addCustomerAddressResponse.asStateFlow()
+   // val addCustomerAddressResponse = _addCustomerAddressResponse.asStateFlow()
 
     private val _customerID = MutableStateFlow("")
     val customerID = _customerID.asStateFlow()
@@ -39,6 +38,13 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     private val _customerAddresses = MutableStateFlow<ResponseStatus<CustomerAddressesResponse>>(ResponseStatus.Loading)
     val customerAddresses = _customerAddresses.asStateFlow()
+
+    private val _customerDefaultAddressResponse = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
+    //val customerDefaultAddressResponse = _customerDefaultAddressResponse.asStateFlow()
+
+    private val _defaultCity = MutableStateFlow<ResponseStatus<String>>(ResponseStatus.Loading)
+    val defaultCity = _defaultCity.asStateFlow()
+
 
 
     init {
@@ -174,9 +180,37 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
                 }.collect{ response ->
                     if(response!= null){
                         _customerAddresses.value = ResponseStatus.Success(response)
+                        val default = response.addresses.find { it.default }
+                        if (default != null) {
+                            _defaultCity.value = ResponseStatus.Success(default.city)
+                        } else {
+                            _defaultCity.value = ResponseStatus.Error(NullPointerException("No default address found"))
+                        }
+
                     }else{
                         _customerAddresses.value = ResponseStatus.Error(
                             NullPointerException("Customer Addresses is null")
+                        )
+                    }
+                }
+        }
+    }
+
+    fun setDefaultAddress(customerId: Long, addressId: Long) {
+        viewModelScope.launch {
+            repo.setDefaultAddress(
+                customerId = customerId,
+                addressId = addressId
+            )
+                .catch { exception ->
+                    _customerDefaultAddressResponse.value = ResponseStatus.Error(exception)
+                }.collect{ response ->
+                    if(response!= null){
+                        _customerDefaultAddressResponse.value = ResponseStatus.Success(response)
+                        getCustomerAddresses(customerId)
+                    }else{
+                        _customerDefaultAddressResponse.value = ResponseStatus.Error(
+                            NullPointerException("Customer default Address is null")
                         )
                     }
                 }

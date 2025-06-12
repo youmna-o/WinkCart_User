@@ -143,4 +143,11 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return remoteDataSource.getCustomerAddresses(customerId = customerId)
     }
 
+    override suspend fun setDefaultAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        return remoteDataSource.setDefaultAddress(
+            customerId = customerId,
+            addressId = addressId
+        )
+    }
+
 }

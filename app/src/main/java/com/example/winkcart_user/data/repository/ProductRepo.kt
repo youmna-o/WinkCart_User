@@ -59,5 +59,9 @@ interface ProductRepo {
 
     suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?>
 
+    suspend fun setDefaultAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<Unit?>
 
 }

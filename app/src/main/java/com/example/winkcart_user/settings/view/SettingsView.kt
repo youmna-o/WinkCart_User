@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.R
+import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.settings.view.currency.CurrencySelectionSheet
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
@@ -44,6 +45,8 @@ fun SettingsView(
 ) {
 
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
+    val defaultCity by viewModel.defaultCity.collectAsState()
+    var city by remember { mutableStateOf("") }
 
     var showSheet by remember { mutableStateOf(false) }
 
@@ -56,9 +59,24 @@ fun SettingsView(
             onDismissRequest = { showSheet = false }
         )
     }
+    when (defaultCity) {
+        is ResponseStatus.Loading -> {
+            Text("Loading city...")
+        }
+
+        is ResponseStatus.Success -> {
+            city = (defaultCity as ResponseStatus.Success).result
+            Text("Default City: $city")
+        }
+
+        is ResponseStatus.Error -> {
+            val error = (defaultCity as ResponseStatus.Error).error.message
+            Text("Error: ${error ?: "Unknown error"}")
+        }
+    }
 
     val settingsItems = listOf(
-        Triple(R.drawable.ic_address, R.string.address, ""),
+        Triple(R.drawable.ic_address, R.string.address, city),
         Triple(R.drawable.ic_currency, R.string.currency, currencyCodeSaved),
         Triple(R.drawable.ic_contact_us, R.string.contact_us, ""),
         Triple(R.drawable.ic_about_us, R.string.about_us, "")

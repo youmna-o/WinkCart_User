@@ -120,4 +120,14 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         emit(response)
     }
 
+    override suspend fun setDefaultAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        val result =
+            retrofitHelper.shopifyService.setDefaultAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId
+            ).body()
+        return flowOf(result)
+    }
+
 }

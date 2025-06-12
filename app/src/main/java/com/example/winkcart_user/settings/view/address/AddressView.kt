@@ -48,6 +48,7 @@ fun AddressView(
         viewModel.getCustomerAddresses(customerId.toLong())
     }
     val customerAddresses by viewModel.customerAddresses.collectAsState()
+    //val customerDefaultAddressResponse by viewModel.customerDefaultAddressResponse.collectAsState()
 
     Scaffold (
         topBar = {
@@ -89,7 +90,14 @@ fun AddressView(
                     if (addresses.isNotEmpty()) {
                         LazyColumn {
                             items(addresses.size) { index ->
-                                AddressCard(address = addresses[index])
+                                AddressCard(
+                                    address = addresses[index],
+                                    defaultCheckAction = { viewModel.setDefaultAddress(
+                                        customerId = customerId.toLong(),
+                                        addressId = addresses[index].id
+                                        )
+                                    }
+                                )
                                 Spacer(modifier = Modifier.height(10.dp))
                             }
                         }
@@ -105,7 +113,6 @@ fun AddressView(
                 is ResponseStatus.Loading -> /*LoadingUI()*/NoAddressUI()
                 is ResponseStatus.Error -> /*ErrorUI()*/NoAddressUI()
             }
-            AddFAB(addAction)
         }
     }
         }

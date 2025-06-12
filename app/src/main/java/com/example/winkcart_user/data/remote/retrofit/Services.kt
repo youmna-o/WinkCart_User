@@ -80,6 +80,14 @@ interface Services {
         @Path("customer_id") customerId: Long
     ): Response<CustomerAddressesResponse>
 
+    @PUT("customers/{customer_id}/addresses/{address_id}/default.json")
+    suspend fun setDefaultAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Path("address_id") addressId: Long
+    ): Response<Unit>
+
+
 }
 
 interface CurrencyService {
