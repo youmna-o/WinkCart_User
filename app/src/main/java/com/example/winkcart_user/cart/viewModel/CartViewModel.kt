@@ -271,6 +271,11 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
+    fun readCustomersID(): String {
+        return repo.readCustomersID()
+    }
+
+
 
     fun readCurrencyCode(){
         viewModelScope.launch (Dispatchers.IO) {
