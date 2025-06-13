@@ -41,12 +41,12 @@ class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): Setting
     }
 
     override fun readCustomerID(): Flow<String> = flow{
-        val customerID = sharedPreferences.getString(CUSTOMER_ID, "") ?: ""
+        val customerID = sharedPreferences.getString(CUSTOMER_ID, "8371333857528") ?: "8371333857528"
         emit(customerID)
     }
 
     override fun readCustomersID(): String {
-        val customerID = sharedPreferences.getString(CUSTOMER_ID, "") ?: ""
+        val customerID = sharedPreferences.getString(CUSTOMER_ID, "8371333857528") ?: "8371333857528"
         return customerID
     }
 

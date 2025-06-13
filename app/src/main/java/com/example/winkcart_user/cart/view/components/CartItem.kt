@@ -261,6 +261,8 @@ fun CartItem(
                                 )
                             }
                         }
+
+
                         Spacer(Modifier.width(15.dp))
 
                         Text(

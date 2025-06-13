@@ -1,4 +1,4 @@
-package com.example.winkcart_user.brands.viewModel
+package com.example.winkcart_user.ui.home.main.brandsViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

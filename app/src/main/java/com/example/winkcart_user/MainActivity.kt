@@ -2,20 +2,24 @@ package com.example.winkcart_user
 
 
 import android.os.Bundle
+
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+
+
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.data.local.LocalDataSourceImpl
 import com.example.winkcart_user.data.local.settings.SettingsDaoImpl
+
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.winkcart_user.brands.viewModel.BrandsFactory
-import com.example.winkcart_user.brands.viewModel.BrandsViewModel
+import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsFactory
+import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.cart.viewModel.CartFactory
 import com.example.winkcart_user.cart.viewModel.CartViewModel
-import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
-import com.example.winkcart_user.categories.viewModel.CategoryFactory
+import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
+import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoryFactory
 import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
@@ -30,17 +34,17 @@ import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 
+import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
+import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
 
 class MainActivity : ComponentActivity() {
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
-val retrofitHelper = RetrofitHelper
+        val retrofitHelper = RetrofitHelper
             val remoteDataSource = RemoteDataSourceImpl(retrofitHelper)
             val localDataSource =  LocalDataSourceImpl(
                 SettingsDaoImpl(
@@ -52,6 +56,8 @@ val retrofitHelper = RetrofitHelper
                 customerRepo = ProductRepoImpl(remoteDataSource,localDataSource)
             )
 
+
+           // var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper)))
             var authViewModel = ViewModelProvider(this,authFactory).get(AuthViewModel :: class.java)
 
             val settingsViewModel: SettingsViewModel = viewModel(
@@ -66,8 +72,6 @@ val retrofitHelper = RetrofitHelper
                     )
                 )
             )
-
-
             val cartViewModel: CartViewModel = viewModel(
                 factory = CartFactory(
                     repo = ProductRepoImpl(
@@ -92,8 +96,6 @@ val retrofitHelper = RetrofitHelper
                     )
                 )
             )
-
-
 
             val brandFactory = BrandsFactory(
                 repo = ProductRepoImpl(
@@ -130,7 +132,8 @@ val retrofitHelper = RetrofitHelper
                     )
                 )
             )
-            val categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(CategoriesViewModel :: class.java)
+            val categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(
+                CategoriesViewModel :: class.java)
 
             val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
@@ -144,6 +147,17 @@ val retrofitHelper = RetrofitHelper
             )
             val currencyViewModel =  ViewModelProvider(this,currencyFactory).get(CurrencyViewModel :: class.java)
 
+            val ordersFactory = OrdersFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
+                    localDataSource =   LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                )
+            )
+            val ordersViewModel = ViewModelProvider(this,ordersFactory).get(OrdersViewModel::class.java)
 
             WinkCart_UserTheme {
                 cartViewModel.readCustomerID()
@@ -154,15 +168,11 @@ val retrofitHelper = RetrofitHelper
                     brandsViewModel = brandViewModel,
                     categoriesViewModel = categoriesViewModel,
                     currencyViewModel = currencyViewModel,
-                    favouriteViewModel = favViewModel
-
+                    ordersViewModel = ordersViewModel,
+                    favouriteViewModel = favViewModel,
                 )
            }
 
             }
         }
     }
-
-
-
-

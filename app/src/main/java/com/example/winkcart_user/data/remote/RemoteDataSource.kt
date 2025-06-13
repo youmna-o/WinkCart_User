@@ -8,6 +8,8 @@ import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
+import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrdersResponse
 
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -54,6 +56,7 @@ interface RemoteDataSource {
     ): Flow<DraftOrderResponse?>
 
     suspend fun getPriceRules(): Flow<PriceRulesResponse?>
-
+    suspend fun getOrders(customerId:Long) :Flow<OrdersResponse?>
+    suspend fun  getSpecificOrderDEtails(orderId:Long):Flow<OrderDetailsResponse?>
 
 }

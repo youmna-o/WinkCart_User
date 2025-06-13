@@ -191,7 +191,6 @@ fun VendorProductScreenOnLoading() {
 }
 
 fun mapProductsToBaAbstracted(products: List<Product>): List<ProductAbstracted> {
-    Log.i("TAG", "mapProductsToBaAbstracted:${products.size} ")
     return products.map { product ->
         ProductAbstracted(
             title = product.title,

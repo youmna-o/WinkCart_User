@@ -1,6 +1,5 @@
 package com.example.winkcart_user.ui.productInfo
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
@@ -10,15 +9,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+
+
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialog
+
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,22 +42,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.winkcart_user.cart.viewModel.CartViewModel
-import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
+import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
 import com.example.winkcart_user.data.model.draftorder.cart.Customer
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.LineItem
 import com.example.winkcart_user.data.model.draftorder.cart.Property
-import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.ui.productInfo.componants.FavIcon
 import com.example.winkcart_user.ui.productInfo.componants.ImageSlider
 import com.example.winkcart_user.ui.productInfo.componants.LongBasicDropdownMenu
 import com.example.winkcart_user.ui.productInfo.componants.Reviews
 import com.example.winkcart_user.ui.productInfo.componants.StarRatingBar
-import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.ui.utils.CustomButton
 
-@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductInfo(
@@ -67,16 +62,14 @@ fun ProductInfo(
     navController: NavController,
     scrollState: ScrollState,
     categoriesViewModel: CategoriesViewModel,
-    cartViewModel: CartViewModel,
-    favouriteViewModel: FavouriteViewModel,
+    cartViewModel: CartViewModel
 ) {
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
-    var myProduct = remember(productState.value) {
+
+    val myProduct = remember(productState.value) {
         categoriesViewModel.getProduct(productID)
     }
-    val draftedOrders = favouriteViewModel.draftProductTitles.collectAsState()
-    val isDraft = draftedOrders.value.contains(myProduct?.title)
 
     var selectedSize by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf("") }
@@ -108,6 +101,7 @@ fun ProductInfo(
             }
         )
     }
+
 
         Scaffold( topBar = {
             CenterAlignedTopAppBar(
@@ -147,6 +141,7 @@ fun ProductInfo(
                         onOptionSelected = { selectedColor = it }
                     )
 
+
                     IconButton(onClick = {
                         val idString = customerID.value
                         if (idString.isBlank()) {
@@ -183,9 +178,11 @@ fun ProductInfo(
                             contentDescription = "Favorite Icon",
                             tint = if (isDraft) myPurple else Color.Gray
                         )
+
                     }
 
                 }
+
 
                 Text("${myProduct?.title}", style = MaterialTheme.typography.titleLarge)
                 Text("${myProduct?.variants?.get(0)?.price}$", style = MaterialTheme.typography.titleLarge)
@@ -243,10 +240,12 @@ fun ProductInfo(
                         )
                     )
 
+
                     cartViewModel.createDraftCartOrder(idString, draftOrder)
                     Log.i("TAG", "ProductInfo: $draftOrder")
                     Log.i("TAG", "customerID = $idString")
                 }
+
                 cartViewModel.readCustomerID()
                 Log.d("shared", "************ after auth")
 
