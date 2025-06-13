@@ -345,6 +345,11 @@ fun getDraftOrders(customerId: String) {
         }
     }
 
+    fun readCustomersID(): String {
+        return repo.readCustomersID()
+    }
+
+
 
     fun readCurrencyCode(){
         viewModelScope.launch (Dispatchers.IO) {

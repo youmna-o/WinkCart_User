@@ -47,8 +47,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 @Composable
 fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cartViewModel: CartViewModel) {
-    val emailError by authViewModel.emailError.collectAsState()
-    val passwordError by authViewModel.passwordError.collectAsState()
+    val emailError by authViewModel.signInEmailError.collectAsState()
+    val passwordError by authViewModel.signInEmailError.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -73,14 +73,30 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cart
             if (idToken != null) {
                 authViewModel.signInWithGoogle(idToken) { success ->
                     if (success) {
-                        shouldNavigate = true
+                        val email = account.email?.trim() ?: ""
+
+                        Firebase.firestore.collection("customers").document(email)
+                            .get()
+                            .addOnSuccessListener { document ->
+                                val customerId = document.getString("customerId") ?: ""
+                                Log.d("shared", "Google Customer ID: $customerId")
+
+                                cartViewModel.writeCustomerID(customerId)
+
+                                shouldNavigate = true
+                            }
+                            .addOnFailureListener {
+                                Log.e("shared", "Firestore fetch failed for Google login", it)
+                                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            }
                     }
                 }
             }
         } catch (e: Exception) {
-            Log.e("GoogleSignIn", "Faild sign in with google", e)
+            Log.e("GoogleSignIn", "Failed sign in with Google", e)
         }
     }
+
 
     Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
 
@@ -90,7 +106,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cart
         ) {
             Text("Login To WinkCart", style = MaterialTheme.typography.titleLarge)
             TextButton({
-                cartViewModel.writeCustomerID(null)
+                cartViewModel.writeCustomerID("")
                 cartViewModel.readCustomerID()
                 navController.navigate("home")
             }) {
@@ -100,10 +116,10 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cart
 
         Spacer(modifier = Modifier.height(56.dp))
 
-        CustomTextField("Email", email, { email = it }, emailError != null)
+        CustomTextField("Email", email, { email = it }, emailError != "")
         emailError?.let { Text(it, color = Color.Red, fontSize = 12.sp) }
 
-        CustomTextField("Password", password, { password = it }, passwordError != null, isPassword = true )
+        CustomTextField("Password", password, { password = it }, passwordError != "", isPassword = true )
         passwordError?.let { Text(it, color = Color.Red, fontSize = 12.sp) }
 
         Text("Create New Account", modifier = Modifier
@@ -153,12 +169,10 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cart
     }
 
     if (shouldNavigate) {
-        LaunchedEffect(Unit) {
-            navController.navigate("home") {
-                popUpTo("login") { inclusive = true }
-            }
-            shouldNavigate = false
+        navController.navigate("home") {
+            popUpTo("login") { inclusive = true }
         }
     }
+
 }
 

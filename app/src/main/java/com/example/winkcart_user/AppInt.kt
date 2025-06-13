@@ -67,12 +67,12 @@ fun AppInit(authViewModel : AuthViewModel,
             val pa =paddingValues
             NavHost(
                 navController = navController,
-                startDestination = NavigationRout.SignUp.route,
-//                when{
-//                    cartViewModel.readCustomerID().toString() == "" -> NavigationRout.SignUp.route
-//                    cartViewModel.readCustomerID().toString()!= "" ->  NavigationRout.Home.route
-//                        else ->NavigationRout.Login.route
-//                },
+                startDestination =
+                when{
+                    cartViewModel.readCustomersID().isBlank() -> NavigationRout.SignUp.route
+                      else -> NavigationRout.Home.route
+                     ///   else ->NavigationRout.Login.route
+                },
                     //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,
                 modifier = Modifier.padding(2.dp)
             ) {

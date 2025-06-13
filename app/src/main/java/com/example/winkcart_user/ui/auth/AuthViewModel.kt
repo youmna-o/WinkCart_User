@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.winkcart_user.data.model.AuthModel
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepoImpl
@@ -25,10 +26,17 @@ import java.util.regex.Pattern
 class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : ProductRepoImpl) : ViewModel(){
 
 
-    private val _emailError = MutableStateFlow("")
-    val emailError = _emailError.asStateFlow()
-    private val _passwordError  = MutableStateFlow("")
-    val passwordError  = _passwordError .asStateFlow()
+    private val _signInEmailError = MutableStateFlow("")
+    val signInEmailError = _signInEmailError.asStateFlow()
+
+    private val _signUpEmailError = MutableStateFlow("")
+    val signUpEmailError = _signUpEmailError.asStateFlow()
+//    private val _emailError = MutableStateFlow("")
+//    val emailError = _emailError.asStateFlow()
+    private val _signInpasswordError  = MutableStateFlow("")
+    val signInpasswordError  = _signInpasswordError .asStateFlow()
+    private val _signUPpasswordError  = MutableStateFlow("")
+    val signUppasswordError  = _signUPpasswordError .asStateFlow()
 
      fun signUp(
          email: String,
@@ -36,7 +44,7 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
          onVerificationSent: (Boolean) -> Unit,
          onVerified: (FirebaseUser?) -> Unit
      ) {
-         if (isValidInputsData(email, password)) {
+         if (isValidInputsData(email, password, AuthModel.SignUp)) {
         repo.signUpFireBase(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -80,7 +88,7 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
         handler.post(checkVerificationRunnable)
     }
     fun signIn(email: String, password: String, onResult: (Boolean) -> Unit) {
-        if (isValidInputsData(email, password)) {
+        if (isValidInputsData(email, password,AuthModel.SignIn)) {
             repo.signInFireBase(email, password)
                 .addOnCompleteListener { task ->
                     onResult(task.isSuccessful)
@@ -116,30 +124,61 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
 
 
 
-    private fun isValidInputsData(email: String, password: String): Boolean {
+    private fun isValidInputsData(
+        email: String,
+        password: String,
+        screenType: AuthModel
+    ): Boolean {
         var isValid = true
+
+        // Email Validation
         if (email.isBlank()) {
-            _emailError.value = "Email is required"
+            when (screenType) {
+                AuthModel.SignIn -> _signInEmailError.value = "Email is required"
+                AuthModel.SignUp -> _signUpEmailError.value = "Email is required"
+            }
             isValid = false
         } else if (!isEmailValid(email)) {
-            _emailError.value  = "Invalid email format"
+            when (screenType) {
+                AuthModel.SignIn -> _signInEmailError.value = "Invalid email format"
+                AuthModel.SignUp -> _signUpEmailError.value = "Invalid email format"
+            }
             isValid = false
         } else {
-            _emailError.value  = ""
+            when (screenType) {
+                AuthModel.SignIn -> _signInEmailError.value = ""
+                AuthModel.SignUp -> _signUpEmailError.value = ""
+            }
         }
 
+        // Password Validation
         if (password.isBlank()) {
-            _passwordError.value = "Password is required"
+            when (screenType) {
+                AuthModel.SignIn -> _signInpasswordError.value = "Password is required"
+                AuthModel.SignUp -> _signUPpasswordError.value = "Password is required"
+            }
             isValid = false
         } else if (password.length < 6) {
-            _passwordError.value = "Password must be at least 6 characters"
+            val msg = "Password must be at least 6 characters"
+            when (screenType) {
+                AuthModel.SignIn -> _signInpasswordError.value = msg
+                AuthModel.SignUp -> _signUPpasswordError.value = msg
+            }
             isValid = false
         } else if (!isPasswordValid(password)) {
-            _passwordError.value = "Password must contain uppercase, lowercase, digit, and symbol"
+            val msg = "Password must contain uppercase, lowercase, digit, and symbol"
+            when (screenType) {
+                AuthModel.SignIn -> _signInpasswordError.value = msg
+                AuthModel.SignUp -> _signUPpasswordError.value = msg
+            }
             isValid = false
         } else {
-            _passwordError.value = ""
+            when (screenType) {
+                AuthModel.SignIn -> _signInpasswordError.value = ""
+                AuthModel.SignUp -> _signUPpasswordError.value = ""
+            }
         }
+
         return isValid
     }
 
@@ -148,7 +187,7 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
         return Pattern.compile(expression).matcher(email).matches()
     }
     fun isPasswordValid(password: String): Boolean {
-        val passwordRegex = Constants.Email_Regix
+        val passwordRegex = Constants.Password_Regix
         return Pattern.compile(passwordRegex).matcher(password).matches()
     }
 
