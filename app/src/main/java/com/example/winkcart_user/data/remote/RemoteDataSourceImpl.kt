@@ -11,6 +11,7 @@ import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
 
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -147,9 +148,15 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
             BuildConfig.shopifyAccessToken,orderId).body()
         var result = retrofitHelper.shopifyService.getOrderDetails(
             BuildConfig.shopifyAccessToken,orderId)
-        Log.i("TAG", "getSpecificOrderDEtails: ${result.raw()}")
-        Log.i("TAG", "getSpecificOrderDEtails: ${result.body()}")
         return flowOf(response)
 
+    }
+
+    override suspend fun createOrder(orderRequest: OrderRequest): Flow<OrdersResponse?> {
+        var result = retrofitHelper.shopifyService.createOrder(  BuildConfig.shopifyAccessToken, orderRequest = orderRequest).body()
+        var response = retrofitHelper.shopifyService.createOrder(  BuildConfig.shopifyAccessToken, orderRequest = orderRequest)
+        Log.i("TAG", "createOrder: ${response.raw()}")
+        Log.i("TAG", "createOrder: ${response.code()}")
+        return flowOf(result)
     }
 }

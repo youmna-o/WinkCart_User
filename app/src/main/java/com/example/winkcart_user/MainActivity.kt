@@ -30,15 +30,15 @@ import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.ui.checkout.view.viewModel.CheckoutFactory
+import com.example.winkcart_user.ui.checkout.view.viewModel.CheckoutViewModel
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
-
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -122,7 +122,6 @@ class MainActivity : ComponentActivity() {
             val vendorProductsViewModel =  ViewModelProvider(this,vendorFactory).get(VendorProductsViewModel :: class.java)
 
              val categoryFactory = CategoryFactory(
-
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
                     localDataSource =   LocalDataSourceImpl(
@@ -135,6 +134,14 @@ class MainActivity : ComponentActivity() {
             val categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(
                 CategoriesViewModel :: class.java)
 
+            val checkoutFactoetry = CheckoutFactory(repo = ProductRepoImpl(
+                remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
+                localDataSource = LocalDataSourceImpl( SettingsDaoImpl(
+                    LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                ))
+            ))
+
+            val checkoutViewModel= ViewModelProvider(this,checkoutFactoetry).get(CheckoutViewModel::class.java)
             val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
@@ -159,6 +166,7 @@ class MainActivity : ComponentActivity() {
             )
             val ordersViewModel = ViewModelProvider(this,ordersFactory).get(OrdersViewModel::class.java)
 
+
             WinkCart_UserTheme {
                 cartViewModel.readCustomerID()
                 AppInit(
@@ -170,6 +178,7 @@ class MainActivity : ComponentActivity() {
                     currencyViewModel = currencyViewModel,
                     ordersViewModel = ordersViewModel,
                     favouriteViewModel = favViewModel,
+                    checkoutViewModel = checkoutViewModel ,
                 )
            }
 

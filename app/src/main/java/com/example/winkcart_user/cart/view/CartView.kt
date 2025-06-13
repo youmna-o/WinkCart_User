@@ -47,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.view.components.CartItem
 import com.example.winkcart_user.cart.view.components.CouponItem
@@ -56,13 +57,14 @@ import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
+import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartView(viewModel: CartViewModel) {
+fun CartView(viewModel: CartViewModel,navController: NavController) {
 
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
@@ -299,12 +301,12 @@ fun CartView(viewModel: CartViewModel) {
                 shape = RoundedCornerShape(12.dp)
 
             )
-            Spacer(Modifier.height(20.dp))
+         /*   Spacer(Modifier.height(20.dp))*/
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -323,9 +325,9 @@ fun CartView(viewModel: CartViewModel) {
 
             Spacer(Modifier.height(30.dp))
             CustomButton(lable = stringResource(R.string.check_out)) {
-
+                navController.navigate(NavigationRout.Checkout.route)
             }
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(120.dp))
         }
 
     }

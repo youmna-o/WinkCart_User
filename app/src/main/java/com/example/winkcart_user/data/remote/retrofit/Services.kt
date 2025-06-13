@@ -9,6 +9,7 @@ import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
 
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -103,6 +104,12 @@ interface Services {
     suspend fun getOrderDetails(
         @Header("X-Shopify-Access-Token") token: String,
         @Path("orderId") orderID:Long):Response<OrderDetailsResponse>
+
+    @POST("orders.json")
+    suspend fun createOrder(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Body orderRequest: OrderRequest
+    ): Response<OrdersResponse>
 
 
 }

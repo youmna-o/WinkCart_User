@@ -25,7 +25,7 @@ class OrdersViewModel(private val repository: ProductRepo) : ViewModel() {
 
     fun getUserOrders(){
         viewModelScope.launch {
-            val orders = repository.getUserOrders(8371331465464) // TODO: Temporary hardcoded user ID for development purposes.
+            val orders = repository.getUserOrders()
             orders.catch {
                 _ordersList.value = ResponseStatus.Error(it)
             }.collect{ it

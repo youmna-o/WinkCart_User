@@ -23,6 +23,8 @@ import com.example.winkcart_user.ui.auth.login.LoginScreen
 import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
 import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
+import com.example.winkcart_user.ui.checkout.view.CheckoutScreen
+import com.example.winkcart_user.ui.checkout.view.viewModel.CheckoutViewModel
 import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.ui.home.main.view.HomeScreen
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
@@ -45,7 +47,8 @@ fun AppInit(authViewModel : AuthViewModel,
             brandsViewModel: BrandsViewModel ,
             currencyViewModel : CurrencyViewModel,
             favouriteViewModel: FavouriteViewModel,
-            ordersViewModel : OrdersViewModel
+            ordersViewModel : OrdersViewModel,
+            checkoutViewModel: CheckoutViewModel
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -103,7 +106,7 @@ fun AppInit(authViewModel : AuthViewModel,
                 }
                 composable(NavigationRout.Profile.route) { ProfileScreen(navController) }
                 composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
-                composable(NavigationRout.Cart.route) { CartView(cartViewModel) }
+                composable(NavigationRout.Cart.route) { CartView(cartViewModel,navController) }
                 composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
                 composable(NavigationRout.ProductInfo.route) {
@@ -125,6 +128,9 @@ fun AppInit(authViewModel : AuthViewModel,
                 }
                 composable(NavigationRout.Orders.route) {
                     OrdersScreen(navController = navController, ordersViewModel = ordersViewModel)
+                }
+                composable(NavigationRout.Checkout.route) {
+                    CheckoutScreen(cartViewModel,currencyViewModel,navController,checkoutViewModel)
                 }
             }
         }
