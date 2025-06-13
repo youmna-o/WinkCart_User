@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.Repository
 
 import com.example.winkcart_user.data.local.LocalDataSource
+import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
 import com.example.winkcart_user.data.model.proddata.Variant
 import com.example.winkcart_user.data.model.products.Product
 import com.example.winkcart_user.data.model.products.ProductResponse
@@ -108,56 +109,67 @@ class ProductRepoImplTest {
         assertEquals(expectedList, result?.smart_collections)
     }
 
+    @Test
+    fun `getProductsByVendor should filter duplicate product titles`() = runTest {
+        val vendor = "MockVendor"
+        val fakeProducts = listOf(
+            createMockProduct(id = 1, title = "Sneakers", price = 50.0),
+            createMockProduct(id = 2, title = "Sneakers", price = 55.0),
+            createMockProduct(id = 3, title = "Jacket", price = 80.0,vendor="Adidas")
+        )
+        val response = ProductResponse(products = fakeProducts)
+        coEvery { remoteDataSource.getProductsByVendor(vendor) } returns flowOf(response)
+
+        val result = productRepo.getProductsByVendor(vendor).first()
+
+        assertNotNull(result)
+        assertEquals(1, result?.products?.count { it.title == "Sneakers" })
+        assertEquals(2, result?.products?.size)
+        assertEquals("Jacket",result?.products[1]?.title)
+    }
+
+    @Test
+    fun `getUserOrders returns orders successfully`() = runTest {
+        val ordersResponse = FakeOrderFactory.createFakeOrdersResponse()
+        coEvery { localDataSource.readCustomersID() } returns "123"
+        coEvery { productRepo.getUserOrders() } returns flowOf(ordersResponse)
+
+        val result = productRepo.getUserOrders().first()
+
+        assertNotNull(result)
+        assertEquals(1, result?.orders?.size)
+        assertEquals("MockVendor", result?.orders?.first()?.lineItems?.first()?.vendor)
+    }
+    @Test
+    fun `getSpecificOrderDetails returns correct order details`() = runTest {
+
+        val fakeOrder = FakeOrderFactory.createFakeOrdersResponse().orders.last()
+        val orderDetailsResponse = OrderDetailsResponse(order = fakeOrder)
+
+        coEvery { remoteDataSource.getSpecificOrderDEtails(999L) } returns flowOf(orderDetailsResponse)
+
+
+        val result = productRepo.getSpecificOrderDetails(999L).first()
+
+        assertNotNull(result)
+        assertEquals(fakeOrder.id, result?.order?.id)
+        assertEquals(fakeOrder.lineItems.first().vendor, result?.order?.lineItems?.first()?.vendor)
+    }
+
+    @Test
+    fun `createOrder returns order successfully`() = runTest {
+
+        val fakeOrderRequest = createFakeOrderRequest()
+        val fakeOrdersResponse = FakeOrderFactory.createFakeOrdersResponse()
+
+        coEvery { remoteDataSource.createOrder(fakeOrderRequest) } returns flowOf(fakeOrdersResponse)
+        val result = productRepo.createOrder(fakeOrderRequest).first()
+        assertNotNull(result)
+        assertEquals(fakeOrdersResponse.orders.first().id, result?.orders?.first()?.id)
+        assertEquals(fakeOrdersResponse.orders.first().lineItems.first().title, result?.orders?.first()?.lineItems?.first()?.title)
+    }
+
 
 }
-fun createMockProduct(id: Long, title: String, price: Double): Product {
-    val variant = Variant(
-        id = id + 1000,
-        product_id = id,
-        title = "OS / black / 10",
-        price = price.toString(),
-        position = 1,
-        inventory_policy = "deny",
-        compare_at_price = null,
-        option1 = "OS",
-        option2 = "black",
-        option3 = "10",
-        created_at = "2025-06-08T07:23:29+03:00",
-        updated_at = "2025-06-08T07:23:29+03:00",
-        taxable = true,
-        barcode = null,
-        fulfillment_service = "manual",
-        grams = 0,
-        inventory_management = "shopify",
-        requires_shipping = true,
-        sku = "SKU-$id",
-        weight = 0.0,
-        weight_unit = "kg",
-        inventory_item_id = id + 2000,
-        inventory_quantity = 30,
-        old_inventory_quantity = 30,
-        admin_graphql_api_id = "gid://shopify/ProductVariant/${id + 1000}",
-        image_id = null
-    )
-    return Product(
-        id = id,
-        title = title,
-        body_html = "",
-        vendor = "MockVendor",
-        product_type = "MockType",
-        created_at = "2025-01-01T00:00:00Z",
-        handle = "mock-handle",
-        updated_at = "2025-01-01T00:00:00Z",
-        published_at = "2025-01-01T00:00:00Z",
-        template_suffix = null,
-        published_scope = "global",
-        tags = "",
-        status = "active",
-        admin_graphql_api_id = "mock-api-id",
-        options = emptyList(),
-        images = emptyList(),
-        image = null,
-        variants =  listOf(variant)
-    )
-}
+
 

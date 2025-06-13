@@ -1,6 +1,5 @@
 package com.example.winkcart_user.data.remote.retrofit
 
-import com.example.winkcart_user.BuildConfig
 import com.example.winkcart_user.data.model.customer.Customer
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.customer.CustomerWrapper
