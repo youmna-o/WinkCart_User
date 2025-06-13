@@ -18,6 +18,8 @@ import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.favourite.Favourite
 import com.example.winkcart_user.favourite.FavouriteViewModel
+import com.example.winkcart_user.payment.view.PaymentMethodsView
+import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.settings.view.SettingsView
 import com.example.winkcart_user.settings.view.aboutus.AboutUsView
 import com.example.winkcart_user.settings.view.address.AddAddressView
@@ -55,7 +57,8 @@ fun AppInit(authViewModel : AuthViewModel,
             currencyViewModel : CurrencyViewModel,
             favouriteViewModel: FavouriteViewModel,
             ordersViewModel : OrdersViewModel,
-            checkoutViewModel: CheckoutViewModel
+            checkoutViewModel: CheckoutViewModel,
+            paymentViewModel: PaymentViewModel
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -121,7 +124,11 @@ fun AppInit(authViewModel : AuthViewModel,
                         backAction = {navController.popBackStack()}
                     )
                 }
-                composable(NavigationRout.Cart.route) { CartView(cartViewModel,navController) }
+               // composable(NavigationRout.Cart.route) { CartView(cartViewModel,navController) }
+                composable(NavigationRout.Cart.route) { CartView(
+                    viewModel = cartViewModel,
+                    checkoutAction = {navController.navigate(NavigationRout.PaymentMethods.route)}
+                ) }
                 composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
                 composable(NavigationRout.ProductInfo.route) {
@@ -187,6 +194,11 @@ fun AppInit(authViewModel : AuthViewModel,
                 composable(NavigationRout.Checkout.route) {
                     CheckoutScreen(cartViewModel,currencyViewModel,navController,checkoutViewModel)
                 }
+
+                composable(NavigationRout.PaymentMethods.route) { PaymentMethodsView(
+                    viewModel = paymentViewModel,
+                    backAction = {navController.popBackStack()}
+                )}
             }
         }
     }

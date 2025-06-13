@@ -44,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.view.components.CartItem
 import com.example.winkcart_user.cart.view.components.CouponItem
@@ -53,13 +52,13 @@ import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
-import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartView(viewModel: CartViewModel,navController: NavController) {
+//fun CartView(viewModel: CartViewModel,navController: NavController) {
+fun CartView(viewModel: CartViewModel, checkoutAction: () -> Unit) {
 
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
@@ -234,10 +233,7 @@ fun CartView(viewModel: CartViewModel,navController: NavController) {
 
                 }
             }
-
             Spacer(Modifier.height(30.dp))
-
-
             OutlinedTextField(
                 value = promoCode,
                 onValueChange = {
@@ -320,9 +316,11 @@ fun CartView(viewModel: CartViewModel,navController: NavController) {
 
             Spacer(Modifier.height(30.dp))
             CustomButton(lable = stringResource(R.string.check_out)) {
-                navController.navigate(NavigationRout.Checkout.route)
+                //navController.navigate(NavigationRout.Checkout.route)
+                checkoutAction()
             }
-            Spacer(Modifier.height(120.dp))
+            Spacer(Modifier.height(150.dp))
+
         }
 
     }

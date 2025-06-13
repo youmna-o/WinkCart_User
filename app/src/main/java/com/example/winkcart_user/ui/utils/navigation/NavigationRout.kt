@@ -17,8 +17,9 @@ sealed class NavigationRout(val route: String) {
     }
     data object AboutUs :NavigationRout("AboutUs")
     data object ContactUs :NavigationRout("ContactUs")
-    object Home : NavigationRout("home")
+     data object PaymentMethods :NavigationRout("PaymentMethods")
 
+     object Home : NavigationRout("home")
      object VendorProducts : NavigationRout("vendor_products/{vendorName}") {
          fun createRoute(vendorName: String) = "vendor_products/$vendorName"
      }
