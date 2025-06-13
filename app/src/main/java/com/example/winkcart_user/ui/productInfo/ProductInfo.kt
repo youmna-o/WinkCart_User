@@ -9,12 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -23,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,11 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.winkcart_user.cart.viewModel.CartViewModel
-import com.example.winkcart_user.categories.viewModel.CategoriesViewModel
+import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
 import com.example.winkcart_user.data.model.draftorder.cart.Customer
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
-import com.example.winkcart_user.data.model.draftorder.cart.LineItem
+import com.example.winkcart_user.data.model.draftorder.cart.LineItemDraft
 import com.example.winkcart_user.data.model.draftorder.cart.Property
 import com.example.winkcart_user.ui.productInfo.componants.FavIcon
 import com.example.winkcart_user.ui.productInfo.componants.ImageSlider
@@ -64,7 +60,7 @@ fun ProductInfo(
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
 
-    var myProduct = remember(productState.value) {
+    val myProduct = remember(productState.value) {
         categoriesViewModel.getProduct(productID)
     }
 
@@ -115,7 +111,37 @@ fun ProductInfo(
                     }?.flatMap { it.values }?.toList() ?: emptyList(),
                         onOptionSelected = { selectedColor = it }
                     )
-                    FavIcon()
+                    FavIcon(){
+                        Log.i("customer", "customerID = ****************")
+                        val draftOrder = DraftOrderRequest(
+                            draft_order = DraftOrder(
+                                line_items = listOf(
+                                    myProduct?.let {
+                                        selectedVariant?.let { it1 ->
+                                            LineItemDraft(
+                                                variant_id = it1.id,
+                                                title = it.title,
+                                                price = it.variants[0].price,
+                                                quantity = 1,
+                                                properties = listOf(
+                                                    Property("Color", selectedColor),
+                                                    Property("Size", selectedSize),
+                                                    Property("Quantity_in_Stock", "${it1.inventory_quantity}"),
+                                                    Property("Image", myProduct.images[0].src),
+                                                    Property("SavedAt",  "Favourite")
+                                                )
+                                            )
+                                        }
+                                    }
+                                ),
+                                customer = Customer(customerID.value.toLong())
+                            )
+                        )
+                        cartViewModel.createDraftOrder(draftOrder)
+                        Log.i("customer", "ProductInfo: $draftOrder ")
+                        Log.i("customer", "customerID = ${customerID.value}")
+                        Log.i("customer", "customerID = ****************")
+                    }
                 }
 
 
@@ -139,17 +165,16 @@ fun ProductInfo(
                 review = categoriesViewModel.getReview(),
                 starSize = 8.0f
             )
+
             CustomButton(
                 lable = "ADD To CART"
             ) {
-
-
                 val draftOrder = DraftOrderRequest(
                     draft_order = DraftOrder(
                         line_items = listOf(
                             myProduct?.let {
                                 selectedVariant?.let { it1 ->
-                                    LineItem(
+                                    LineItemDraft(
                                         variant_id = it1.id,
                                         title = it.title,
                                         price = it.variants[0].price,
@@ -173,6 +198,8 @@ fun ProductInfo(
                 Log.i("TAG", "customerID = ${customerID.value}")
 
             }
+                cartViewModel.readCustomerID()
+                Log.d("shared", "************ after auth")
 
 
         }

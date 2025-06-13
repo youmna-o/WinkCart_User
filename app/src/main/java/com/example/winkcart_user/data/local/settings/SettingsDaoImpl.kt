@@ -37,7 +37,7 @@ class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): Setting
     }
 
     override suspend fun writeCurrencyReadingDate(currencyReadingDate: String) {
-        sharedPreferences.edit { putString(CURRENCY_READING_DATE, currencyReadingDate) }
+        sharedPreferences.edit { putString(CURRENCY_READING_DATE, currencyReadingDate).commit() }
     }
 
     override fun readCustomerID(): Flow<String> = flow{
@@ -45,7 +45,13 @@ class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): Setting
         emit(customerID)
     }
 
+    override fun readCustomersID(): String {
+        val customerID = sharedPreferences.getString(CUSTOMER_ID, "8371333857528") ?: "8371333857528"
+        return customerID
+    }
+
     override suspend fun writeCustomerID(customerID: String) {
         sharedPreferences.edit { putString(CUSTOMER_ID, customerID) }
     }
+
 }

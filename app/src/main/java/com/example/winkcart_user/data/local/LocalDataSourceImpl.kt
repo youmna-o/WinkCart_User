@@ -36,4 +36,8 @@ class LocalDataSourceImpl(private val settingsDao: SettingsDao) : LocalDataSourc
         return settingsDao.writeCustomerID(customerID)
     }
 
+    override fun readCustomersID(): String {
+        return settingsDao.readCustomersID()
+    }
+
 }
