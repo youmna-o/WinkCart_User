@@ -39,7 +39,7 @@ import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesView
 import com.example.winkcart_user.data.model.draftorder.cart.Customer
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
-import com.example.winkcart_user.data.model.draftorder.cart.LineItem
+import com.example.winkcart_user.data.model.draftorder.cart.LineItemDraft
 import com.example.winkcart_user.data.model.draftorder.cart.Property
 import com.example.winkcart_user.ui.productInfo.componants.FavIcon
 import com.example.winkcart_user.ui.productInfo.componants.ImageSlider
@@ -118,7 +118,7 @@ fun ProductInfo(
                                 line_items = listOf(
                                     myProduct?.let {
                                         selectedVariant?.let { it1 ->
-                                            LineItem(
+                                            LineItemDraft(
                                                 variant_id = it1.id,
                                                 title = it.title,
                                                 price = it.variants[0].price,
@@ -174,7 +174,7 @@ fun ProductInfo(
                         line_items = listOf(
                             myProduct?.let {
                                 selectedVariant?.let { it1 ->
-                                    LineItem(
+                                    LineItemDraft(
                                         variant_id = it1.id,
                                         title = it.title,
                                         price = it.variants[0].price,

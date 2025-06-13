@@ -9,6 +9,7 @@ package com.example.winkcart_user.ui.utils.navigation
      object Home : NavigationRout("home")
      data object Orders : NavigationRout("orders")
      data object Profile : NavigationRout("Profile")
+     data object Checkout : NavigationRout("Checkout")
      data object OrderDetails : NavigationRout("OrderDetails/{orderId}")
 
      object VendorProducts : NavigationRout("vendor_products/{vendorName}") {

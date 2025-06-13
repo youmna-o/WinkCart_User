@@ -11,6 +11,7 @@ import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
+import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
 
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -145,12 +146,17 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     }
 
 
-    override suspend fun getUserOrders(customerID: Long): Flow<OrdersResponse?> {
-        return remoteDataSource.getOrders(customerID)
+    override suspend fun getUserOrders(): Flow<OrdersResponse?> {
+        var customer_id : String = this.readCustomersID()
+        return remoteDataSource.getOrders(/*customer_id.toLong()*/8371331465464)
     }
 
     override suspend fun getSpecificOrderDetails(orderId: Long): Flow<OrderDetailsResponse?> {
         return remoteDataSource.getSpecificOrderDEtails(orderId)
+    }
+
+    override suspend fun createOrder(orderRequest: OrderRequest): Flow<OrdersResponse?> {
+        return remoteDataSource.createOrder(orderRequest = orderRequest)
     }
 
 }
