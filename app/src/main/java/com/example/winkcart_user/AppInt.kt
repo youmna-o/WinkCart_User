@@ -48,9 +48,7 @@ fun AppInit(authViewModel : AuthViewModel,
             currencyViewModel : CurrencyViewModel,
             favouriteViewModel: FavouriteViewModel,
             ordersViewModel : OrdersViewModel,
-/*
             checkoutViewModel: CheckoutViewModel
-*/
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -129,7 +127,7 @@ fun AppInit(authViewModel : AuthViewModel,
                     OrdersScreen(navController = navController, ordersViewModel = ordersViewModel)
                 }
                 composable(NavigationRout.Checkout.route) {
-                    CheckoutScreen(cartViewModel,currencyViewModel,navController)
+                    CheckoutScreen(cartViewModel,currencyViewModel,navController,checkoutViewModel)
                 }
             }
         }

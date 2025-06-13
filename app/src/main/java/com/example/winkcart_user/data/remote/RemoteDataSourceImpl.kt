@@ -153,6 +153,9 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
 
     override suspend fun createOrder(orderRequest: OrderRequest): Flow<OrdersResponse?> {
         var result = retrofitHelper.shopifyService.createOrder(  BuildConfig.shopifyAccessToken, orderRequest = orderRequest).body()
+        var response = retrofitHelper.shopifyService.createOrder(  BuildConfig.shopifyAccessToken, orderRequest = orderRequest)
+        Log.i("TAG", "createOrder: ${response.raw()}")
+        Log.i("TAG", "createOrder: ${response.code()}")
         return flowOf(result)
     }
 }

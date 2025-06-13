@@ -89,6 +89,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     //firebase
     // Import the BoM for the Firebase platform

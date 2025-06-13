@@ -105,7 +105,7 @@ interface Services {
         @Header("X-Shopify-Access-Token") token: String,
         @Path("orderId") orderID:Long):Response<OrderDetailsResponse>
 
-    @POST("admin/api/2023-07/orders.json")
+    @POST("orders.json")
     suspend fun createOrder(
         @Header("X-Shopify-Access-Token") token: String,
         @Body orderRequest: OrderRequest

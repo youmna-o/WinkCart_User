@@ -122,7 +122,6 @@ class MainActivity : ComponentActivity() {
             val vendorProductsViewModel =  ViewModelProvider(this,vendorFactory).get(VendorProductsViewModel :: class.java)
 
              val categoryFactory = CategoryFactory(
-
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
                     localDataSource =   LocalDataSourceImpl(
@@ -135,6 +134,14 @@ class MainActivity : ComponentActivity() {
             val categoriesViewModel =  ViewModelProvider(this,categoryFactory).get(
                 CategoriesViewModel :: class.java)
 
+            val checkoutFactoetry = CheckoutFactory(repo = ProductRepoImpl(
+                remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
+                localDataSource = LocalDataSourceImpl( SettingsDaoImpl(
+                    LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                ))
+            ))
+
+            val checkoutViewModel= ViewModelProvider(this,checkoutFactoetry).get(CheckoutViewModel::class.java)
             val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
                     remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
@@ -171,7 +178,7 @@ class MainActivity : ComponentActivity() {
                     currencyViewModel = currencyViewModel,
                     ordersViewModel = ordersViewModel,
                     favouriteViewModel = favViewModel,
-
+                    checkoutViewModel = checkoutViewModel ,
                 )
            }
 
