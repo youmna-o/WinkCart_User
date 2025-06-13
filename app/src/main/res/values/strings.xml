@@ -33,4 +33,20 @@
     <string name="Enter_your_promo_code">Enter your promo code</string>
     <string name="your_promo_codes">Your Promo Codes</string>
 
+    <string name="payment_methods">Payment Methods</string>
+    <string name="online_payment">Online Payment</string>
+    <string name="masterCard">MasterCard</string>
+    <string name="more_payment_options">More Payment Options</string>
+    <string name="cash_on_delivery">Cash on Delivery (COD)</string>
+    <string name="enter_card_details">Enter Card Details</string>
+
+
+    <string name="name_on_card">Name on card</string>
+    <string name="card_number">Card number</string>
+    <string name="expire_date">Expire Date</string>
+    <string name="cvv">CVV</string>
+
+    <string name="apply">APPLY</string>
+
+
 </resources>

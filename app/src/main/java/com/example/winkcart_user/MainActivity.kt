@@ -1,13 +1,11 @@
 package com.example.winkcart_user
 
 
-import android.os.Build
 import android.os.Bundle
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -54,6 +52,9 @@ import com.example.winkcart_user.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
+import com.example.winkcart_user.payment.view.PaymentMethodsView
+import com.example.winkcart_user.payment.viewModel.PaymentFactory
+import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.settings.SettingsView
 import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
@@ -161,6 +162,19 @@ class MainActivity : ComponentActivity() {
             val currencyViewModel =  ViewModelProvider(this,currencyFactory).get(CurrencyViewModel :: class.java)
 
 
+            val paymentFactory = PaymentFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper) ,
+                    localDataSource =   LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                )
+            )
+            val paymentViewModel = ViewModelProvider(this,paymentFactory)[PaymentViewModel :: class.java]
+
+
 
 
             WinkCart_UserTheme {
@@ -171,7 +185,8 @@ class MainActivity : ComponentActivity() {
                     vendorProductViewModel = vendorProductsViewModel,
                     brandsViewModel = brandViewModel,
                     categoriesViewModel = categoriesViewModel,
-                    currencyViewModel = currencyViewModel
+                    currencyViewModel = currencyViewModel,
+                    paymentViewModel = paymentViewModel
                 )
            }
 
@@ -186,7 +201,8 @@ fun AppInit(authViewModel : AuthViewModel,
             settingsViewModel: SettingsViewModel,
             vendorProductViewModel :VendorProductsViewModel,
             brandsViewModel: BrandsViewModel ,
-            currencyViewModel : CurrencyViewModel
+            currencyViewModel : CurrencyViewModel,
+            paymentViewModel : PaymentViewModel
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -232,8 +248,15 @@ fun AppInit(authViewModel : AuthViewModel,
                     )
                 }
                 composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
-                composable(NavigationRout.Cart.route) { CartView(cartViewModel) }
+                composable(NavigationRout.Cart.route) { CartView(
+                    viewModel = cartViewModel,
+                    checkoutAction = {navController.navigate(NavigationRout.PaymentMethods.route)}
+                    ) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
+                composable(NavigationRout.PaymentMethods.route) { PaymentMethodsView(
+                    viewModel = paymentViewModel,
+                    backAction = {navController.popBackStack()}
+                )}
 
                 composable(NavigationRout.ProductInfo.route) {
                         backStackEntry ->
