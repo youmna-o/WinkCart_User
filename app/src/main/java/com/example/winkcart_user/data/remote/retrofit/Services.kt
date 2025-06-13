@@ -15,6 +15,8 @@ import com.example.winkcart_user.data.model.orders.OrdersResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 
 
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
@@ -93,7 +95,6 @@ interface Services {
         @Header("X-Shopify-Access-Token") token: String
     ): Response<PriceRulesResponse>
 
-
     @GET("orders.json")
     suspend fun getUserOrders (
     @Header("X-Shopify-Access-Token") token: String,
@@ -111,7 +112,41 @@ interface Services {
         @Body orderRequest: OrderRequest
     ): Response<OrdersResponse>
 
+    @POST("customers/{customer_id}/addresses.json")
+    suspend fun addCustomerAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Body request: CustomerAddressRequest
+    ): Response<Any>
 
+    @GET("customers/{customer_id}/addresses.json")
+    suspend fun getCustomerAddresses(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long
+    ): Response<CustomerAddressesResponse>
+
+    @PUT("customers/{customer_id}/addresses/{address_id}/default.json")
+    suspend fun setDefaultAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Path("address_id") addressId: Long
+    ): Response<Unit>
+
+    @GET("customers/{customer_id}/addresses/{address_id}.json")
+    suspend fun getCustomerAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Path("address_id") addressId: Long
+    ): Response<CustomerAddressRequest>
+
+
+    @PUT("customers/{customer_id}/addresses/{address_id}.json")
+    suspend fun updateCustomerAddress(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("customer_id") customerId: Long,
+        @Path("address_id") addressId: Long,
+        @Body addressUpdateRequest: CustomerAddressRequest
+    ): Response<Any>
 }
 
 

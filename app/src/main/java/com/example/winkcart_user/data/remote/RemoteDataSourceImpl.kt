@@ -3,7 +3,6 @@ package com.example.winkcart_user.data.remote
 import android.util.Log
 import com.example.winkcart_user.BuildConfig
 
-import com.example.winkcart_user.data.model.customer.Customer
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.customer.CustomerWrapper
@@ -13,9 +12,10 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
 import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
-
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.retrofit.MockDataSource
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
@@ -118,14 +118,13 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     override suspend fun updateDraftOrder(
         draftOrderId: Long,
         draftOrderRequest: DraftOrderRequest
-    ): Flow<DraftOrderResponse?> = flow {
-        val response = retrofitHelper
-            .shopifyService.updateDraftOrder(
+    ): Flow<DraftOrderResponse?> {
+        val response = retrofitHelper.shopifyService.updateDraftOrder(
             token = BuildConfig.shopifyAccessToken,
             draftOrderId = draftOrderId,
             draftOrder = draftOrderRequest
         ).body()
-        emit(response)
+        return flowOf(response)
     }
 
     override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
@@ -159,4 +158,63 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         Log.i("TAG", "createOrder: ${response.code()}")
         return flowOf(result)
     }
+
+    override suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any> {
+        val response = retrofitHelper.shopifyService.addCustomerAddress(
+            token = BuildConfig.shopifyAccessToken,
+            customerId = customerId,
+            request = customerAddressRequest
+        )
+        return flowOf(response)
+    }
+
+    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> {
+        val response = retrofitHelper.shopifyService.getCustomerAddresses(
+            token = BuildConfig.shopifyAccessToken,
+            customerId = customerId
+        ).body()
+        return flowOf(response)
+    }
+
+    override suspend fun setDefaultAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        val result =
+            retrofitHelper.shopifyService.setDefaultAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId
+            ).body()
+        return flowOf(result)
+    }
+
+    override suspend fun getCustomerAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<CustomerAddressRequest?> {
+        val response =
+            retrofitHelper.shopifyService.getCustomerAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId
+            ).body()
+        return flowOf(response)
+    }
+
+    override suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?> {
+        val response =
+            retrofitHelper.shopifyService.updateCustomerAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId,
+                addressUpdateRequest = customerAddressRequest
+            ).body()
+        return flowOf(response)
+    }
+
 }

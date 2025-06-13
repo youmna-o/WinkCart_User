@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.local
 
 import com.example.winkcart_user.data.local.settings.SettingsDao
+import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
 
 class LocalDataSourceImpl(private val settingsDao: SettingsDao) : LocalDataSource {
@@ -8,7 +9,7 @@ class LocalDataSourceImpl(private val settingsDao: SettingsDao) : LocalDataSourc
         return settingsDao.readCurrencyCode()
     }
 
-    override suspend fun writeCurrencyCode(currencyCode: String) {
+    override suspend fun writeCurrencyCode(currencyCode: Currency) {
         settingsDao.writeCurrencyCode(currencyCode)
     }
 

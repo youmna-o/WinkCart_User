@@ -1,4 +1,4 @@
-package com.example.winkcart_user.settings
+package com.example.winkcart_user.settings.view.aboutus
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import com.example.winkcart_user.ui.theme.HeaderTextColor
 
 @Preview
 @Composable
-private fun AboutUsView() {
+fun AboutUsView() {
     Box(
         modifier = Modifier
             .fillMaxSize()

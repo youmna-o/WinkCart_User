@@ -1,4 +1,4 @@
-package com.example.winkcart_user.settings
+package com.example.winkcart_user.settings.view.contactus
 
 import android.content.Intent
 import androidx.compose.foundation.background
@@ -27,7 +27,7 @@ import androidx.core.net.toUri
 
 @Preview
 @Composable
-private fun ContactUsScreen() {
+fun ContactUsView() {
     val localContext = LocalContext.current
     Box(
         modifier = Modifier

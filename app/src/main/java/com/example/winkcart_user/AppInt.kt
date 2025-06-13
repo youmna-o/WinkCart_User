@@ -8,15 +8,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.favourite.Favourite
 import com.example.winkcart_user.favourite.FavouriteViewModel
-import com.example.winkcart_user.settings.SettingsView
+import com.example.winkcart_user.settings.view.SettingsView
+import com.example.winkcart_user.settings.view.aboutus.AboutUsView
+import com.example.winkcart_user.settings.view.address.AddAddressView
+import com.example.winkcart_user.settings.view.address.AddressView
+import com.example.winkcart_user.settings.view.address.EditAddressView
+import com.example.winkcart_user.settings.view.contactus.ContactUsView
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.auth.login.LoginScreen
@@ -105,7 +112,15 @@ fun AppInit(authViewModel : AuthViewModel,
                     )
                 }
                 composable(NavigationRout.Profile.route) { ProfileScreen(navController) }
-                composable(NavigationRout.Settings.route) { SettingsView(settingsViewModel) }
+                composable(NavigationRout.Settings.route) {
+                    SettingsView(
+                        viewModel = settingsViewModel,
+                        addressAction = {navController.navigate(NavigationRout.Address.route)},
+                        contactUsAction = {navController.navigate(NavigationRout.ContactUs.route)},
+                        aboutUsAction = {navController.navigate(NavigationRout.AboutUs.route)},
+                        backAction = {navController.popBackStack()}
+                    )
+                }
                 composable(NavigationRout.Cart.route) { CartView(cartViewModel,navController) }
                 composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
@@ -122,6 +137,46 @@ fun AppInit(authViewModel : AuthViewModel,
 
                     )
                 }
+                composable(NavigationRout.Address.route) {
+                    AddressView(
+                        viewModel = settingsViewModel,
+                        addAction = {navController.navigate(NavigationRout.AddAddress.route)},
+                        backAction = {navController.popBackStack()},
+                        editAction = { customerId, addressId ->
+                            navController.navigate(
+                                NavigationRout.EditAddress.createRoute(customerId, addressId)
+                            )
+                            navController.currentBackStackEntry?.savedStateHandle?.set("addressId", addressId)
+                        }
+
+                    )
+                }
+
+                composable(NavigationRout.AddAddress.route) { AddAddressView(
+                    viewModel = settingsViewModel,
+                    backAction = {navController.popBackStack()}
+                ) }
+                composable(NavigationRout.ContactUs.route) { ContactUsView() }
+                composable(NavigationRout.AboutUs.route) { AboutUsView() }
+
+                composable(
+                    route = NavigationRout.EditAddress.route,
+                    arguments = listOf(
+                        navArgument("customerId") { type = NavType.LongType },
+                        navArgument("addressId") { type = NavType.LongType }
+                    )
+                ) { backStackEntry ->
+                    val customerId = backStackEntry.arguments?.getLong("customerId") ?: return@composable
+                    val addressId = backStackEntry.arguments?.getLong("addressId") ?: return@composable
+
+                    EditAddressView(
+                        customerId = customerId,
+                        addressId = addressId,
+                        viewModel = settingsViewModel,
+                        backAction = {navController.popBackStack()}
+                    )
+                }
+
                 composable(NavigationRout.OrderDetails.route) { backStackEntry ->
                     val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
                     OrderDetailsScreen(navController,ordersViewModel,orderId.toLong())

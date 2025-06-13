@@ -18,8 +18,10 @@ import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.map
-
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
+import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
 
 class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
@@ -60,7 +62,7 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return localDataSource.readCurrencyCode()
     }
 
-    override suspend fun writeCurrencyCode(currencyCode: String) {
+    override suspend fun writeCurrencyCode(currencyCode: Currency) {
         localDataSource.writeCurrencyCode(currencyCode)
     }
 
@@ -145,7 +147,6 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return  remoteDataSource.getPriceRules()
     }
 
-
     override suspend fun getUserOrders(): Flow<OrdersResponse?> {
         var customer_id : String = this.readCustomersID()
         return remoteDataSource.getOrders(/*customer_id.toLong()*/8371331465464)
@@ -157,6 +158,49 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
 
     override suspend fun createOrder(orderRequest: OrderRequest): Flow<OrdersResponse?> {
         return remoteDataSource.createOrder(orderRequest = orderRequest)
+    }
+
+    override suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any> {
+        return remoteDataSource.addCustomerAddress(
+            customerId = customerId,
+            customerAddressRequest = customerAddressRequest
+        )
+    }
+
+    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> {
+        return remoteDataSource.getCustomerAddresses(customerId = customerId)
+    }
+
+    override suspend fun setDefaultAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        return remoteDataSource.setDefaultAddress(
+            customerId = customerId,
+            addressId = addressId
+        )
+    }
+
+    override suspend fun getCustomerAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<CustomerAddressRequest?> {
+        return remoteDataSource.getCustomerAddress(
+            customerId = customerId,
+            addressId = addressId
+        )
+    }
+
+    override suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?> {
+        return remoteDataSource.updateCustomerAddress(
+            customerId = customerId,
+            addressId = addressId,
+            customerAddressRequest = customerAddressRequest
+        )
     }
 
 }
