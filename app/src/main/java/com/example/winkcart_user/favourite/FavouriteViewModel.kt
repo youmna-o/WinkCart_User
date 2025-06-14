@@ -129,7 +129,6 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
                 repo.createDraftOrder(draftOrderRequest)
                     .catch { /* handle error */ }
                     .collect {
-                        // بعد الإضافة بنجاح، نعيد تحميل الطلبات
                         getDraftOrders(customerId)
                     }
             }
