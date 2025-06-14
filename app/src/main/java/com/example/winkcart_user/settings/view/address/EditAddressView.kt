@@ -1,5 +1,6 @@
 package com.example.winkcart_user.settings.view.address
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -42,10 +45,13 @@ import com.example.winkcart_user.R
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.helperclasses.MapUtils
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.google.android.gms.maps.model.LatLng
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +59,9 @@ fun EditAddressView(
     customerId: Long,
     addressId: Long,
     viewModel: SettingsViewModel,
-    backAction: () -> Unit
+    backAction: () -> Unit,
+    navigateToMapAction:()->Unit,
+    addressLatLon : LatLng?
 ) {
     val validationState by viewModel.formValidationState.collectAsState()
     val customerAddress by viewModel.customerAddress.collectAsState()
@@ -61,12 +69,12 @@ fun EditAddressView(
     val savedCountry = stringResource(R.string.egypt)
 
     var title by remember { mutableStateOf("") }
-    var selectedGovernorate by remember { mutableStateOf("") }
+    //var selectedGovernorate by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var contactPerson by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
     var country by remember { mutableStateOf(savedCountry) }
-
+    var isOutOfCoverage by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
@@ -81,7 +89,7 @@ fun EditAddressView(
                         val request = CustomerAddressRequest(
                             CustomerAddress(
                                 title = title,
-                                city = selectedGovernorate,
+                                city = ""/*selectedGovernorate*/,
                                 country = country,
                                 address = address,
                                 name = contactPerson,
@@ -108,6 +116,22 @@ fun EditAddressView(
         viewModel.getCustomerAddress(customerId = customerId, addressId = addressId)
     }
 
+    val context = LocalContext.current
+
+    LaunchedEffect(addressLatLon) {
+        addressLatLon?.let {
+            val (fullAddress, detectedCountry) = MapUtils.getAddressFromLatLng(context, it.latitude, it.longitude)
+            country = detectedCountry
+            isOutOfCoverage = !detectedCountry.equals("Egypt", ignoreCase = true)
+            if (isOutOfCoverage) {
+                address = ""
+            } else {
+                address = fullAddress
+            }
+        }
+    }
+
+
     when (val result = customerAddress) {
         is ResponseStatus.Error -> {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -126,7 +150,7 @@ fun EditAddressView(
 
             LaunchedEffect(fetchedAddress) {
                 title = fetchedAddress.title
-                selectedGovernorate = fetchedAddress.city
+                /*selectedGovernorate = fetchedAddress.city*/
                 address = fetchedAddress.address
                 contactPerson = fetchedAddress.name
                 phoneNumber = fetchedAddress.phone.removePrefix("+20 ")
@@ -184,9 +208,9 @@ fun EditAddressView(
                     enabled = false
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+              //  Spacer(modifier = Modifier.height(16.dp))
 
-                GovernorateDropdown(
+                /*GovernorateDropdown(
                     selectedGovernorate = selectedGovernorate,
                     onGovernorateSelected = { selected ->
                         selectedGovernorate = selected.name.lowercase().replaceFirstChar { it.uppercaseChar() }
@@ -198,7 +222,7 @@ fun EditAddressView(
                         color = Color.Red,
                         style = LocalTextStyle.current.copy(fontSize = 12.sp)
                     )
-                }
+                }*/
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -208,8 +232,25 @@ fun EditAddressView(
                     label = { Text(text = stringResource(R.string.address)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    isError = validationState.addressError
+                    readOnly = true,
+                    isError = validationState.addressError,
+                    trailingIcon = {
+                        IconButton(onClick = { navigateToMapAction() }) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Choose on Map",
+                                tint = myPurple
+                            )
+                        }
+                    }
                 )
+                if (isOutOfCoverage) {
+                    Text(
+                        text = stringResource(R.string.this_address_is_out_of_our_coverage_area),
+                        color = Color.Red,
+                        style = LocalTextStyle.current.copy(fontSize = 12.sp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -258,18 +299,18 @@ fun EditAddressView(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                CustomButton(lable = stringResource(R.string.save_changes)) {
+                CustomButton(
+                    lable = stringResource(R.string.save_changes)
+                ) {
                     val isFormValid = viewModel.validateAddressForm(
                         title = title,
-                        selectedGovernorate = selectedGovernorate,
+                       /* selectedGovernorate = selectedGovernorate,*/
                         address = address,
                         contactPerson = contactPerson,
                         phoneNumber = phoneNumber
                     )
 
                     if (isFormValid) {
-
-
 
                             showDialog = true
                         }

@@ -30,5 +30,7 @@ sealed class NavigationRout(val route: String) {
 
      object categories :NavigationRout("Categories")
      object Favourite :NavigationRout("Favourite")
+    data object Map: NavigationRout("map_screen")
+
 }
 

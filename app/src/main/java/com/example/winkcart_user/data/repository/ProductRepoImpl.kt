@@ -22,6 +22,10 @@ import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.settings.enums.Currency
+import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.flow.Flow
 
 class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
@@ -202,5 +206,16 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
             customerAddressRequest = customerAddressRequest
         )
     }
+
+    //map
+    override fun getAutoCompleteText(query: String, placesClient: PlacesClient): Task<FindAutocompletePredictionsResponse> {
+        return remoteDataSource.getPlacesApiAutoComplete(query,placesClient)
+    }
+
+    override fun fetchGoogleMapPlaceById(placeId: String, placesClient: PlacesClient): Task<FetchPlaceResponse> {
+        return remoteDataSource.fetchPlaceById(placeId,placesClient)
+
+    }
+
 
 }

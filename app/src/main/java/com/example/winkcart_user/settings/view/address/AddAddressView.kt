@@ -1,5 +1,6 @@
 package com.example.winkcart_user.settings.view.address
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,27 +42,48 @@ import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.helperclasses.MapUtils
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.google.android.gms.maps.model.LatLng
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAddressView(
     viewModel: SettingsViewModel,
-    backAction : () -> Unit
+    backAction : () -> Unit,
+    navigateToMapAction:()->Unit,
+    addressLatLon : LatLng?
 ) {
+    Log.i("TAG", "AddAddressView: lateLng = ${addressLatLon?.latitude} ")
     val customerID by viewModel.customerID.collectAsState()
     val validationState by viewModel.formValidationState.collectAsState()
 
     val savedCountry = stringResource(R.string.egypt)
     var title by remember { mutableStateOf("") }
-    var selectedGovernorate by remember { mutableStateOf("") }
+  //  var selectedGovernorate by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var contactPerson by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
     var country by remember { mutableStateOf(savedCountry) }
+    var isOutOfCoverage by remember { mutableStateOf(false) }
+
+
+    val context = LocalContext.current
+
+    LaunchedEffect(addressLatLon) {
+        addressLatLon?.let {
+            val (fullAddress, detectedCountry) = MapUtils.getAddressFromLatLng(context, it.latitude, it.longitude)
+            address = fullAddress
+            country = detectedCountry
+            isOutOfCoverage = !detectedCountry.equals("Egypt", ignoreCase = true)
+            Log.i("TAG", "AddAddressView: address = $address | country = $detectedCountry")
+        }
+    }
+
 
     Scaffold (
         topBar = {
@@ -116,10 +141,10 @@ fun AddAddressView(
                     readOnly = true,
                     enabled = false
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+               // Spacer(modifier = Modifier.height(16.dp))
 
 
-                GovernorateDropdown(
+                /*GovernorateDropdown(
                     selectedGovernorate = selectedGovernorate,
                     onGovernorateSelected = { selected ->
                         selectedGovernorate = selected.name
@@ -131,7 +156,7 @@ fun AddAddressView(
                         color = Color.Red,
                         style = LocalTextStyle.current.copy(fontSize = 12.sp)
                     )
-                }
+                }*/
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -141,10 +166,30 @@ fun AddAddressView(
                         address = it
                     },
                     label = { Text(text = stringResource(R.string.address)) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     singleLine = true,
-                    isError = validationState.addressError
+                    readOnly = true,
+                    isError = validationState.addressError,
+                    trailingIcon = {
+                        IconButton(onClick = { navigateToMapAction() }) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Choose on Map",
+                                tint = myPurple
+                            )
+                        }
+                    }
                 )
+                if (isOutOfCoverage) {
+                    address = ""
+                    Text(
+                        text = stringResource(R.string.this_address_is_out_of_our_coverage_area),
+                        color = Color.Red,
+                        style = LocalTextStyle.current.copy(fontSize = 12.sp)
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
@@ -193,9 +238,9 @@ fun AddAddressView(
                 Spacer(modifier = Modifier.height(30.dp))
 
                 CustomButton(lable = stringResource(R.string.save_address)) {
-                    val isFormValid = viewModel.validateAddressForm(
+                   val isFormValid = viewModel.validateAddressForm(
                         title = title,
-                        selectedGovernorate = selectedGovernorate,
+                        /*selectedGovernorate = selectedGovernorate,*/
                         address = address,
                         contactPerson = contactPerson,
                         phoneNumber = phoneNumber
@@ -205,7 +250,7 @@ fun AddAddressView(
                         val customerAddressRequest = CustomerAddressRequest(
                             CustomerAddress(
                                 title = title,
-                                city = selectedGovernorate.lowercase().replaceFirstChar { it.uppercaseChar() },
+                                city = "" /*selectedGovernorate.lowercase().replaceFirstChar { it.uppercaseChar() }*/,
                                 country = country,
                                 address = address,
                                 name = contactPerson,

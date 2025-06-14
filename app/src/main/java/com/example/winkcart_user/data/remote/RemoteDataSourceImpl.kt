@@ -2,7 +2,6 @@ package com.example.winkcart_user.data.remote
 
 import android.util.Log
 import com.example.winkcart_user.BuildConfig
-
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.customer.CustomerWrapper
@@ -20,6 +19,12 @@ import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.retrofit.MockDataSource
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -215,6 +220,19 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
                 addressUpdateRequest = customerAddressRequest
             ).body()
         return flowOf(response)
+    }
+
+    //map
+    override fun getPlacesApiAutoComplete(query: String, placesClient: PlacesClient): Task<FindAutocompletePredictionsResponse> {
+        val request = FindAutocompletePredictionsRequest.builder()
+            .setQuery(query)
+            .build()
+        return placesClient.findAutocompletePredictions(request)
+    }
+
+    override fun fetchPlaceById(placeId: String, placesClient: PlacesClient): Task<FetchPlaceResponse> {
+        val request= FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.LAT_LNG, Place.Field.NAME))
+        return placesClient.fetchPlace(request)
     }
 
 }

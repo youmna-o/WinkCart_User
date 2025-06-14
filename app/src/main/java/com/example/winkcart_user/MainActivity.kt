@@ -26,6 +26,8 @@ import com.example.winkcart_user.payment.viewModel.PaymentFactory
 import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
+import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
+import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModelFactory
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.checkout.view.viewModel.CheckoutFactory
@@ -35,11 +37,15 @@ import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProducts
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
+import com.google.android.libraries.places.api.Places
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+        if (!Places.isInitialized()) {
+            Places.initialize(this, BuildConfig.MAPS_API_KEY)
+        }
         setContent {
             val retrofitHelper = RetrofitHelper
             val remoteDataSource = RemoteDataSourceImpl(retrofitHelper)
@@ -195,6 +201,23 @@ class MainActivity : ComponentActivity() {
             val paymentViewModel =
                 ViewModelProvider(this, paymentFactory)[PaymentViewModel::class.java]
 
+
+            //map
+            val placesClient= Places.createClient(LocalContext.current)
+            val placesViewModelFactory = PlacesViewModelFactory(
+                repo = ProductRepoImpl(
+                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    localDataSource = LocalDataSourceImpl(
+                        SettingsDaoImpl(
+                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
+                        )
+                    )
+                ),
+                placesClient
+            )
+            val placesViewModel =
+                ViewModelProvider(this, placesViewModelFactory)[PlacesViewModel::class.java]
+
             WinkCart_UserTheme {
                 cartViewModel.readCustomerID()
                 AppInit(
@@ -207,7 +230,8 @@ class MainActivity : ComponentActivity() {
                     ordersViewModel = ordersViewModel,
                     favouriteViewModel = favViewModel,
                     checkoutViewModel = checkoutViewModel,
-                    paymentViewModel = paymentViewModel
+                    paymentViewModel = paymentViewModel,
+                    placesViewModel = placesViewModel
                 )
             }
 

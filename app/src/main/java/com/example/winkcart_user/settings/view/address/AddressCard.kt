@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
@@ -31,6 +32,7 @@ import com.example.winkcart_user.ui.theme.CardBackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
 import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
+import com.google.maps.android.compose.GoogleMap
 
 
 @Composable
@@ -116,7 +118,9 @@ fun AddressCard(
                 Text(
                     text = address.address,
                     color = HeaderTextColor,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
 

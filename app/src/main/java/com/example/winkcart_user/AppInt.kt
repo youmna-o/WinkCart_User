@@ -27,6 +27,8 @@ import com.example.winkcart_user.settings.view.address.AddressView
 import com.example.winkcart_user.settings.view.address.EditAddressView
 import com.example.winkcart_user.settings.view.contactus.ContactUsView
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
+import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
+import com.example.winkcart_user.settings.view.address.map.PlacePicker
 import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.auth.login.LoginScreen
 import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
@@ -45,6 +47,7 @@ import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
 import com.example.winkcart_user.ui.profile.userProfile.view.ProfileScreen
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
+import com.google.android.gms.maps.model.LatLng
 import kotlin.collections.contains
 
 @Composable
@@ -58,7 +61,8 @@ fun AppInit(authViewModel : AuthViewModel,
             favouriteViewModel: FavouriteViewModel,
             ordersViewModel : OrdersViewModel,
             checkoutViewModel: CheckoutViewModel,
-            paymentViewModel: PaymentViewModel
+            paymentViewModel: PaymentViewModel,
+            placesViewModel: PlacesViewModel
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -98,6 +102,7 @@ fun AppInit(authViewModel : AuthViewModel,
                     //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,
                 modifier = Modifier.padding(2.dp)
             ) {
+                var addressLatLon: LatLng? = null
                 composable(NavigationRout.Login.route) {
                     LoginScreen(navController = navController , authViewModel = authViewModel,cartViewModel)
                 }
@@ -161,7 +166,9 @@ fun AppInit(authViewModel : AuthViewModel,
 
                 composable(NavigationRout.AddAddress.route) { AddAddressView(
                     viewModel = settingsViewModel,
-                    backAction = {navController.popBackStack()}
+                    backAction = {navController.popBackStack()},
+                    navigateToMapAction =  { navController.navigate(NavigationRout.Map.route) },
+                    addressLatLon = addressLatLon
                 ) }
                 composable(NavigationRout.ContactUs.route) { ContactUsView() }
                 composable(NavigationRout.AboutUs.route) { AboutUsView() }
@@ -180,7 +187,9 @@ fun AppInit(authViewModel : AuthViewModel,
                         customerId = customerId,
                         addressId = addressId,
                         viewModel = settingsViewModel,
-                        backAction = {navController.popBackStack()}
+                        backAction = {navController.popBackStack()},
+                        navigateToMapAction =  { navController.navigate(NavigationRout.Map.route) },
+                        addressLatLon = addressLatLon
                     )
                 }
 
@@ -199,6 +208,19 @@ fun AppInit(authViewModel : AuthViewModel,
                     viewModel = paymentViewModel,
                     backAction = {navController.popBackStack()}
                 )}
+
+
+                //map
+
+                composable(NavigationRout.Map.route) {
+                    PlacePicker(
+                        placesViewModel = placesViewModel
+                    ) { latLon ->
+                        addressLatLon = latLon
+                        navController.popBackStack()
+
+                    }
+                }
             }
         }
     }

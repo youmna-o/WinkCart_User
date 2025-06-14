@@ -34,6 +34,7 @@ import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.utils.AddFAB
 import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.google.android.gms.maps.model.LatLng
 
 
 @OptIn(ExperimentalMaterial3Api::class)

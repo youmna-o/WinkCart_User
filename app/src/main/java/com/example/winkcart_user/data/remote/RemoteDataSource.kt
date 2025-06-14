@@ -14,6 +14,9 @@ import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequ
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
 
@@ -77,5 +80,15 @@ interface RemoteDataSource {
         addressId: Long,
         customerAddressRequest: CustomerAddressRequest
     ): Flow<Any?>
+
+//map
+    fun getPlacesApiAutoComplete(
+        query: String,
+        placesClient: PlacesClient
+    ): Task<FindAutocompletePredictionsResponse>
+
+    fun fetchPlaceById(placeId: String, placesClient: PlacesClient): Task<FetchPlaceResponse>
+
+
 
 }

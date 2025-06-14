@@ -72,7 +72,7 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     fun validateAddressForm(
         title: String,
-        selectedGovernorate: String,
+        /*selectedGovernorate: String,*/
         address: String,
         contactPerson: String,
         phoneNumber: String
@@ -82,7 +82,7 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
         val validation = AddressFormValidationState(
             titleError = title.isBlank(),
-            governorateError = selectedGovernorate.isBlank(),
+            /*governorateError = selectedGovernorate.isBlank(),*/
             addressError = address.isBlank(),
             contactPersonError = contactPerson.isBlank(),
             phoneError = !isValidPhone
