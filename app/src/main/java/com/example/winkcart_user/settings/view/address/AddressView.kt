@@ -48,10 +48,10 @@ fun AddressView(
 ) {
     val customerId by viewModel.customerID.collectAsState()
     viewModel.readCustomerID()
-
-    LaunchedEffect(customerId) {
+    viewModel.getCustomerAddresses(customerId.toLong())
+   /* LaunchedEffect(customerId) {
         viewModel.getCustomerAddresses(customerId.toLong())
-    }
+    }*/
     val customerAddresses by viewModel.customerAddresses.collectAsState()
     //val customerDefaultAddressResponse by viewModel.customerDefaultAddressResponse.collectAsState()
 
