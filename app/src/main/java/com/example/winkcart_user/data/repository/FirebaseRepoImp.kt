@@ -34,4 +34,8 @@ class FirebaseRepoImp(private  val remoteDataSource: RemoteDataSource) : Firebas
         return remoteDataSource.firebaseAuthWithGoogle(idToken)
     }
 
+    override fun getUserGemail(): String {
+        return Firebase.auth.currentUser?.email ?: ""
+    }
+
 }

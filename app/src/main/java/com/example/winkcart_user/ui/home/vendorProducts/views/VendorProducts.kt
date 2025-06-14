@@ -73,7 +73,6 @@ fun VendorProductScreen(
     var productsByVendor = vendorProductsViewModel.productByVendor.collectAsState()
 
     var filteredProducts  = vendorProductsViewModel.filteredProducts.collectAsState().value
-  //  var searchedInput  = vendorProductsViewModel.searchInput.collectAsState().value
 
     when (productsByVendor.value) {
         is ResponseStatus.Loading -> {
@@ -81,10 +80,6 @@ fun VendorProductScreen(
         }
 
         is ResponseStatus.Success -> {
-      //      val afterSearch = state.
-                //response.products
-//                            .filter { product -> product.title.contains(searchInput, ignoreCase = true)
-//                        }
 
         VendorProductsOnScuccess(
             searchInput = searchInput,
@@ -94,9 +89,6 @@ fun VendorProductScreen(
 
             ,
             products = mapProductsToBaAbstracted(filteredProducts),
-                //filteredProducts,
-                //mapProductsToBaAbstracted((productsByVendor.value as ResponseStatus.Success<ProductResponse>).result.products),
-
             vendor = vendor,
             navController = navController,
             currencyCode = currencyCodeSaved,

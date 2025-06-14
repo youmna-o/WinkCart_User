@@ -109,25 +109,6 @@ fun ProductItem (product: ProductAbstracted ,currencyRate:String, currencyCode:S
                             fontWeight = FontWeight.Bold
 
                         )
-                        Surface(
-                            shape = CircleShape,
-                            color = Color.White,
-                            shadowElevation = 4.dp,
-                        ) {
-                            IconButton(
-                                onClick = { /* add to fav action  */},
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .align(Alignment.CenterVertically)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.FavoriteBorder,
-                                    contentDescription = "Add to favorites",
-                                    tint = Color.Gray,
-                                    modifier = Modifier.size(25.dp)
-                                )
-                            }
-                        }
                     }
                 }
             }

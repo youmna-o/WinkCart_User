@@ -21,7 +21,7 @@ import coil.compose.AsyncImage
 fun VendorCard(vendorName: String, imageUrl: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         modifier = modifier
-            .size(width = 150.dp, height = 130.dp)
+            .size(width = 150.dp, height = 150.dp)
             .background(Color.White),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),

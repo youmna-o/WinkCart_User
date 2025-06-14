@@ -120,5 +120,7 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:2.11.4")
     implementation("com.google.android.libraries.places:places:3.3.0")
 
+    implementation ("com.airbnb.android:lottie-compose:6.4.0")
+
 
 }
