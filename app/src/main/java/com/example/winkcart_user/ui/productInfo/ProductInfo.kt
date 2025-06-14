@@ -69,6 +69,7 @@ fun ProductInfo(
     categoriesViewModel: CategoriesViewModel,
     cartViewModel: CartViewModel,
     favouriteViewModel: FavouriteViewModel,
+    //  with fav view model
 ) {
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
