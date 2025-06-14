@@ -28,7 +28,8 @@ android {
 
 
         buildConfigField("String","shopifyAccessToken","\"${localProps["shopifyAccessToken"]}\"")
-
+        buildConfigField("String","MAPS_API_KEY","\"${localProps["MAPS_API_KEY"]}\"")
+        manifestPlaceholders["MAPS_API_KEY"] = localProps["MAPS_API_KEY"] ?: ""
     }
 
     buildTypes {
@@ -68,6 +69,8 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.play.services.analytics.impl)
+    implementation(libs.firebase.firestore)
+    implementation(libs.androidx.benchmark.macro)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,25 +90,35 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     //firebase
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
-
-    // Add the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
+    //auth
     implementation("com.google.firebase:firebase-auth")
-
-    // Also add the dependencies for the Credential Manager libraries and specify their versions
+    //google
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    //fireStore
+    implementation("com.google.firebase:firebase-firestore")
+    //verificationEmail
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+
+
 
     //glide
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
     implementation ("com.google.accompanist:accompanist-pager:0.28.0")
     //stars
     implementation("androidx.compose.material:material-icons-extended")
+
+    //map
+
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.libraries.places:places:3.3.0")
 
 
 }

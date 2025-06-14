@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import androidx.core.content.edit
+import com.example.winkcart_user.settings.enums.Currency
 
 class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): SettingsDao {
 
@@ -14,12 +15,12 @@ class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): Setting
         private const val CUSTOMER_ID = "customer_id"
     }
     override fun readCurrencyCode(): Flow<String>  = flow {
-        val currencyCode = sharedPreferences.getString(CURRENCY_CODE, "EGP") ?: "EGP"
+        val currencyCode = sharedPreferences.getString(CURRENCY_CODE, Currency.EGP.name) ?: Currency.EGP.name
         emit(currencyCode)
     }
 
-    override suspend fun writeCurrencyCode(currencyCode: String) {
-        sharedPreferences.edit { putString(CURRENCY_CODE, currencyCode) }
+    override suspend fun writeCurrencyCode(currencyCode: Currency) {
+        sharedPreferences.edit { putString(CURRENCY_CODE, currencyCode.name) }
     }
 
     override fun readCurrencyRate(): Flow<String> = flow  {
@@ -37,15 +38,21 @@ class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): Setting
     }
 
     override suspend fun writeCurrencyReadingDate(currencyReadingDate: String) {
-        sharedPreferences.edit { putString(CURRENCY_READING_DATE, currencyReadingDate) }
+        sharedPreferences.edit { putString(CURRENCY_READING_DATE, currencyReadingDate).commit() }
     }
 
     override fun readCustomerID(): Flow<String> = flow{
-        val customerID = sharedPreferences.getString(CUSTOMER_ID, "8371333857528") ?: "8371333857528"
+        val customerID = sharedPreferences.getString(CUSTOMER_ID, "") ?: ""
         emit(customerID)
+    }
+
+    override fun readCustomersID(): String {
+        val customerID = sharedPreferences.getString(CUSTOMER_ID, "") ?: ""
+        return customerID
     }
 
     override suspend fun writeCustomerID(customerID: String) {
         sharedPreferences.edit { putString(CUSTOMER_ID, customerID) }
     }
+
 }

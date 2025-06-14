@@ -20,6 +20,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,13 +33,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.cart.viewModel.CartViewModel
+import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.ui.theme.myPurple
 
 
 @Composable
-fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, onApplyClicked: (PriceRule) -> Unit) {
+fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, onApplyClicked: (PriceRule, String ) -> Unit) {
 
+    LaunchedEffect(priceRule.id) {
+        viewModel.getDiscountCodesByPriceRule(priceRule.id)
+    }
+
+    val discountCodeState by viewModel.priceRuleDiscountCodes.collectAsState()
+
+    val firstDiscountCode = when (discountCodeState) {
+        is ResponseStatus.Success -> {
+            val codes = (discountCodeState as ResponseStatus.Success).result?.discount_codes
+            if (codes?.isNotEmpty() == true) codes[0].code else "No code"
+        }
+        is ResponseStatus.Error -> "Error loading code"
+        is ResponseStatus.Loading -> "Loading..."
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -86,14 +104,14 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Personal offer",
+                            text = priceRule.title,
                             fontSize = 16.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
 
                         Text(
-                            text = priceRule.title,
+                            text = firstDiscountCode,
                             color = Color.Gray,
                             fontSize = 12.sp,
                             maxLines = 1,
@@ -123,7 +141,7 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
                         ) {
                             Button(
                                 onClick = {
-                                    onApplyClicked(priceRule)
+                                    onApplyClicked(priceRule,firstDiscountCode)
 
                                 },
                                 shape = RoundedCornerShape(24.dp),

@@ -2,7 +2,6 @@ package com.example.winkcart_user.cart.view
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,20 +13,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDropDown
-import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +43,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,17 +53,16 @@ import com.example.winkcart_user.cart.view.components.CartItem
 import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
-import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartView(viewModel: CartViewModel) {
+//fun CartView(viewModel: CartViewModel,navController: NavController) {
+fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit) {
 
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
@@ -75,12 +77,10 @@ fun CartView(viewModel: CartViewModel) {
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     var showSheet by remember { mutableStateOf(false) }
+    val scroll = rememberScrollState()
 
-    val couponImages = listOf(
-        R.drawable.coupon3,
-        R.drawable.coupon2,
-        R.drawable.coupon1
-    )
+
+
 
     LaunchedEffect(showSheet) {
         if (showSheet) {
@@ -109,11 +109,12 @@ fun CartView(viewModel: CartViewModel) {
     }
 
     Log.i("TAG", "CartView: draftOrders = ${draftOrderList.size}")
-    Log.i("TAG", "CartView: priceRules = $priceRulesList")
+    Log.i("TAG", "CartView: priceRules = ${priceRulesList.size}")
 
 
     // Modal Bottom Sheet
     if (showSheet) {
+
         ModalBottomSheet(
             onDismissRequest = { showSheet = false },
             sheetState = sheetState
@@ -123,6 +124,7 @@ fun CartView(viewModel: CartViewModel) {
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
+
             ) {
                 Text(
                     text = stringResource(R.string.your_promo_codes),
@@ -135,16 +137,22 @@ fun CartView(viewModel: CartViewModel) {
 
                 if (priceRulesList.isNotEmpty()) {
                     LazyColumn(
-                        modifier = Modifier.weight(1f) ,
+                        modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(priceRulesList.size) { index ->
+                            val couponImage : Int = if(priceRulesList[index].value_type == "percentage"){
+                                R.drawable.discount_copoun
+                            }else{
+                                R.drawable.receipt_copoun
+                            }
+
                             CouponItem(
                                 viewModel = viewModel,
                                 priceRule = priceRulesList[index],
-                                imageID = couponImages[index],
-                                onApplyClicked = { selectedPriceRule ->
-                                    promoCode = selectedPriceRule.title
+                                imageID = couponImage,
+                                onApplyClicked = { selectedPriceRule, code ->
+                                    promoCode = code
                                     showSheet = false
                                     viewModel.setAppliedCoupon(selectedPriceRule)
                                     viewModel.refreshTotalAmount()
@@ -160,18 +168,35 @@ fun CartView(viewModel: CartViewModel) {
         }
     }
 
-
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.cart),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { backAction.invoke() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+            )
+        }
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BackgroundColor)
                 .padding(SCREEN_PADDING)
+                .padding(paddingValues)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-
-
+                    .verticalScroll(scroll)
             ) {
 
                 if (draftOrderList.isNotEmpty()) {
@@ -232,10 +257,7 @@ fun CartView(viewModel: CartViewModel) {
 
                     }
                 }
-
                 Spacer(Modifier.height(30.dp))
-
-
                 OutlinedTextField(
                     value = promoCode,
                     onValueChange = {
@@ -282,24 +304,23 @@ fun CartView(viewModel: CartViewModel) {
                                     modifier = Modifier.size(36.dp)
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Outlined.ArrowForward,
+                                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
                                         contentDescription = "Apply promo",
                                         tint = Color.White
                                     )
                                 }
                             }
                         }
-                    }
-                    ,
+                    },
                     shape = RoundedCornerShape(12.dp)
 
                 )
-                Spacer(Modifier.height(20.dp))
+                /*   Spacer(Modifier.height(20.dp))*/
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
+                        .padding(top = 2.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -317,14 +338,17 @@ fun CartView(viewModel: CartViewModel) {
                 }
 
                 Spacer(Modifier.height(30.dp))
-
                 CustomButton(lable = stringResource(R.string.check_out)) {
-
+                    if(draftOrderList.isNotEmpty()) {
+                        checkoutAction(totalAmount, currencyCodeSaved)
+                    }
                 }
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(150.dp))
+
             }
 
         }
 
     }
+}
 
