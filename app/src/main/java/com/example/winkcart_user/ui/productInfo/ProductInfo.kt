@@ -55,7 +55,10 @@ fun ProductInfo(
     navController: NavController,
     scrollState: ScrollState,
     categoriesViewModel: CategoriesViewModel,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    favouriteViewModel: FavouriteViewModel,
+    //  with fav view model
+
 ) {
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
