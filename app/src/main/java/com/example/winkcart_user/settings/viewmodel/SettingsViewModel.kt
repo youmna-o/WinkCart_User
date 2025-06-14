@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
@@ -38,6 +39,8 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     private val _customerAddresses = MutableStateFlow<ResponseStatus<CustomerAddressesResponse>>(ResponseStatus.Loading)
     val customerAddresses = _customerAddresses.asStateFlow()
+    private val _defaultCustomerAddresses = MutableStateFlow<ResponseStatus<CustomerAddress>>(ResponseStatus.Loading)
+    val defaultCustomerAddresses = _defaultCustomerAddresses.asStateFlow()
 
     private val _customerDefaultAddressResponse = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
     //val customerDefaultAddressResponse = _customerDefaultAddressResponse.asStateFlow()
@@ -185,11 +188,15 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
                     if(response!= null){
                         _customerAddresses.value = ResponseStatus.Success(response)
                         val default = response.addresses.find { it.default }
+
                         if (default != null) {
+                            _defaultCustomerAddresses.value = ResponseStatus.Success(default)
                             _defaultCity.value = ResponseStatus.Success(default.city)
                         } else {
+                            _defaultCustomerAddresses.value = ResponseStatus.Error(NullPointerException("No default address found"))
                             _defaultCity.value = ResponseStatus.Error(NullPointerException("No default address found"))
                         }
+
 
                     }else{
                         _customerAddresses.value = ResponseStatus.Error(

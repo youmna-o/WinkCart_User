@@ -8,7 +8,9 @@ sealed class NavigationRout(val route: String) {
      data object Cart :NavigationRout("Cart")
      data object Orders : NavigationRout("orders")
      data object Profile : NavigationRout("Profile")
-     data object Checkout : NavigationRout("Checkout")
+     data object Checkout : NavigationRout("Checkout/{cardNumber}/{totalAmount}/{currencyCode}"){
+         fun createRoute(cardNumber: String, totalAmount: String, currencyCode: String) = "Checkout/$cardNumber/$totalAmount/$currencyCode"
+     }
      data object OrderDetails : NavigationRout("OrderDetails/{orderId}")
     data object Address :NavigationRout("Address")
     data object AddAddress :NavigationRout("AddAddress")
@@ -17,7 +19,9 @@ sealed class NavigationRout(val route: String) {
     }
     data object AboutUs :NavigationRout("AboutUs")
     data object ContactUs :NavigationRout("ContactUs")
-     data object PaymentMethods :NavigationRout("PaymentMethods")
+     data object PaymentMethods :NavigationRout("PaymentMethods/{totalAmount}/{currencyCode}") {
+         fun createRoute(totalAmount: String, currencyCode: String) = "PaymentMethods/$totalAmount/$currencyCode"
+     }
 
      object Home : NavigationRout("home")
      object VendorProducts : NavigationRout("vendor_products/{vendorName}") {
@@ -31,6 +35,7 @@ sealed class NavigationRout(val route: String) {
      object categories :NavigationRout("Categories")
      object Favourite :NavigationRout("Favourite")
     data object Map: NavigationRout("map_screen")
+    data object Success: NavigationRout("Success")
 
 }
 

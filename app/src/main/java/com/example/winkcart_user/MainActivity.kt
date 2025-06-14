@@ -30,8 +30,6 @@ import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModelFactory
 import com.example.winkcart_user.ui.auth.AuthFactory
 import com.example.winkcart_user.ui.auth.AuthViewModel
-import com.example.winkcart_user.ui.checkout.view.viewModel.CheckoutFactory
-import com.example.winkcart_user.ui.checkout.view.viewModel.CheckoutViewModel
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
@@ -149,18 +147,6 @@ class MainActivity : ComponentActivity() {
                 CategoriesViewModel::class.java
             )
 
-            val checkoutFactoetry = CheckoutFactory(
-                repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
-                    localDataSource = LocalDataSourceImpl(
-                        SettingsDaoImpl(
-                            LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
-                        )
-                    )
-                )
-            )
-            val checkoutViewModel =
-                ViewModelProvider(this, checkoutFactoetry).get(CheckoutViewModel::class.java)
 
             val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
@@ -229,7 +215,6 @@ class MainActivity : ComponentActivity() {
                     currencyViewModel = currencyViewModel,
                     ordersViewModel = ordersViewModel,
                     favouriteViewModel = favViewModel,
-                    checkoutViewModel = checkoutViewModel,
                     paymentViewModel = paymentViewModel,
                     placesViewModel = placesViewModel
                 )

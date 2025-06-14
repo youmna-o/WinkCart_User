@@ -1,5 +1,6 @@
 package com.example.winkcart_user.payment.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -45,16 +46,38 @@ import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentMethodsView(
     viewModel : PaymentViewModel,
-    backAction: () -> Unit
+    backAction: () -> Unit,
+    totalAmount : String,
+    currencyCode : String,
+    goToCheckout: (String, String) -> Unit
 ) {
+    Log.i("TAG", "PaymentMethodsView: totalAmount: $totalAmount, currencyCode : $currencyCode ")
     val selectedOption = remember { mutableStateOf<PaymentMethod?>(null) }
     val showCardSheet = remember { mutableStateOf(false) }
+    var cardNumber by remember { mutableStateOf("") }
+    var isCashAllowed by remember { mutableStateOf(true) }
+    var amount by remember { mutableStateOf(0.0) }
+
+    LaunchedEffect(totalAmount, currencyCode) {
+        val cleanedAmount = totalAmount
+            .replace(",", "")
+            .replace(Regex("[^\\d.]"), "")
+
+        amount = cleanedAmount.toDouble()
+
+        isCashAllowed = when (currencyCode.uppercase()) {
+            "USD" -> amount <= 200.0
+            "EGP" -> amount <= 1000.0
+            else -> true
+        }
+
+        Log.d("PaymentMethodsView", "Parsed amount: $amount, isCashAllowed: $isCashAllowed")
+    }
 
     Scaffold(
         topBar = {
@@ -97,15 +120,21 @@ fun PaymentMethodsView(
                     },
                     icon = R.drawable.ic_mastercard
                 )
+                if (isCashAllowed) {
+                    PaymentSectionHeader(title = stringResource(R.string.more_payment_options))
 
-                PaymentSectionHeader(title = stringResource(R.string.more_payment_options))
-
-                PaymentOptionCard(
-                    title = stringResource(R.string.cash_on_delivery),
-                    isSelected = selectedOption.value == PaymentMethod.COD,
-                    onClick = { selectedOption.value = PaymentMethod.COD },
-                    icon = R.drawable.ic_cod
-                )
+                    PaymentOptionCard(
+                        title = stringResource(R.string.cash_on_delivery),
+                        isSelected = selectedOption.value == PaymentMethod.COD,
+                        onClick =
+                            {
+                                selectedOption.value = PaymentMethod.COD
+                                cardNumber = "Cash on Delivery (COD)"
+                                amount?.toString()?.let { goToCheckout(cardNumber, it) }
+                           },
+                        icon = R.drawable.ic_cod
+                    )
+                }
             }
         }
     }
@@ -115,7 +144,6 @@ fun PaymentMethodsView(
         val validationState by viewModel.formValidationState.collectAsState()
 
         var nameOnCard by remember { mutableStateOf("") }
-        var cardNumber by remember { mutableStateOf("") }
         var expireDate by remember { mutableStateOf("") }
         var cvv by remember { mutableStateOf("") }
 
@@ -195,9 +223,9 @@ fun PaymentMethodsView(
                     )
 
                     if (isFormValid) {
+                        goToCheckout("**** **** **** ${cardNumber.takeLast(4)}", amount.toString())
 
-
-                        backAction()
+                        //backAction()
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))

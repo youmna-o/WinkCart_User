@@ -34,8 +34,8 @@ import com.example.winkcart_user.ui.auth.login.LoginScreen
 import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
 import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
-import com.example.winkcart_user.ui.checkout.view.CheckoutScreen
-import com.example.winkcart_user.ui.checkout.view.viewModel.CheckoutViewModel
+import com.example.winkcart_user.payment.view.CheckoutScreen
+import com.example.winkcart_user.payment.view.SuccessView
 import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.ui.home.main.view.HomeScreen
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
@@ -56,11 +56,10 @@ fun AppInit(authViewModel : AuthViewModel,
             categoriesViewModel : CategoriesViewModel,
             settingsViewModel: SettingsViewModel,
             vendorProductViewModel :VendorProductsViewModel,
-            brandsViewModel: BrandsViewModel ,
+            brandsViewModel: BrandsViewModel,
             currencyViewModel : CurrencyViewModel,
             favouriteViewModel: FavouriteViewModel,
             ordersViewModel : OrdersViewModel,
-            checkoutViewModel: CheckoutViewModel,
             paymentViewModel: PaymentViewModel,
             placesViewModel: PlacesViewModel
 ) {
@@ -132,7 +131,13 @@ fun AppInit(authViewModel : AuthViewModel,
                // composable(NavigationRout.Cart.route) { CartView(cartViewModel,navController) }
                 composable(NavigationRout.Cart.route) { CartView(
                     viewModel = cartViewModel,
-                    checkoutAction = {navController.navigate(NavigationRout.PaymentMethods.route)}
+                    checkoutAction = { totalAmount, currencyCode ->
+                            navController.navigate(
+                                NavigationRout.PaymentMethods.createRoute(totalAmount, currencyCode)
+
+                            )
+                        },
+                    backAction = {navController.popBackStack()}
                 ) }
                 composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
@@ -200,15 +205,60 @@ fun AppInit(authViewModel : AuthViewModel,
                 composable(NavigationRout.Orders.route) {
                     OrdersScreen(navController = navController, ordersViewModel = ordersViewModel)
                 }
-                composable(NavigationRout.Checkout.route) {
-                    CheckoutScreen(cartViewModel,currencyViewModel,navController,checkoutViewModel)
+                composable(
+                    NavigationRout.Checkout.route,
+                    arguments = listOf(
+                        navArgument("cardNumber") { type = NavType.StringType },
+                        navArgument("totalAmount") { type = NavType.StringType },
+                        navArgument("currencyCode") { type = NavType.StringType }
+                    )
+                    ) {backStackEntry ->
+                    val cardNumber = backStackEntry.arguments?.getString("cardNumber") ?: return@composable
+                    val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: return@composable
+                    val currencyCode = backStackEntry.arguments?.getString("currencyCode") ?: return@composable
+                    CheckoutScreen(
+                        cartViewModel,
+                        currencyViewModel,
+                        navController,
+                        paymentViewModel,
+                        cardNumber = cardNumber,
+                        totalAmount = totalAmount,
+                        currencyCode = currencyCode,
+                        settingsViewModel = settingsViewModel,
+                        goToSuccess = {navController.navigate(NavigationRout.Success.route)}
+
+                    )
                 }
 
-                composable(NavigationRout.PaymentMethods.route) { PaymentMethodsView(
-                    viewModel = paymentViewModel,
-                    backAction = {navController.popBackStack()}
-                )}
+                composable(NavigationRout.PaymentMethods.route,
+                    arguments = listOf(
+                        navArgument("totalAmount") { type = NavType.StringType },
+                        navArgument("currencyCode") { type = NavType.StringType }
+                    )
+                ) {  backStackEntry ->
+                    val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: return@composable
+                    val currencyCode = backStackEntry.arguments?.getString("currencyCode") ?: return@composable
+                    PaymentMethodsView(
+                        viewModel = paymentViewModel,
+                        backAction = {navController.popBackStack()},
+                        totalAmount = totalAmount,
+                        currencyCode = currencyCode,
+                        goToCheckout = { cardNumber, amount ->
+                            navController.navigate(
+                                NavigationRout.Checkout.createRoute(cardNumber, amount, currencyCode)
 
+                            )
+                        },
+                    )
+                }
+
+                composable(NavigationRout.Success.route) {
+                    SuccessView(
+                        backAction = {navController.navigate("home") {
+                            popUpTo(0)
+                        }}
+                    )
+                }
 
                 //map
 

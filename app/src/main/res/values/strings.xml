@@ -100,6 +100,6 @@
     <string name="selected_location">selected Location</string>
     <string name="confirm_location">Confirm Location</string>
     <string name="this_address_is_out_of_our_coverage_area">This address is out of our coverage area</string>
-
+    <string name="cart">Cart</string>
 
 </resources>
