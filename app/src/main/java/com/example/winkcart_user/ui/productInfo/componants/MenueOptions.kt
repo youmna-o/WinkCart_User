@@ -27,12 +27,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LongBasicDropdownMenu(lable: String,
-                          menuItemData : List<String>,
-                          onOptionSelected: (String) -> Unit
+fun LongBasicDropdownMenu(
+    lable: String,
+    menuItemData: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-
 
     Box(
         modifier = Modifier
@@ -40,18 +41,20 @@ fun LongBasicDropdownMenu(lable: String,
             .height(40.dp)
             .width(120.dp)
     ) {
-        Button(onClick = { expanded = !expanded },
+        Button(
+            onClick = { expanded = !expanded },
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.White,
                 containerColor = Color.Black
             ),
-            shape = RoundedCornerShape(8.dp)) {
-            Row  (
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
-            ){
-                Text(text = lable)
+            ) {
+                Text(text = if (selectedOption.isNotEmpty()) selectedOption else lable)
                 Icon(Icons.Default.ArrowDropDown, contentDescription = "More options")
             }
         }

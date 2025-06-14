@@ -75,8 +75,11 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         return FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
     }
      override fun firebaseAuthWithGoogle(idToken: String): Task<AuthResult> {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        return Firebase.auth.signInWithCredential(credential)
+        return Firebase.auth.signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
+    }
+
+    override fun signOutFireBase() {
+        return  FirebaseAuth.getInstance().signOut()
     }
 
 

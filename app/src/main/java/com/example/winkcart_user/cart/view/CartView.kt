@@ -48,12 +48,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.view.components.CartItem
 import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
+import com.example.winkcart_user.ui.auth.AuthViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
@@ -62,7 +64,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 //fun CartView(viewModel: CartViewModel,navController: NavController) {
-fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit) {
+fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
 
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
@@ -230,6 +232,10 @@ fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, 
                                         updatedDraftOrder.id,
                                         updatedDraftOrderRequest
                                     )
+                                },
+                                onItemClick = {
+                                    val productId = draftOrderList[index].line_items[0]?.product_id ?: 0L
+                                    navController.navigate("ProductInfo/$productId")
                                 }
                             )
 
@@ -279,12 +285,12 @@ fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, 
                                     onClick = {
                                         // Clear applied coupon
                                         promoCode = ""
-                                        viewModel.clearAppliedCoupon() // call function to clear in ViewModel
+                                        viewModel.clearAppliedCoupon()
                                     },
                                     modifier = Modifier.size(36.dp)
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Outlined.Remove, // or Icons.Default.Close
+                                        imageVector = Icons.Outlined.Remove,
                                         contentDescription = "Remove coupon",
                                         tint = Color.White
                                     )
@@ -343,9 +349,21 @@ fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, 
                         checkoutAction(totalAmount, currencyCodeSaved)
                     }
                 }
-                Spacer(Modifier.height(150.dp))
+                Spacer(Modifier.height(20.dp))
+                CustomButton(lable = "Sign out") {
+                    authViewModel.signOut()
+                    viewModel.writeCustomerID("")
+                    viewModel.readCustomerID()
+
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
+                Spacer(Modifier.height(100.dp))
+
 
             }
+
 
         }
 

@@ -2,6 +2,7 @@ package com.example.winkcart_user.ui.productInfo
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,15 +37,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.winkcart_user.cart.viewModel.CartViewModel
+import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.Customer
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
@@ -57,6 +63,7 @@ import com.example.winkcart_user.ui.productInfo.componants.Reviews
 import com.example.winkcart_user.ui.productInfo.componants.StarRatingBar
 import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.ui.utils.CustomButton
+import kotlinx.coroutines.launch
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,16 +76,26 @@ fun ProductInfo(
     cartViewModel: CartViewModel,
     favouriteViewModel: FavouriteViewModel,
 ) {
+    val context =LocalContext.current
     val customerID = cartViewModel.customerID.collectAsState()
     val productState = categoriesViewModel.products.collectAsState()
     var myProduct = remember(productState.value) {
         categoriesViewModel.getProduct(productID)
     }
+    val draftOrders = favouriteViewModel.draftOrders.collectAsState()
+    val matchedDraft = (draftOrders.value as? ResponseStatus.Success)?.result?.draft_orders
+        ?.find { draft ->
+            draft.line_items.any { it?.title == myProduct?.title }
+        }
+
     val draftedOrders = favouriteViewModel.draftProductTitles.collectAsState()
     val isDraft = draftedOrders.value.contains(myProduct?.title)
 
     var selectedSize by remember { mutableStateOf("") }
     var selectedColor by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     var showLoginRequiredDialog by remember { mutableStateOf(false) }
     val selectedVariant = remember(selectedSize, selectedColor) {
         myProduct?.variants?.find { variant ->
@@ -108,7 +125,9 @@ fun ProductInfo(
         )
     }
 
-    Scaffold( topBar = {
+    Scaffold(Modifier.padding(16.dp),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
         CenterAlignedTopAppBar(
             title = {
                 Text(
@@ -134,17 +153,20 @@ fun ProductInfo(
             Log.i("TAG", "ProductInfo: $productID")
             ImageSlider(myProduct?.images?.map { it.src }?.toList() ?: emptyList())
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically ) {
-                LongBasicDropdownMenu(lable = "Size", myProduct?.options?.filter {
-                    it.name == "Size"
-                }?.flatMap { it.values }?.toList() ?: emptyList(),
+                LongBasicDropdownMenu(
+                    lable = "Size",
+                    menuItemData = myProduct?.options?.firstOrNull { it.name == "Size" }?.values ?: emptyList(),
+                    selectedOption = selectedSize,
                     onOptionSelected = { selectedSize = it }
                 )
 
-                LongBasicDropdownMenu(lable = "color", myProduct?.options?.filter {
-                    it.name == "Color"
-                }?.flatMap { it.values }?.toList() ?: emptyList(),
+                LongBasicDropdownMenu(
+                    lable = "Color",
+                    menuItemData = myProduct?.options?.firstOrNull { it.name == "Color" }?.values ?: emptyList(),
+                    selectedOption = selectedColor,
                     onOptionSelected = { selectedColor = it }
                 )
+
 
                 IconButton(onClick = {
                     val idString = customerID.value
@@ -153,7 +175,10 @@ fun ProductInfo(
                         return@IconButton
                     }
 
-                    if (!isDraft && myProduct != null && selectedVariant != null) {
+                    if (isDraft && matchedDraft != null) {
+                            favouriteViewModel.deleteDraftOrder(matchedDraft.id)
+                    } else if (myProduct != null && selectedVariant != null) {
+
                         val draftOrder = DraftOrderRequest(
                             draft_order = DraftOrder(
                                 line_items = listOf(
@@ -170,7 +195,6 @@ fun ProductInfo(
                                             Property("SavedAt", "Favourite")
                                         ),
                                         product_id = 0
-
                                     )
                                 ),
                                 customer = Customer(idString.toLong())
@@ -185,6 +209,7 @@ fun ProductInfo(
                         tint = if (isDraft) myPurple else Color.Gray
                     )
                 }
+
 
             }
 
@@ -243,13 +268,14 @@ fun ProductInfo(
                     cartViewModel.createDraftCartOrder(idString,draftOrder)
                     Log.i("TAG", "ProductInfo: $draftOrder ")
                     Log.i("TAG", "customerID = ${customerID.value}")
+                    coroutineScope.launch {
+                        Toast.makeText(context, "Added to cart successfully", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
 
             cartViewModel.readCustomerID()
             Log.d("shared", "************ after auth")
-
-
 
         }
     }
