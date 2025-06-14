@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.remote.retrofit
 
 import com.example.winkcart_user.BuildConfig
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.Customer
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.customer.CustomerWrapper
@@ -147,6 +148,12 @@ interface Services {
         @Path("address_id") addressId: Long,
         @Body addressUpdateRequest: CustomerAddressRequest
     ): Response<Any>
+
+    @GET("price_rules/{price_rule_id}/discount_codes.json")
+    suspend fun getDiscountCodesByPriceRule(
+        @Header("X-Shopify-Access-Token") token: String,
+        @Path("price_rule_id") priceRuleId: Long
+    ): Response<DiscountCodesResponse>
 }
 
 

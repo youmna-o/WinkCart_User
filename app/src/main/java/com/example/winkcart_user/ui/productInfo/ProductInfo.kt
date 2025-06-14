@@ -129,7 +129,8 @@ fun ProductInfo(
                                                 Property("Quantity_in_Stock", "${it1.inventory_quantity}"),
                                                 Property("Image", myProduct.images[0].src),
                                                 Property("SavedAt",  "Favourite")
-                                            )
+                                            ),
+                                            product_id = 0
                                         )
                                     }
                                 }
@@ -185,7 +186,8 @@ fun ProductInfo(
                                             Property("Quantity_in_Stock", "${it1.inventory_quantity}"),
                                             Property("Image", myProduct.images[0].src),
                                             Property("SavedAt",  "Cart")
-                                        )
+                                        ),
+                                        product_id = 0
                                     )
                                 }
                             }

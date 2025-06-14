@@ -2,6 +2,7 @@ package com.example.winkcart_user.data.remote
 
 import android.util.Log
 import com.example.winkcart_user.BuildConfig
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.customer.CustomerWrapper
@@ -222,6 +223,14 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         return flowOf(response)
     }
 
+    override suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?> {
+        val response =
+            retrofitHelper.shopifyService.getDiscountCodesByPriceRule(
+                token = BuildConfig.shopifyAccessToken,
+                priceRuleId = priceRuleId
+            ).body()
+        return flowOf(response)
+    }
     //map
     override fun getPlacesApiAutoComplete(query: String, placesClient: PlacesClient): Task<FindAutocompletePredictionsResponse> {
         val request = FindAutocompletePredictionsRequest.builder()
@@ -234,5 +243,7 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         val request= FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.LAT_LNG, Place.Field.NAME))
         return placesClient.fetchPlace(request)
     }
+
+
 
 }

@@ -44,11 +44,18 @@ fun CheckoutScreen(
     val orderResponse = paymentViewModel.ordersResponse.collectAsState()
     val defaultCustomerAddress by settingsViewModel.defaultCustomerAddresses.collectAsState()
     val customerId by cartViewModel.customerID.collectAsState()
+    val discount by cartViewModel.discountAmount.collectAsState()
+    val discountOnly = discount.split(" ").first().toDoubleOrNull() ?: 0.0
+
+
 
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
+
+
     cartViewModel.readCustomerID()
+
 
     settingsViewModel.getCustomerAddresses(customerId.toLong())
     LaunchedEffect(orderResponse.value) {
@@ -66,6 +73,7 @@ fun CheckoutScreen(
         is ResponseStatus.Success -> (draftOrders as ResponseStatus.Success).result.draft_orders
         else -> emptyList()
     }
+
 
     val allLineItems: List<LineItemDraft> = draftOrderList.flatMap { draftOrder ->
         draftOrder.line_items.mapNotNull { it }
@@ -119,7 +127,7 @@ fun CheckoutScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     SummarySection(
                         orderAmount = totalAmount,
-                        discount = "50",
+                        discount = discountOnly.toString(),
                         currencyCode = currencyCode
                     ) {
                         paymentViewModel.createOrder(lineItems = allLineItems)

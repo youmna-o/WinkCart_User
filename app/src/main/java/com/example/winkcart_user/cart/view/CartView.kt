@@ -80,11 +80,7 @@ fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, 
     val scroll = rememberScrollState()
 
 
-    val couponImages = listOf(
-        R.drawable.coupon3,
-        R.drawable.coupon2,
-        R.drawable.coupon1
-    )
+
 
     LaunchedEffect(showSheet) {
         if (showSheet) {
@@ -113,7 +109,7 @@ fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, 
     }
 
     Log.i("TAG", "CartView: draftOrders = ${draftOrderList.size}")
-    Log.i("TAG", "CartView: priceRules = $priceRulesList")
+    Log.i("TAG", "CartView: priceRules = ${priceRulesList.size}")
 
 
     // Modal Bottom Sheet
@@ -145,12 +141,18 @@ fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, 
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(priceRulesList.size) { index ->
+                            val couponImage : Int = if(priceRulesList[index].value_type == "percentage"){
+                                R.drawable.discount_copoun
+                            }else{
+                                R.drawable.receipt_copoun
+                            }
+
                             CouponItem(
                                 viewModel = viewModel,
                                 priceRule = priceRulesList[index],
-                                imageID = couponImages[index],
-                                onApplyClicked = { selectedPriceRule ->
-                                    promoCode = selectedPriceRule.title
+                                imageID = couponImage,
+                                onApplyClicked = { selectedPriceRule, code ->
+                                    promoCode = code
                                     showSheet = false
                                     viewModel.setAppliedCoupon(selectedPriceRule)
                                     viewModel.refreshTotalAmount()

@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.repository
 
 
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.Customer
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
@@ -91,6 +92,7 @@ interface ProductRepo {
         customerAddressRequest: CustomerAddressRequest
     ): Flow<Any?>
 
+    suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?>
 
     //map
     fun getAutoCompleteText(

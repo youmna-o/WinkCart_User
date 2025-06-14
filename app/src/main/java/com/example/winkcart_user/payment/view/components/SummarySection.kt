@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SummarySection(orderAmount: String, discount: String,currencyCode: String, onClick: () -> Unit) {
-    val summary = orderAmount.toDouble() - discount.toDouble()
+    val summary = orderAmount.toDouble() + discount.toDouble()
     val formattedSummary:String?
     if(summary<0.0){
         formattedSummary = "0.00"
@@ -37,7 +37,7 @@ fun SummarySection(orderAmount: String, discount: String,currencyCode: String, o
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Order:")
-            Text("$orderAmount $currencyCode")
+            Text("$formattedSummary $currencyCode")
         }
 
         Row(
@@ -53,7 +53,7 @@ fun SummarySection(orderAmount: String, discount: String,currencyCode: String, o
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Summary:", fontWeight = FontWeight.Bold)
-            Text("$formattedSummary $currencyCode", fontWeight = FontWeight.Bold)
+            Text("$orderAmount $currencyCode", fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(12.dp))

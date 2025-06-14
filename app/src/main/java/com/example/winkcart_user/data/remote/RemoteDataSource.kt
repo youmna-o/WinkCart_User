@@ -1,5 +1,6 @@
 package com.example.winkcart_user.data.remote
 
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
@@ -81,7 +82,9 @@ interface RemoteDataSource {
         customerAddressRequest: CustomerAddressRequest
     ): Flow<Any?>
 
-//map
+    suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?>
+
+    //map
     fun getPlacesApiAutoComplete(
         query: String,
         placesClient: PlacesClient

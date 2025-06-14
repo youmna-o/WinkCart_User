@@ -1,19 +1,15 @@
 package com.example.winkcart_user.data.repository
 
-import android.util.Log
 import com.example.winkcart_user.data.local.LocalDataSource
-
-import com.example.winkcart_user.data.model.customer.Customer
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
-
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
 import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
-
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.RemoteDataSource
@@ -152,8 +148,8 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     }
 
     override suspend fun getUserOrders(): Flow<OrdersResponse?> {
-        var customer_id : String = this.readCustomersID()
-        return remoteDataSource.getOrders(/*customer_id.toLong()*/8371331465464)
+        val customerId : String = this.readCustomersID()
+        return remoteDataSource.getOrders(customerId.toLong()/*8371331465464*/)
     }
 
     override suspend fun getSpecificOrderDetails(orderId: Long): Flow<OrderDetailsResponse?> {
@@ -204,6 +200,12 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
             customerId = customerId,
             addressId = addressId,
             customerAddressRequest = customerAddressRequest
+        )
+    }
+
+    override suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?> {
+        return remoteDataSource.getDiscountCodesByPriceRule(
+            priceRuleId = priceRuleId
         )
     }
 
