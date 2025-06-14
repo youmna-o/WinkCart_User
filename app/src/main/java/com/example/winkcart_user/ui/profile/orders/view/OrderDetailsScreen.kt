@@ -134,7 +134,7 @@ fun OrderDetailsScreenOnSuccess(order:Order,navController: NavController){
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Order information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                OrderInfoRow("Shipping Address:", "${order.shippingAddress.city}, ${order.shippingAddress.country}")
+              //  OrderInfoRow("Shipping Address:", "${order.shippingAddress.city}, ${order.shippingAddress.country}")
                 OrderInfoRow("Total Amount:", "${order.currentTotalPrice} ${order.currency}")
                 OrderInfoRow("Discount:", "${order.currentTotalDiscounts} ${order.currency}" )
             }

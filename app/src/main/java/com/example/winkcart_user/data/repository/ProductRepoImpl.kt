@@ -1,5 +1,6 @@
 package com.example.winkcart_user.data.repository
 
+import android.util.Log
 import com.example.winkcart_user.data.local.LocalDataSource
 import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.CustomerRequest
@@ -91,6 +92,7 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     }
 
     override fun readCustomersID(): String {
+        Log.i("TAG", "readCustomersID: ${localDataSource.readCustomersID()} ")
         return localDataSource.readCustomersID()
     }
 

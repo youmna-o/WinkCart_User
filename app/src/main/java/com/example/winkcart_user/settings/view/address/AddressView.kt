@@ -1,5 +1,6 @@
 package com.example.winkcart_user.settings.view.address
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,8 @@ fun AddressView(
     editAction : (Long, Long) -> Unit
 ) {
     val customerId by viewModel.customerID.collectAsState()
+    viewModel.readCustomerID()
+
     LaunchedEffect(customerId) {
         viewModel.getCustomerAddresses(customerId.toLong())
     }

@@ -20,7 +20,7 @@ class OrdersViewModel(private val repository: ProductRepo) : ViewModel() {
     val orderDetails = _orderDetails.asStateFlow()
 
     init {
-        getUserOrders()
+       // getUserOrders()
     }
 
     fun getUserOrders(){

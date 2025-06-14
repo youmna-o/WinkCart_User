@@ -170,7 +170,7 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
         }
     }
 
-     private fun readCustomerID(){
+     fun readCustomerID(){
         viewModelScope.launch (Dispatchers.IO) {
             val result = repo.readCustomerID()
             result.collect{
