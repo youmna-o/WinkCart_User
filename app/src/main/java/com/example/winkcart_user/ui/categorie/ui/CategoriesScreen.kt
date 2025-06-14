@@ -75,7 +75,6 @@ fun CategoriesScreen (categoriesViewModel: CategoriesViewModel,
 
     val allProducts by  categoriesViewModel.products.collectAsState()
     val searchInput by categoriesViewModel.searchInput.collectAsState()
-    var filteredProducts  = categoriesViewModel.filteredProducts.collectAsState().value
 
     categoriesViewModel.getMenProducts()
     categoriesViewModel.getMenProducts()

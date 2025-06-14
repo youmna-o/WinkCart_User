@@ -35,6 +35,8 @@ import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProducts
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
+import com.example.winkcart_user.ui.profile.userProfile.view.ProfileFactory
+import com.example.winkcart_user.ui.profile.userProfile.view.ProfileViewModel
 import com.google.android.libraries.places.api.Places
 
 class MainActivity : ComponentActivity() {
@@ -60,6 +62,12 @@ class MainActivity : ComponentActivity() {
 
             // var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper)))
             var authViewModel = ViewModelProvider(this, authFactory).get(AuthViewModel::class.java)
+
+            val profileFactory = ProfileFactory(
+                repo = FirebaseRepoImp(remoteDataSource),
+                productRepo = ProductRepoImpl(remoteDataSource, localDataSource)
+            )
+            var profileViewModel = ViewModelProvider(this, profileFactory).get(ProfileViewModel::class.java)
 
             val settingsViewModel: SettingsViewModel = viewModel(
                 factory = SettingsFactory(
@@ -216,7 +224,8 @@ class MainActivity : ComponentActivity() {
                     ordersViewModel = ordersViewModel,
                     favouriteViewModel = favViewModel,
                     paymentViewModel = paymentViewModel,
-                    placesViewModel = placesViewModel
+                    placesViewModel = placesViewModel,
+                    profileViewModel = profileViewModel
                 )
             }
 

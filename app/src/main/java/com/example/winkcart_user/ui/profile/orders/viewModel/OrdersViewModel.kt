@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.profile.orders.viewModel
 
+import android.R.bool
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,10 +20,6 @@ class OrdersViewModel(private val repository: ProductRepo) : ViewModel() {
     private val _orderDetails = MutableStateFlow<ResponseStatus<OrderDetailsResponse>>(ResponseStatus.Loading)
     val orderDetails = _orderDetails.asStateFlow()
 
-    init {
-       // getUserOrders()
-    }
-
     fun getUserOrders(){
         viewModelScope.launch {
             val orders = repository.getUserOrders()
@@ -38,6 +35,8 @@ class OrdersViewModel(private val repository: ProductRepo) : ViewModel() {
 
         }
     }
+
+
 
     fun getOrderDetails(orderId:Long){
         viewModelScope.launch {
