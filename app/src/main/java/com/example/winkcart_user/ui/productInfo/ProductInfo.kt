@@ -41,6 +41,7 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.LineItemDraft
 import com.example.winkcart_user.data.model.draftorder.cart.Property
+import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.ui.productInfo.componants.FavIcon
 import com.example.winkcart_user.ui.productInfo.componants.ImageSlider
 import com.example.winkcart_user.ui.productInfo.componants.LongBasicDropdownMenu
@@ -57,7 +58,6 @@ fun ProductInfo(
     categoriesViewModel: CategoriesViewModel,
     cartViewModel: CartViewModel,
     favouriteViewModel: FavouriteViewModel,
-    //  with fav view model
 
 ) {
     val customerID = cartViewModel.customerID.collectAsState()

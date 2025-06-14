@@ -150,7 +150,7 @@ fun AppInit(authViewModel : AuthViewModel,
                         scrollState = scroll,
                         categoriesViewModel = categoriesViewModel,
                         cartViewModel = cartViewModel,
-                      //  favouriteViewModel= favouriteViewModel,
+                        favouriteViewModel= favouriteViewModel,
 
                     )
                 }
