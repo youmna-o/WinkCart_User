@@ -52,7 +52,7 @@ class PaymentViewModel(private  val repo: ProductRepo) : ViewModel() {
     ) {
         val request = OrderRequest(
             order = OrderData(
-                customer = CustomerOrder(id =/*8408855937272*/ repo.readCustomersID().toLong()),
+                customer = CustomerOrder(id =repo.readCustomersID().toLong()),
                 line_items = lineItems,
                 send_receipt = true
             )

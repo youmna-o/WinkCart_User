@@ -45,6 +45,7 @@ import com.example.winkcart_user.ui.profile.orders.view.OrderDetailsScreen
 import com.example.winkcart_user.ui.profile.orders.view.OrdersScreen
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
 import com.example.winkcart_user.ui.profile.userProfile.view.ProfileScreen
+import com.example.winkcart_user.ui.profile.userProfile.view.ProfileViewModel
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.google.android.gms.maps.model.LatLng
@@ -61,7 +62,8 @@ fun AppInit(authViewModel : AuthViewModel,
             favouriteViewModel: FavouriteViewModel,
             ordersViewModel : OrdersViewModel,
             paymentViewModel: PaymentViewModel,
-            placesViewModel: PlacesViewModel
+            placesViewModel: PlacesViewModel,
+            profileViewModel: ProfileViewModel
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -118,7 +120,7 @@ fun AppInit(authViewModel : AuthViewModel,
                         vendorProductsViewModel = vendorProductViewModel
                     )
                 }
-                composable(NavigationRout.Profile.route) { ProfileScreen(navController) }
+                composable(NavigationRout.Profile.route) { ProfileScreen(navController, profileViewModel = profileViewModel) }
                 composable(NavigationRout.Settings.route) {
                     SettingsView(
                         viewModel = settingsViewModel,

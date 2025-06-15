@@ -92,7 +92,6 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     }
 
     override fun readCustomersID(): String {
-        Log.i("TAG", "readCustomersID: ${localDataSource.readCustomersID()} ")
         return localDataSource.readCustomersID()
     }
 
@@ -151,7 +150,7 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
 
     override suspend fun getUserOrders(): Flow<OrdersResponse?> {
         val customerId : String = this.readCustomersID()
-        return remoteDataSource.getOrders(customerId.toLong()/*8371331465464*/)
+        return remoteDataSource.getOrders(customerId.toLong())
     }
 
     override suspend fun getSpecificOrderDetails(orderId: Long): Flow<OrderDetailsResponse?> {

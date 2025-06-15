@@ -1,6 +1,5 @@
 package com.example.winkcart_user.ui.profile.orders.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,7 +34,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.winkcart_user.BottomNavigationBar
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.orders.Order
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
@@ -95,23 +93,28 @@ fun OrdersScreenOnSuccess(navController: NavController, orders: List<Order>) {
         },
         containerColor = Color(0xFFF5F5F5)
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(orders.size) { index ->
-                OrderCard(order = orders[index], onClick = {
-                    navController.navigate("OrderDetails/${orders[index].id}")
-                    Log.i("TAG", "OrdersScreenOnSucc ORDER CARD: ${orders[index].id} ")
+        if (orders.isEmpty()) {
+            LottieAnimationView()
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(orders.size) { index ->
+                    OrderCard(
+                        order = orders[index],
+                        onClick = {
+                            navController.navigate("OrderDetails/${orders[index].id}")
+                        }
+                    )
                 }
-                )
-                Log.i("TAG", "OrdersScreenOnSucc: ${orders[index].id} ")
             }
         }
     }
 }
+
 
 @Composable
 fun OrdersScreenLoading() {
