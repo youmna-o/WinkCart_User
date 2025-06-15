@@ -361,7 +361,8 @@ fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutActi
                                     showSheet = false
                                     viewModel.setAppliedCoupon(selectedPriceRule)
                                     viewModel.refreshTotalAmount()
-                                }
+                                },
+                                currencyCode = currencyCodeSaved
                             )
                         }
 

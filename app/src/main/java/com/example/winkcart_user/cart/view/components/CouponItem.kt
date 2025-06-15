@@ -23,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,23 +45,32 @@ fun CouponItem(
     viewModel: CartViewModel,
     priceRule: PriceRule,
     imageID: Int,
-    onApplyClicked: (PriceRule, String) -> Unit
+    onApplyClicked: (PriceRule, String) -> Unit,
+    currencyCode: String
 ) {
     LaunchedEffect(priceRule.id) {
         viewModel.getDiscountCodesByPriceRule(priceRule.id)
     }
 
-    val discountCodeState by viewModel.priceRuleDiscountCodes.collectAsState()
+    val discountCodesMap by viewModel.discountCodesByPriceRule.collectAsState()
+    val discountCodeState = discountCodesMap[priceRule.id]
 
-    val firstDiscountCode = when (discountCodeState) {
-        is ResponseStatus.Success -> {
-            val codes = (discountCodeState as ResponseStatus.Success).result?.discount_codes
-            if (codes?.isNotEmpty() == true) codes[0].code else "No code"
+    val firstDiscountCode = remember { mutableStateOf("Loading...") }
+
+    LaunchedEffect(discountCodeState) {
+        when (val state = discountCodeState) {
+            is ResponseStatus.Success -> {
+                val codes = state.result?.discount_codes
+                firstDiscountCode.value = if (!codes.isNullOrEmpty()) codes[0].code else "No code"
+            }
+            is ResponseStatus.Error -> {
+                firstDiscountCode.value = "Error loading code"
+            }
+            is ResponseStatus.Loading, null -> {
+                firstDiscountCode.value = "Loading..."
+            }
         }
-        is ResponseStatus.Error -> "Error loading code"
-        is ResponseStatus.Loading -> "Loading..."
     }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,12 +118,29 @@ fun CouponItem(
                             text = priceRule.title,
                             fontSize = 18.sp,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .width(110.dp),
+                            softWrap = false
                         )
 
                         Text(
-                            text = firstDiscountCode,
+                            text = firstDiscountCode.value,
                             color = Color.Gray,
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        val discountText = when (priceRule.value_type) {
+                            "percentage" -> "${priceRule.value.trimStart('-')}%"
+                            "fixed_amount" -> priceRule.value.trimStart('-') + " $currencyCode" // You can format this further
+                            else -> ""
+                        }
+
+                        Text(
+                            text = discountText,
+                            color = Color.Red,
                             fontSize = 14.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -130,7 +158,9 @@ fun CouponItem(
                         Text(
                             text = viewModel.getRemainingMonthsText(priceRule.ends_at),
                             color = Color.Gray,
-                            fontSize = 12.sp
+                            fontSize = 12.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
@@ -142,7 +172,7 @@ fun CouponItem(
                         ) {
                             Button(
                                 onClick = {
-                                    onApplyClicked(priceRule, firstDiscountCode)
+                                    onApplyClicked(priceRule, firstDiscountCode.value)
                                 },
                                 shape = RoundedCornerShape(24.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = myPurple),
