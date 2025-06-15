@@ -22,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +38,7 @@ import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.ui.auth.AuthViewModel
-import com.example.winkcart_user.ui.utils.CustomTextField
+import com.example.winkcart_user.ui.utils.components.CustomTextField
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

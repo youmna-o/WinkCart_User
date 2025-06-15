@@ -1,6 +1,7 @@
 package com.example.winkcart_user.settings.viewmodel
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -56,6 +57,7 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     init {
         readCustomerID()
+        Log.i("TAG", " Setting inti CustomerID: ${customerID.value} ")
         viewModelScope.launch {
             val storedDate = try {
                 repo.readCurrencyReadingDate().first()

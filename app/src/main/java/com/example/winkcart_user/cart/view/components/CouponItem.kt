@@ -39,8 +39,12 @@ import com.example.winkcart_user.ui.theme.myPurple
 
 
 @Composable
-fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, onApplyClicked: (PriceRule, String ) -> Unit) {
-
+fun CouponItem(
+    viewModel: CartViewModel,
+    priceRule: PriceRule,
+    imageID: Int,
+    onApplyClicked: (PriceRule, String) -> Unit
+) {
     LaunchedEffect(priceRule.id) {
         viewModel.getDiscountCodesByPriceRule(priceRule.id)
     }
@@ -55,16 +59,15 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
         is ResponseStatus.Error -> "Error loading code"
         is ResponseStatus.Loading -> "Loading..."
     }
+
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
-
-        ) {
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,6 +76,7 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(12.dp)
                     .height(IntrinsicSize.Min),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -81,17 +85,13 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .height(65.dp)
-                        .width(100.dp)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 12.dp,
-                                bottomStart = 12.dp
-                            )
-                        )
+                        .height(80.dp)
+                        .width(120.dp)
+                        .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp))
                 )
 
-                Spacer(Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(12.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,12 +100,12 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(end = 8.dp),
+                            .padding(end = 12.dp),
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = priceRule.title,
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -113,64 +113,59 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
                         Text(
                             text = firstDiscountCode,
                             color = Color.Gray,
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-
                     }
-                    Spacer(Modifier.weight(1f))
+
+                    Spacer(modifier = Modifier.weight(1f))
+
                     Column(
                         modifier = Modifier
-                            .padding(end = 8.dp),
-                        verticalArrangement = Arrangement.Center
+                            .padding(end = 12.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.End
                     ) {
-
                         Text(
-                            text = viewModel.getRemainingMonthsText(
-                                endsAt = priceRule.ends_at
-                            ),
+                            text = viewModel.getRemainingMonthsText(priceRule.ends_at),
                             color = Color.Gray,
-                            fontSize = 10.sp,
+                            fontSize = 12.sp
                         )
-                        Spacer(Modifier.height(4.dp))
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
                         Surface(
                             shape = RoundedCornerShape(24.dp),
-                            shadowElevation = 16.dp,
+                            shadowElevation = 12.dp,
                             color = Color.Transparent
                         ) {
                             Button(
                                 onClick = {
-                                    onApplyClicked(priceRule,firstDiscountCode)
-
+                                    onApplyClicked(priceRule, firstDiscountCode)
                                 },
                                 shape = RoundedCornerShape(24.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = myPurple),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                 modifier = Modifier
-                                    .width(80.dp)
-                                    .height(30.dp)
+                                    .width(100.dp)
+                                    .height(36.dp)
                             ) {
                                 Text(
                                     text = "Apply",
                                     color = Color.White,
-                                    fontSize = 10.sp,
+                                    fontSize = 12.sp,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
-
                     }
                 }
             }
         }
     }
-
-
-
 }
-
 
 
 

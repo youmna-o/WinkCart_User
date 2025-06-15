@@ -1,4 +1,4 @@
-package com.example.winkcart_user.settings.view.address
+package com.example.winkcart_user.settings.view.address.components
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -32,7 +32,6 @@ import com.example.winkcart_user.ui.theme.CardBackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
 import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
-import com.google.maps.android.compose.GoogleMap
 
 
 @Composable

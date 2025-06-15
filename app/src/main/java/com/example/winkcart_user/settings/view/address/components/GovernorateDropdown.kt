@@ -1,4 +1,4 @@
-package com.example.winkcart_user.settings.view.address
+package com.example.winkcart_user.settings.view.address.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row

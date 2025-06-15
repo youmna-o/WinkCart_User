@@ -1,4 +1,4 @@
-package com.example.winkcart_user.ui.utils
+package com.example.winkcart_user.ui.utils.components
 
 
 import androidx.compose.foundation.layout.Box

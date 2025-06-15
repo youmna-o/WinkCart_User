@@ -62,6 +62,9 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _priceRuleDiscountCodes = MutableStateFlow<ResponseStatus<DiscountCodesResponse?>>(ResponseStatus.Loading)
     val priceRuleDiscountCodes = _priceRuleDiscountCodes.asStateFlow()
 
+    private val _isConnected = MutableStateFlow(true)
+
+
     fun setAppliedCoupon(coupon: PriceRule) {
         if (_appliedCoupon.value?.id != coupon.id) {
             _appliedCoupon.value = coupon

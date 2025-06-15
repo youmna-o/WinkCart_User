@@ -3,7 +3,6 @@ package com.example.winkcart_user.ui.auth.signUp
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,17 +26,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.ui.auth.AuthViewModel
-import com.example.winkcart_user.ui.utils.CustomSmallTextField
-import com.example.winkcart_user.ui.utils.CustomTextField
+import com.example.winkcart_user.ui.utils.components.CustomSmallTextField
+import com.example.winkcart_user.ui.utils.components.CustomTextField
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 

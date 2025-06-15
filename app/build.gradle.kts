@@ -120,5 +120,10 @@ dependencies {
 
     implementation ("com.airbnb.android:lottie-compose:6.4.0")
 
+    //gif
+    implementation("io.coil-kt:coil-gif:2.4.0")
+
+
+
 
 }

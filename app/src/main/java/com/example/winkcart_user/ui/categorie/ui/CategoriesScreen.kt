@@ -54,7 +54,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.CurrencyViewModel
 import com.example.winkcart_user.data.model.products.ProductAbstracted
-import com.example.winkcart_user.ui.utils.ProductItem
+import com.example.winkcart_user.ui.utils.components.ProductItem
 
 import androidx.compose.runtime.mutableStateOf
 import android.annotation.SuppressLint

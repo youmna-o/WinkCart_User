@@ -154,6 +154,7 @@ fun AppInit(authViewModel : AuthViewModel,
                         categoriesViewModel = categoriesViewModel,
                         cartViewModel = cartViewModel,
                         favouriteViewModel= favouriteViewModel,
+                        currencyViewModel = currencyViewModel
 
                     )
                 }

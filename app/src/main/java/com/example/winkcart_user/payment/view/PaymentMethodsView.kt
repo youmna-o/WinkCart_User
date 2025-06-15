@@ -44,7 +44,7 @@ import com.example.winkcart_user.payment.view.components.PaymentOptionCard
 import com.example.winkcart_user.payment.view.components.PaymentSectionHeader
 import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
-import com.example.winkcart_user.ui.utils.CustomButton
+import com.example.winkcart_user.ui.utils.components.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
