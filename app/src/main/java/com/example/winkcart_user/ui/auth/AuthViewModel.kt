@@ -103,7 +103,9 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
                 onResult(task.isSuccessful)
             }
     }
-
+    fun signOut(){
+        repo.signOutFireBase()
+    }
 
     fun postCustomer(
         customerRequest: CustomerRequest,

@@ -130,7 +130,6 @@ fun AppInit(authViewModel : AuthViewModel,
                         backAction = {navController.popBackStack()}
                     )
                 }
-               // composable(NavigationRout.Cart.route) { CartView(cartViewModel,navController) }
                 composable(NavigationRout.Cart.route) { CartView(
                     viewModel = cartViewModel,
                     checkoutAction = { totalAmount, currencyCode ->
@@ -139,9 +138,11 @@ fun AppInit(authViewModel : AuthViewModel,
 
                             )
                         },
-                    backAction = {navController.popBackStack()}
+                    backAction = {navController.popBackStack()},
+                    authViewModel = authViewModel,
+                   navController =  navController,
                 ) }
-                composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel) }
+                composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel, navController) }
                 composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
                 composable(NavigationRout.ProductInfo.route) {
                         backStackEntry ->

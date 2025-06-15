@@ -60,7 +60,6 @@ class MainActivity : ComponentActivity() {
             )
 
 
-            // var authFactory = AuthFactory(FirebaseRepoImp(RemoteDataSourceImpl(RetrofitHelper)))
             var authViewModel = ViewModelProvider(this, authFactory).get(AuthViewModel::class.java)
 
             val profileFactory = ProfileFactory(

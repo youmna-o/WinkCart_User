@@ -53,7 +53,6 @@ android {
         buildConfig = true
     }
 }
-
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -113,11 +112,10 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-pager:0.28.0")
     //stars
     implementation("androidx.compose.material:material-icons-extended")
-
     //map
+    implementation("com.google.maps.android:maps-compose:2.11.4")
 
     implementation("com.google.android.gms:play-services-maps:18.1.0")
-    implementation("com.google.maps.android:maps-compose:2.11.4")
     implementation("com.google.android.libraries.places:places:3.3.0")
 
     implementation ("com.airbnb.android:lottie-compose:6.4.0")
