@@ -118,11 +118,7 @@ class FavouriteViewModelTest {
         )
 
         coEvery { repo.getAllDraftOrders() } returns flowOf(DraftOrderResponse(draft_orders = mockDraftOrders))
-
-        // Act
         viewModel.getDraftOrders(customerId)
-
-        // Assert
         val state = viewModel.draftOrders.value
         assertTrue(state is ResponseStatus.Success)
         assertEquals(1, (state as ResponseStatus.Success).result.draft_orders.size)
