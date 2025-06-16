@@ -188,6 +188,7 @@ fun ProductInfo(
                                         price = selectedVariant.price,
                                         quantity = 1,
                                         properties = listOf(
+
                                             Property("Color", selectedColor),
                                             Property("Size", selectedSize),
                                             Property("Quantity_in_Stock", "${selectedVariant.inventory_quantity}"),
