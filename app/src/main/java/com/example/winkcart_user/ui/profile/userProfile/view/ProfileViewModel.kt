@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepo
-import com.example.winkcart_user.data.repository.ProductRepoImpl
-import com.example.winkcart_user.ui.auth.AuthViewModel
 
 class ProfileViewModel( private val repo: FirebaseRepo,  val productRepo: ProductRepo) : ViewModel(){
     

@@ -2,7 +2,7 @@
 
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepoImpl
-import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.auth.AuthViewModel
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult

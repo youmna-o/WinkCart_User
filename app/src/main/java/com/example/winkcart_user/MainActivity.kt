@@ -28,8 +28,8 @@ import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModelFactory
-import com.example.winkcart_user.ui.auth.AuthFactory
-import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.auth.AuthFactory
+import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory

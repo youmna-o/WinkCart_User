@@ -1,4 +1,4 @@
-package com.example.winkcart_user.ui.auth
+package com.example.winkcart_user.auth
 
 import android.os.Handler
 import android.os.Looper
