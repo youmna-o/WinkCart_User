@@ -1,14 +1,21 @@
+
+
+
 package com.example.winkcart_user.ui.profile.userProfile.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,115 +24,147 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.winkcart_user.ui.utils.extractUsername
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(32.dp)
+fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewModel) {
+    var showDialog = remember { mutableStateOf(false) }
+    val email = remember { profileViewModel.getGemail() }
+    val isGuest = remember { profileViewModel.isGuest() }
 
-    ) {
-        item {
-            Text(
-                text = "My profile",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray.copy(alpha = 0.3f))
-                ) {
-                    Text(
-                        text = "MB",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Gray
-                    )
+    Scaffold (    topBar = {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = "My Profile",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = null)
                 }
+            },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = Color.White
+            ),
 
-                Spacer(modifier = Modifier.width(16.dp))
+            )
+    },
+        containerColor = Color(0xFFF5F5F5)) {
+        padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(32.dp)
 
-                Column {
-                    Text(
-                        text = "Matilda Brown",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black
-                    )
-                    Text(
-                        text = "matildabrown@mail.com",
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(70.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray.copy(alpha = 0.3f))
+                    ) {
+                        Text(
+                            text = extractUsername(profileViewModel.getGemail())[0].toString(),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Gray
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column {
+                        Text(
+                            text =  if (profileViewModel.isGuest())
+                                "Guest"
+
+                            else
+                                extractUsername(profileViewModel.getGemail()),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+                        Text(
+                            text =if (isGuest) "" else email,
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 }
             }
-        }
 
-        item {
-            ProfileMenuItem(
-                title = "My orders",
-                subtitle = "see your delivered orders",
+            item {
+                ProfileMenuItem(
+                    title = "My Orders",
+                    subtitle = "see your delivered orders",
+                    onClick = {
+                        if (profileViewModel.isGuest()){
+                            showDialog.value = true
+                        }else{
+                            navController.navigate("orders")
+                            var email = profileViewModel.getGemail()
+                            Log.i("TAGG", "ProfileScreen: $email")
+
+                        }
+                    }
+                )
+
+                ProfileMenuItem(
+                    title = "Shipping Addresses",
+                    subtitle = " addresses",
+                    onClick = { /* */ }
+                )
+
+
+
+
+                ProfileMenuItem(
+                    title = "Settings",
+                    subtitle = "addresses,about us etc ",
+                    onClick = { navController.navigate("Settings") }
+                )
+
+            }
+
+
+        }
+        if (showDialog.value) {
+            CustomAlertDialog(
                 onClick = {
-                    navController.navigate("orders")
-                }
+                    showDialog.value = false
+                    navController.navigate("login")
+                },
+                onDismissClick = { showDialog.value = false}
             )
-
-            ProfileMenuItem(
-                title = "Shipping addresses",
-                subtitle = "3 addresses",
-                onClick = { /* */ }
-            )
-
-            ProfileMenuItem(
-                title = "Payment methods",
-                subtitle = "Visa **34",
-                onClick = { /* */ }
-            )
-
-            ProfileMenuItem(
-                title = "Promo codes",
-                subtitle = "You have special promo codes",
-                onClick = { /*  */ }
-            )
-
-            ProfileMenuItem(
-                title = "My reviews",
-                subtitle = "Reviews for 4 items",
-                onClick = { /*  */ }
-            )
-
-            ProfileMenuItem(
-                title = "Settings",
-                subtitle = "addresses,about us etc ",
-                onClick = { navController.navigate("Settings") }
-            )
-
         }
-
-
     }
+
+
+
+
+
 }
 
 @Composable
 fun ProfileMenuItem(
     title: String,
     subtitle: String,
-    onClick: () -> Unit
+    onClick:  () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -171,4 +210,24 @@ fun ProfileMenuItem(
             )
         }
     }
+}
+@Composable
+fun CustomAlertDialog(onClick: () -> Unit,onDismissClick: () -> Unit){
+    AlertDialog(
+        onDismissRequest = {  },
+        title = { Text("Guest Mode") },
+        text = { Text("You can't see your orders, You must login first") },
+        confirmButton = {
+            TextButton(onClick = onClick) {
+                Text("Login")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                onDismissClick.invoke()
+            }) {
+                Text("OK")
+            }
+        }
+    )
 }
