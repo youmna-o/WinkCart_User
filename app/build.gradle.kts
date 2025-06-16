@@ -29,6 +29,8 @@ android {
 
         buildConfigField("String","shopifyAccessToken","\"${localProps["shopifyAccessToken"]}\"")
         buildConfigField("String","MAPS_API_KEY","\"${localProps["MAPS_API_KEY"]}\"")
+        buildConfigField("String", "FIREBASE_PROJECT_TOKEN", "\"${localProps["firebaseProjectToken"]}\"")
+
         manifestPlaceholders["MAPS_API_KEY"] = localProps["MAPS_API_KEY"] ?: ""
     }
 
@@ -71,6 +73,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.benchmark.macro)
     testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -119,6 +122,23 @@ dependencies {
     implementation("com.google.android.libraries.places:places:3.3.0")
 
     implementation ("com.airbnb.android:lottie-compose:6.4.0")
+    //testing
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    testImplementation ("io.mockk:mockk:1.13.8")
+    testImplementation ("androidx.test.ext:junit-ktx:1.1.5")
+    testImplementation ("androidx.test:core-ktx:1.5.0")
+    testImplementation ("org.robolectric:robolectric:4.11.1")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 
+    testImplementation ( "org.hamcrest:hamcrest:2.2")
+    testImplementation ("org.hamcrest:hamcrest-library:2.2")
+    androidTestImplementation ("org.hamcrest:hamcrest:2.2")
+    androidTestImplementation ("org.hamcrest:hamcrest-library:2.2")
+    // Turbine to test flows
+    testImplementation ("app.cash.turbine:turbine:1.0.0")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    testImplementation(kotlin("test"))
 
 }

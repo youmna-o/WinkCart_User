@@ -1,4 +1,4 @@
-package com.example.winkcart_user.ui.auth
+package com.example.winkcart_user.auth
 
 import android.os.Handler
 import android.os.Looper
@@ -126,7 +126,7 @@ class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : 
 
 
 
-    private fun isValidInputsData(
+     fun isValidInputsData(
         email: String,
         password: String,
         screenType: AuthModel

@@ -29,9 +29,9 @@ import com.example.winkcart_user.settings.view.contactus.ContactUsView
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.view.address.map.PlacePicker
-import com.example.winkcart_user.ui.auth.AuthViewModel
-import com.example.winkcart_user.ui.auth.login.LoginScreen
-import com.example.winkcart_user.ui.auth.signUp.SignUpScreen
+import com.example.winkcart_user.auth.AuthViewModel
+import com.example.winkcart_user.auth.login.LoginScreen
+import com.example.winkcart_user.auth.signUp.SignUpScreen
 import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
 import com.example.winkcart_user.payment.view.CheckoutScreen

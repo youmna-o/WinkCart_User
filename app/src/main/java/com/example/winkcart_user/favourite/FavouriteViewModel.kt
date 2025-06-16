@@ -32,7 +32,7 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
 
     private val _createDraftOrderResponse = MutableStateFlow<ResponseStatus<Any>>(ResponseStatus.Loading)
     private val _deleteDraftOrders = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
-    //val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
+    val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
 
 
     private val _totalAmount = MutableStateFlow("0.00 EGP")

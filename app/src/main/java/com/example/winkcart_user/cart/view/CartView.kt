@@ -55,7 +55,7 @@ import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
-import com.example.winkcart_user.ui.auth.AuthViewModel
+import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
