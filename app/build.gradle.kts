@@ -29,6 +29,8 @@ android {
 
         buildConfigField("String","shopifyAccessToken","\"${localProps["shopifyAccessToken"]}\"")
         buildConfigField("String","MAPS_API_KEY","\"${localProps["MAPS_API_KEY"]}\"")
+        buildConfigField("String", "FIREBASE_PROJECT_TOKEN", "\"${localProps["firebaseProjectToken"]}\"")
+
         manifestPlaceholders["MAPS_API_KEY"] = localProps["MAPS_API_KEY"] ?: ""
     }
 

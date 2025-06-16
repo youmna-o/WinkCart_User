@@ -35,7 +35,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.BuildCompat
 import androidx.navigation.NavController
+import com.example.winkcart_user.BuildConfig
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.ui.auth.AuthViewModel
@@ -59,9 +61,10 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cart
     var shouldNavigate by remember { mutableStateOf(false) }
 
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken("687416921904-5o11fbijq7c8mr9b5311v8sbe9n64o3b.apps.googleusercontent.com")
+        .requestIdToken(BuildConfig.FIREBASE_PROJECT_TOKEN)
         .requestEmail()
         .build()
+
 
     val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
