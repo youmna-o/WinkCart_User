@@ -20,8 +20,8 @@ import com.example.winkcart_user.payment.view.components.DefaultAddressSection
 import com.example.winkcart_user.payment.view.components.PaymentSection
 import com.example.winkcart_user.payment.view.components.ProductListSection
 import com.example.winkcart_user.payment.view.components.SummarySection
-import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
+import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 
 

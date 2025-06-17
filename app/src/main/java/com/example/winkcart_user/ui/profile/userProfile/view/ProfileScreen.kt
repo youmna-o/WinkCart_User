@@ -1,6 +1,3 @@
-
-
-
 package com.example.winkcart_user.ui.profile.userProfile.view
 
 import android.util.Log
@@ -78,7 +75,8 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
                             .background(Color.Gray.copy(alpha = 0.3f))
                     ) {
                         Text(
-                            text = extractUsername(profileViewModel.getGemail())[0].toString(),
+                            text = extractUsername(profileViewModel.getGemail() ?: "1")
+                                .getOrNull(0)?.toString() ?: "1",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Gray
@@ -129,9 +127,6 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
                     subtitle = " addresses",
                     onClick = { /* */ }
                 )
-
-
-
 
                 ProfileMenuItem(
                     title = "Settings",
