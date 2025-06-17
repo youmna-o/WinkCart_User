@@ -1,6 +1,5 @@
 package com.example.winkcart_user.data.repository
 
-import android.util.Log
 import com.example.winkcart_user.data.local.LocalDataSource
 import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.CustomerRequest
@@ -187,6 +186,16 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         addressId: Long
     ): Flow<CustomerAddressRequest?> {
         return remoteDataSource.getCustomerAddress(
+            customerId = customerId,
+            addressId = addressId
+        )
+    }
+
+    override suspend fun deleteCustomerAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<Unit?> {
+        return remoteDataSource.deleteCustomerAddress(
             customerId = customerId,
             addressId = addressId
         )

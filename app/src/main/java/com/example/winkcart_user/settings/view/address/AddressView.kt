@@ -28,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.R
-import com.example.winkcart_user.cart.view.components.EmptyCart
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.settings.view.address.components.AddressCard
 import com.example.winkcart_user.settings.view.address.components.NoAddressUI
@@ -102,7 +101,10 @@ fun AddressView(
                                         addressId = addresses[index].id
                                         )
                                     },
-                                    editAction = editAction
+                                    editAction = editAction,
+                                    deleteAction = {
+                                        viewModel.deleteCustomerAddress(customerId.toLong(), addresses[index].id)
+                                    }
 
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))

@@ -1,6 +1,5 @@
 package com.example.winkcart_user.settings.viewmodel
 
-
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +39,10 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
 
     private val _customerAddresses = MutableStateFlow<ResponseStatus<CustomerAddressesResponse>>(ResponseStatus.Loading)
     val customerAddresses = _customerAddresses.asStateFlow()
+
+    private val _deleteCustomerAddresses = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
+    val deleteCustomerAddresses = _deleteCustomerAddresses.asStateFlow()
+
     private val _defaultCustomerAddresses = MutableStateFlow<ResponseStatus<CustomerAddress>>(ResponseStatus.Loading)
     val defaultCustomerAddresses = _defaultCustomerAddresses.asStateFlow()
 
@@ -164,6 +167,8 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
             }.collect{ it
                 if (it!= null){
                     _addCustomerAddressResponse.value= ResponseStatus.Success<Any>(it)
+                    getCustomerAddresses(customerId)
+
                 }else{
                     _addCustomerAddressResponse.value = ResponseStatus.Error(NullPointerException("customerAddressRequest is null"))
                 }
@@ -257,11 +262,31 @@ class SettingsViewModel(private  val repo: ProductRepo) : ViewModel() {
                 }.collect{ response ->
                     if(response!= null){
                         _customerAddressUpdateResponse.value = ResponseStatus.Success(response)
-
+                        getCustomerAddresses(customerId)
 
                     }else{
                         _customerAddressUpdateResponse.value = ResponseStatus.Error(
                             NullPointerException("Customer Address update response is null")
+                        )
+                    }
+                }
+        }
+    }
+
+
+    fun deleteCustomerAddress(customerId: Long, addressId: Long) {
+        viewModelScope.launch {
+            repo.deleteCustomerAddress(customerId, addressId)
+                .catch { exception ->
+                    _deleteCustomerAddresses.value = ResponseStatus.Error(exception)
+                }.collect{ response ->
+                    if(response!= null){
+                        _deleteCustomerAddresses.value = ResponseStatus.Success(response)
+                        getCustomerAddresses(customerId)
+
+                    }else{
+                        _deleteCustomerAddresses.value = ResponseStatus.Error(
+                            NullPointerException("Customer Address is not deleted")
                         )
                     }
                 }

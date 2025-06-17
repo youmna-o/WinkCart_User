@@ -82,6 +82,8 @@ interface RemoteDataSource {
         customerAddressRequest: CustomerAddressRequest
     ): Flow<Any?>
 
+    suspend fun deleteCustomerAddress(customerId: Long, addressId: Long): Flow<Unit?>
+
     suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?>
 
     //map

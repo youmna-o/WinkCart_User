@@ -2,7 +2,8 @@ package com.example.winkcart_user.settings.view.address.components
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,34 +12,50 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.ui.theme.CardBackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
-import com.example.winkcart_user.ui.theme.myPurple
 import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 
 @Composable
 fun AddressCard(
     customerId: Long,
-    address: CustomerAddress, defaultCheckAction: ()-> Unit, editAction: (Long, Long) -> Unit
+    address: CustomerAddress,
+    defaultCheckAction: ()-> Unit,
+    editAction: (Long, Long) -> Unit,
+    deleteAction: () -> Unit
 ){
+
+    var expanded by remember { mutableStateOf(false) }
 
     Log.i("TAG", "AddressCard: $address")
     Card(
@@ -81,14 +98,42 @@ fun AddressCard(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    text = stringResource(R.string.edit),
-                    color = myPurple,
-                    fontSize = 18.sp,
-                    modifier = Modifier.clickable {
-                        editAction.invoke(customerId,address.id)
+                Box {
+                    var colorDeleteText = Color.Black
+                    if (address.default){
+                        colorDeleteText = Color.Gray
                     }
-                )
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Menu"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        offset = DpOffset(x = 0.dp, y = 8.dp),
+                        modifier = Modifier
+                            .background(Color.White)
+                            .shadow(2.dp)
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(R.string.edit), color = Color.Black) },
+                            onClick = {
+                                expanded = false
+                                editAction.invoke(customerId, address.id)
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(R.string.delete), color = colorDeleteText) },
+                            enabled = !address.default,
+                            onClick = {
+                                expanded = false
+                                deleteAction.invoke()
+                            }
+                        )
+                    }
+                }
             }
 
 
@@ -138,9 +183,7 @@ fun AddressCard(
                         uncheckedColor = Color.Black,
                         checkmarkColor = Color.White
                     )
-
                 )
-
                 Text(
                     text = stringResource(R.string.address_card_checkbox_text),
                     color = HeaderTextColor,
@@ -150,6 +193,10 @@ fun AddressCard(
         }
 
     }
+
+
+
+
 
 }
 

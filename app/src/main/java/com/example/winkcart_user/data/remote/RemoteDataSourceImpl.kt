@@ -223,6 +223,16 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
         return flowOf(response)
     }
 
+    override suspend fun deleteCustomerAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        val response =
+            retrofitHelper.shopifyService.deleteCustomerAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId
+            ).body()
+        return flowOf(response)
+    }
+
     override suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?> {
         val response =
             retrofitHelper.shopifyService.getDiscountCodesByPriceRule(

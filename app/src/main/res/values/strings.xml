@@ -19,6 +19,7 @@
     <string name="contact_us_phone">📞 Phone: +20 114 070 8568</string>
 
     <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
     <string name= "address_card_checkbox_text">Use as the default address</string>
 
     <string name="title">Title</string>
