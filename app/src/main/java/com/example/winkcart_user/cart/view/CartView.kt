@@ -2,7 +2,6 @@ package com.example.winkcart_user.cart.view
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,17 +18,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDropDown
-import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +43,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,18 +54,17 @@ import com.example.winkcart_user.cart.view.components.CartItem
 import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
-import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
+import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.CustomButton
-import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartView(viewModel: CartViewModel,navController: NavController) {
+//fun CartView(viewModel: CartViewModel,navController: NavController) {
+fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
 
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
@@ -82,11 +82,7 @@ fun CartView(viewModel: CartViewModel,navController: NavController) {
     val scroll = rememberScrollState()
 
 
-    val couponImages = listOf(
-        R.drawable.coupon3,
-        R.drawable.coupon2,
-        R.drawable.coupon1
-    )
+
 
     LaunchedEffect(showSheet) {
         if (showSheet) {
@@ -115,7 +111,7 @@ fun CartView(viewModel: CartViewModel,navController: NavController) {
     }
 
     Log.i("TAG", "CartView: draftOrders = ${draftOrderList.size}")
-    Log.i("TAG", "CartView: priceRules = $priceRulesList")
+    Log.i("TAG", "CartView: priceRules = ${priceRulesList.size}")
 
 
     // Modal Bottom Sheet
@@ -143,16 +139,22 @@ fun CartView(viewModel: CartViewModel,navController: NavController) {
 
                 if (priceRulesList.isNotEmpty()) {
                     LazyColumn(
-                        modifier = Modifier.weight(1f) ,
+                        modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(priceRulesList.size) { index ->
+                            val couponImage : Int = if(priceRulesList[index].value_type == "percentage"){
+                                R.drawable.discount_copoun
+                            }else{
+                                R.drawable.receipt_copoun
+                            }
+
                             CouponItem(
                                 viewModel = viewModel,
                                 priceRule = priceRulesList[index],
-                                imageID = couponImages[index],
-                                onApplyClicked = { selectedPriceRule ->
-                                    promoCode = selectedPriceRule.title
+                                imageID = couponImage,
+                                onApplyClicked = { selectedPriceRule, code ->
+                                    promoCode = code
                                     showSheet = false
                                     viewModel.setAppliedCoupon(selectedPriceRule)
                                     viewModel.refreshTotalAmount()
@@ -168,169 +170,203 @@ fun CartView(viewModel: CartViewModel,navController: NavController) {
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundColor)
-            .padding(SCREEN_PADDING)
-    ) {
-        Column(
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.cart),
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { backAction.invoke() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+            )
+        }
+    ) { paddingValues ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scroll)
-
+                .background(BackgroundColor)
+                .padding(SCREEN_PADDING)
+                .padding(paddingValues)
         ) {
-
-            if (draftOrderList.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                ) {
-                    items(draftOrderList.size) { index ->
-                        CartItem(
-                            draftOrder = draftOrderList[index],
-                            currencyCode = currencyCodeSaved,
-                            currencyRate = currencyRateSaved,
-                            onDeleteClick = { draftOrderId ->
-                                viewModel.deleteDraftOrder(draftOrderId)
-                            },
-                            onQuantityChange = { updatedDraftOrder, newQuantity ->
-                                val updatedLineItem =
-                                    updatedDraftOrder.line_items[0]?.copy(quantity = newQuantity)
-
-                                val updatedDraftOrderRequest = DraftOrderRequest(
-                                    draft_order = draftOrderList[index].copy(
-                                        line_items = listOf(
-                                            updatedLineItem
-                                        )
-                                    ),
-
-                                    )
-
-                                viewModel.refreshTotalAmount()
-
-                                viewModel.updateDraftOrder(
-                                    updatedDraftOrder.id,
-                                    updatedDraftOrderRequest
-                                )
-                            }
-                        )
-
-                    }
-                }
-            } else {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    //need update with lotti or image for empty cart
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            "  All products from this vendor are currently out of stock. ",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
-                        )
-                        Text(
-                            " Stay tuned for updates!",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
-                        )
-                    }
-
-
-                }
-            }
-
-            Spacer(Modifier.height(30.dp))
-
-
-            OutlinedTextField(
-                value = promoCode,
-                onValueChange = {
-                    promoCode = it
-
-                },
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                label = { Text(stringResource(R.string.Enter_your_promo_code)) },
-                trailingIcon = {
-                    if (appliedCoupon != null) {
-                        // Show close icon
-                        Surface(
-                            shape = CircleShape,
-                            color = Color.Red,
-                            shadowElevation = 4.dp,
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    // Clear applied coupon
-                                    promoCode = ""
-                                    viewModel.clearAppliedCoupon() // call function to clear in ViewModel
-                                },
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Remove, // or Icons.Default.Close
-                                    contentDescription = "Remove coupon",
-                                    tint = Color.White
-                                )
-                            }
-                        }
-                    } else {
-                        // Show apply arrow icon
-                        Surface(
-                            shape = CircleShape,
-                            color = Color.Black,
-                            shadowElevation = 4.dp,
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    showSheet = true
-                                },
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.ArrowForward,
-                                    contentDescription = "Apply promo",
-                                    tint = Color.White
-                                )
-                            }
-                        }
-                    }
-                }
-                ,
-                shape = RoundedCornerShape(12.dp)
-
-            )
-         /*   Spacer(Modifier.height(20.dp))*/
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 2.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
+                    .verticalScroll(scroll)
             ) {
-                Text(
-                    text = stringResource(R.string.total_amount),
-                    color = Color.Gray,
-                    fontSize = 24.sp,
+
+                if (draftOrderList.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        items(draftOrderList.size) { index ->
+                            CartItem(
+                                draftOrder = draftOrderList[index],
+                                currencyCode = currencyCodeSaved,
+                                currencyRate = currencyRateSaved,
+                                onDeleteClick = { draftOrderId ->
+                                    viewModel.deleteDraftOrder(draftOrderId)
+                                },
+                                onQuantityChange = { updatedDraftOrder, newQuantity ->
+                                    val updatedLineItem =
+                                        updatedDraftOrder.line_items[0]?.copy(quantity = newQuantity)
+
+                                    val updatedDraftOrderRequest = DraftOrderRequest(
+                                        draft_order = draftOrderList[index].copy(
+                                            line_items = listOf(
+                                                updatedLineItem
+                                            )
+                                        ),
+
+                                        )
+
+                                    viewModel.refreshTotalAmount()
+
+                                    viewModel.updateDraftOrder(
+                                        updatedDraftOrder.id,
+                                        updatedDraftOrderRequest
+                                    )
+                                },
+                                onItemClick = {
+                                    val productId = draftOrderList[index].line_items[0]?.product_id ?: 0L
+                                    navController.navigate("ProductInfo/$productId")
+                                }
+                            )
+
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        //need update with lotti or image for empty cart
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                "  All products from this vendor are currently out of stock. ",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
+                            Text(
+                                " Stay tuned for updates!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
+                        }
+
+
+                    }
+                }
+                Spacer(Modifier.height(30.dp))
+                OutlinedTextField(
+                    value = promoCode,
+                    onValueChange = {
+                        promoCode = it
+
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    label = { Text(stringResource(R.string.Enter_your_promo_code)) },
+                    trailingIcon = {
+                        if (appliedCoupon != null) {
+                            // Show close icon
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.Red,
+                                shadowElevation = 4.dp,
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        // Clear applied coupon
+                                        promoCode = ""
+                                        viewModel.clearAppliedCoupon()
+                                    },
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Remove,
+                                        contentDescription = "Remove coupon",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        } else {
+                            // Show apply arrow icon
+                            Surface(
+                                shape = CircleShape,
+                                color = Color.Black,
+                                shadowElevation = 4.dp,
+                            ) {
+                                IconButton(
+                                    onClick = {
+                                        showSheet = true
+                                    },
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                                        contentDescription = "Apply promo",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    shape = RoundedCornerShape(12.dp)
+
                 )
-                Text(
-                    text = totalAmount,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                )
+                /*   Spacer(Modifier.height(20.dp))*/
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.total_amount),
+                        color = Color.Gray,
+                        fontSize = 24.sp,
+                    )
+                    Text(
+                        text = totalAmount,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                    )
+
+                }
+
+                Spacer(Modifier.height(30.dp))
+                CustomButton(lable = stringResource(R.string.check_out)) {
+                    if(draftOrderList.isNotEmpty()) {
+                        checkoutAction(totalAmount, currencyCodeSaved)
+                    }
+                }
+                Spacer(Modifier.height(20.dp))
+                CustomButton(lable = "Sign out") {
+                    authViewModel.signOut()
+                    viewModel.writeCustomerID("")
+                    viewModel.readCustomerID()
+
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
+                Spacer(Modifier.height(100.dp))
+
 
             }
 
-            Spacer(Modifier.height(30.dp))
-            CustomButton(lable = stringResource(R.string.check_out)) {
-                navController.navigate(NavigationRout.Checkout.route)
-            }
-            Spacer(Modifier.height(120.dp))
+
         }
 
     }
-
 }
 

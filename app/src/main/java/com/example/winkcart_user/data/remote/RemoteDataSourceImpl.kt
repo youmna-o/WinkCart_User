@@ -2,8 +2,7 @@ package com.example.winkcart_user.data.remote
 
 import android.util.Log
 import com.example.winkcart_user.BuildConfig
-
-import com.example.winkcart_user.data.model.customer.Customer
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
 import com.example.winkcart_user.data.model.customer.CustomerWrapper
@@ -13,15 +12,23 @@ import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
 import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
-
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.retrofit.MockDataSource
 import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +36,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSource {
-  var auth = Firebase.auth
+  //var auth = Firebase.auth
     override suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?> {
         val result = retrofitHelper.shopifyService.getSmartCollections(token = BuildConfig.shopifyAccessToken)
             .body()
@@ -61,15 +68,18 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     }
 
     override fun signUpFireBase(email: String, password: String): Task<AuthResult> {
-        return  return auth.createUserWithEmailAndPassword(email, password)
+        return  return FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
     }
 
     override fun signInFireBase(email: String, password: String): Task<AuthResult> {
-        return auth.signInWithEmailAndPassword(email, password)
+        return FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
     }
      override fun firebaseAuthWithGoogle(idToken: String): Task<AuthResult> {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        return Firebase.auth.signInWithCredential(credential)
+        return Firebase.auth.signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
+    }
+
+    override fun signOutFireBase() {
+        return  FirebaseAuth.getInstance().signOut()
     }
 
 
@@ -117,14 +127,13 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
     override suspend fun updateDraftOrder(
         draftOrderId: Long,
         draftOrderRequest: DraftOrderRequest
-    ): Flow<DraftOrderResponse?> = flow {
-        val response = retrofitHelper
-            .shopifyService.updateDraftOrder(
+    ): Flow<DraftOrderResponse?> {
+        val response = retrofitHelper.shopifyService.updateDraftOrder(
             token = BuildConfig.shopifyAccessToken,
             draftOrderId = draftOrderId,
             draftOrder = draftOrderRequest
         ).body()
-        emit(response)
+        return flowOf(response)
     }
 
     override suspend fun getPriceRules(): Flow<PriceRulesResponse?> {
@@ -153,9 +162,88 @@ class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSourc
 
     override suspend fun createOrder(orderRequest: OrderRequest): Flow<OrdersResponse?> {
         var result = retrofitHelper.shopifyService.createOrder(  BuildConfig.shopifyAccessToken, orderRequest = orderRequest).body()
-        var response = retrofitHelper.shopifyService.createOrder(  BuildConfig.shopifyAccessToken, orderRequest = orderRequest)
-        Log.i("TAG", "createOrder: ${response.raw()}")
-        Log.i("TAG", "createOrder: ${response.code()}")
         return flowOf(result)
     }
+
+    override suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any> {
+        val response = retrofitHelper.shopifyService.addCustomerAddress(
+            token = BuildConfig.shopifyAccessToken,
+            customerId = customerId,
+            request = customerAddressRequest
+        )
+        return flowOf(response)
+    }
+
+    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> {
+        val response = retrofitHelper.shopifyService.getCustomerAddresses(
+            token = BuildConfig.shopifyAccessToken,
+            customerId = customerId
+        ).body()
+        return flowOf(response)
+    }
+
+    override suspend fun setDefaultAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        val result =
+            retrofitHelper.shopifyService.setDefaultAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId
+            ).body()
+        return flowOf(result)
+    }
+
+    override suspend fun getCustomerAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<CustomerAddressRequest?> {
+        val response =
+            retrofitHelper.shopifyService.getCustomerAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId
+            ).body()
+        return flowOf(response)
+    }
+
+    override suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?> {
+        val response =
+            retrofitHelper.shopifyService.updateCustomerAddress(
+                token = BuildConfig.shopifyAccessToken,
+                customerId = customerId,
+                addressId = addressId,
+                addressUpdateRequest = customerAddressRequest
+            ).body()
+        return flowOf(response)
+    }
+
+    override suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?> {
+        val response =
+            retrofitHelper.shopifyService.getDiscountCodesByPriceRule(
+                token = BuildConfig.shopifyAccessToken,
+                priceRuleId = priceRuleId
+            ).body()
+        return flowOf(response)
+    }
+    //map
+    override fun getPlacesApiAutoComplete(query: String, placesClient: PlacesClient): Task<FindAutocompletePredictionsResponse> {
+        val request = FindAutocompletePredictionsRequest.builder()
+            .setQuery(query)
+            .build()
+        return placesClient.findAutocompletePredictions(request)
+    }
+
+    override fun fetchPlaceById(placeId: String, placesClient: PlacesClient): Task<FetchPlaceResponse> {
+        val request= FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.LAT_LNG, Place.Field.NAME))
+        return placesClient.fetchPlace(request)
+    }
+
+
+
 }

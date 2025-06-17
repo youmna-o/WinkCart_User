@@ -39,6 +39,7 @@ import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.orders.Order
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
 import com.example.winkcart_user.ui.utils.formatDate
+import com.example.winkcart_user.ui.utils.getDeliveryStatus
 
 @Composable
 fun OrderDetailsScreen (navController: NavController, ordersViewModel: OrdersViewModel,orderID :Long){
@@ -59,9 +60,11 @@ fun OrderDetailsScreen (navController: NavController, ordersViewModel: OrdersVie
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@kotlin.OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderDetailsScreenOnSuccess(order:Order,navController: NavController){
+    val deliveryStatus = getDeliveryStatus(order.createdAt ?: "")
+
     Scaffold (
         topBar = {
             TopAppBar(
@@ -112,12 +115,15 @@ fun OrderDetailsScreenOnSuccess(order:Order,navController: NavController){
                             fontSize = 14.sp
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Delivered",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF4CAF50)
-                        )                }
+                        if (deliveryStatus.showStatus) {
+                            Text(
+                                text = deliveryStatus.statusText,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = deliveryStatus.statusColor
+                            )
+                        }
+                    }
 
                 }
 
@@ -134,7 +140,6 @@ fun OrderDetailsScreenOnSuccess(order:Order,navController: NavController){
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Order information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                OrderInfoRow("Shipping Address:", "${order.shippingAddress.city}, ${order.shippingAddress.country}")
                 OrderInfoRow("Total Amount:", "${order.currentTotalPrice} ${order.currency}")
                 OrderInfoRow("Discount:", "${order.currentTotalDiscounts} ${order.currency}" )
             }

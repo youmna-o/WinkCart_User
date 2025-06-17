@@ -1,6 +1,7 @@
 package com.example.winkcart_user.cart.view.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +55,8 @@ fun CartItem(
     currencyRate:String,
     currencyCode:String,
     onDeleteClick: (Long) -> Unit,
-    onQuantityChange: (DraftOrder, Int) -> Unit
+    onQuantityChange: (DraftOrder, Int) -> Unit,
+    onItemClick: () -> Unit
 ) {
 
     val price = draftOrder.line_items[0]?.let {
@@ -99,6 +101,8 @@ fun CartItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable{onItemClick(
+            )}
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),

@@ -1,6 +1,7 @@
 package com.example.winkcart_user.favourite
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +50,7 @@ fun FavItem(
     currencyRate:String,
     currencyCode:String,
     onDeleteClick: (Long) -> Unit,
-    onQuantityChange: (DraftOrder, Int) -> Unit
+    onItemClick: () -> Unit
 ) {
 
     val price = draftOrder.line_items[0]?.let {
@@ -90,7 +91,10 @@ fun FavItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable{onItemClick(
+            )}
             .padding(8.dp),
+
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
@@ -146,6 +150,16 @@ fun FavItem(
                                 .padding(end = 8.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
+                            draftOrder.line_items[0]?.let {
+                                Text(
+                                    text = it.title,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.widthIn(max = 200.dp)
+                                )
+                            }
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
@@ -179,25 +193,10 @@ fun FavItem(
 
 
                             }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                draftOrder.line_items[0]?.let {
-                                    Text(
-                                        text = it.title,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.widthIn(max = 200.dp)
-                                    )
-                                }
 
-                                Spacer(Modifier.weight(1f))
 
-                            }
+
+
 
                         }
                     }

@@ -45,7 +45,6 @@ fun OrderItemCard(title: String, quantity: Int, price: String, currency: String)
     }
 }
 
-// This row displays shared order details like shipping address, total cost, and other summary information.
 @Composable
 fun OrderInfoRow(label: String, value: String) {
     Row(

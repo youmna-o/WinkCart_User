@@ -9,5 +9,8 @@ interface FirebaseRepo {
     fun signInFireBase(email: String, password: String): Task<AuthResult>
     fun sendEmailVerification(onComplete: (Boolean) -> Unit)
     fun firebaseAuthWithGoogle(idToken: String): Task<AuthResult>
+    fun signOutFireBase()
+    fun getUserGemail(): String
+
 
 }

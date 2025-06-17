@@ -25,10 +25,15 @@ import com.example.winkcart_user.data.model.orders.Order
 import com.example.winkcart_user.ui.utils.calculateQuantities
 import com.example.winkcart_user.ui.utils.calculateTotalAfterDiscount
 import com.example.winkcart_user.ui.utils.formatDate
+import com.example.winkcart_user.ui.utils.getDeliveryStatus
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
-// in all orders screen , represent an order
 @Composable
 fun OrderCard(order: Order, onClick: () -> Unit) {
+    val deliveryStatus = getDeliveryStatus(order.createdAt ?: "")
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,12 +64,15 @@ fun OrderCard(order: Order, onClick: () -> Unit) {
                         modifier = Modifier.padding(top = 2.dp)
                     )
                 }
-                Text(
-                    text = "Delivered",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF4CAF50)
-                )
+
+                if (deliveryStatus.showStatus) {
+                    Text(
+                        text = deliveryStatus.statusText,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = deliveryStatus.statusColor
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -114,7 +122,7 @@ fun OrderDetailRow(label: String, value: String) {
             text = value,
             fontSize = 14.sp,
             color = Color.Gray,
-
         )
     }
 }
+

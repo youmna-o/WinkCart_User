@@ -1,6 +1,7 @@
 package com.example.winkcart_user.data.repository
 
 
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.Customer
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
@@ -13,7 +14,15 @@ import com.example.winkcart_user.data.model.orders.OrdersResponse
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddress
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
+import com.example.winkcart_user.settings.enums.Currency
+import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepo {
@@ -22,7 +31,7 @@ interface ProductRepo {
     suspend fun getLatestRateFromUSDToEGP(): Flow<CurrencyResponse?>
 
     suspend fun readCurrencyCode(): Flow<String>
-    suspend fun writeCurrencyCode(currencyCode: String)
+    suspend fun writeCurrencyCode(currencyCode: Currency)
 
     suspend fun readCurrencyRate(): Flow<String>
     suspend fun writeCurrencyRate(currencyRate: String)
@@ -63,5 +72,37 @@ interface ProductRepo {
     suspend fun createOrder(orderRequest: OrderRequest): Flow<OrdersResponse?>
 
 
+    suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any>
+
+    suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?>
+
+    suspend fun setDefaultAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<Unit?>
+
+    suspend fun getCustomerAddress(customerId: Long, addressId: Long): Flow<CustomerAddressRequest?>
+
+    suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?>
+
+    suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?>
+
+    //map
+    fun getAutoCompleteText(
+        query: String,
+        placesClient: PlacesClient
+    ): Task<FindAutocompletePredictionsResponse>
+
+    fun fetchGoogleMapPlaceById(
+        placeId: String,
+        placesClient: PlacesClient
+    ): Task<FetchPlaceResponse>
 
 }

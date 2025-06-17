@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.repository.ProductRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 
@@ -28,8 +30,9 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _draftOrders = MutableStateFlow<ResponseStatus<DraftOrderResponse>>(ResponseStatus.Loading)
     val draftOrders = _draftOrders.asStateFlow()
 
+    private val _createDraftOrderResponse = MutableStateFlow<ResponseStatus<Any>>(ResponseStatus.Loading)
     private val _deleteDraftOrders = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
-    //val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
+    val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
 
 
     private val _totalAmount = MutableStateFlow("0.00 EGP")
@@ -38,9 +41,8 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _priceRules = MutableStateFlow<ResponseStatus<PriceRulesResponse>>(ResponseStatus.Loading)
     val priceRules = _priceRules.asStateFlow()
 
-
-
-
+    private val _draftProductTitles = MutableStateFlow<Set<String>>(emptySet())
+    val draftProductTitles = _draftProductTitles.asStateFlow()
 
 
     init {
@@ -53,7 +55,6 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
             }
         }
     }
-
 
     fun readCurrencyCode(){
         viewModelScope.launch (Dispatchers.IO) {
@@ -93,8 +94,12 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
                                         }
                                     }
                                 }
+                            val productTitles = matchingDraftOrders.flatMap { it.line_items.mapNotNull { item -> item?.title } }.toSet()
+                            _draftProductTitles.value = productTitles
+
                             _draftOrders.value = ResponseStatus.Success(
                                 response.copy(draft_orders = matchingDraftOrders)
+
                             )
                         } else {
                             _draftOrders.value = ResponseStatus.Error(
@@ -107,7 +112,28 @@ class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
             }
         }
     }
+    fun createDraftFavouriteOrder(customerId: String, draftOrderRequest: DraftOrderRequest) {
+        viewModelScope.launch {
+            val existingOrders = repo.getAllDraftOrders().firstOrNull()
+            val isAlreadyExist = existingOrders?.draft_orders?.any { existingOrder ->
+                existingOrder.customer?.id == customerId.toLong() &&
+                        existingOrder.line_items.map { it?.title }.toSet() == draftOrderRequest.draft_order.line_items.map { it?.title }.toSet() &&
+                        existingOrder.line_items.any { lineItem ->
+                            lineItem?.properties?.any { prop ->
+                                prop.name == "SavedAt" && prop.value == "Favourite"
+                            } == true
+                        }
+            } == true
 
+            if (!isAlreadyExist) {
+                repo.createDraftOrder(draftOrderRequest)
+                    .catch { /* handle error */ }
+                    .collect {
+                        getDraftOrders(customerId)
+                    }
+            }
+        }
+    }
 
 
     fun deleteDraftOrder(draftOrderId: Long) {

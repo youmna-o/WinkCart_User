@@ -2,24 +2,27 @@ package com.example.winkcart_user.data.repository
 
 import android.util.Log
 import com.example.winkcart_user.data.local.LocalDataSource
-
-import com.example.winkcart_user.data.model.customer.Customer
+import com.example.winkcart_user.data.model.coupons.discount.DiscountCodesResponse
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.model.customer.CustomerResponse
-
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
 import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
-
 import com.example.winkcart_user.data.model.settings.currency.CurrencyResponse
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.map
-
 import com.example.winkcart_user.data.model.products.ProductResponse
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressesResponse
+import com.example.winkcart_user.settings.enums.Currency
+import com.google.android.gms.tasks.Task
+import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
+import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.flow.Flow
 
 class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
@@ -60,7 +63,7 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return localDataSource.readCurrencyCode()
     }
 
-    override suspend fun writeCurrencyCode(currencyCode: String) {
+    override suspend fun writeCurrencyCode(currencyCode: Currency) {
         localDataSource.writeCurrencyCode(currencyCode)
     }
 
@@ -145,10 +148,9 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
         return  remoteDataSource.getPriceRules()
     }
 
-
     override suspend fun getUserOrders(): Flow<OrdersResponse?> {
-        var customer_id : String = this.readCustomersID()
-        return remoteDataSource.getOrders(/*customer_id.toLong()*/8371331465464)
+        val customerId : String = this.readCustomersID()
+        return remoteDataSource.getOrders(customerId.toLong())
     }
 
     override suspend fun getSpecificOrderDetails(orderId: Long): Flow<OrderDetailsResponse?> {
@@ -158,5 +160,65 @@ class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private
     override suspend fun createOrder(orderRequest: OrderRequest): Flow<OrdersResponse?> {
         return remoteDataSource.createOrder(orderRequest = orderRequest)
     }
+
+    override suspend fun addCustomerAddress(
+        customerId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any> {
+        return remoteDataSource.addCustomerAddress(
+            customerId = customerId,
+            customerAddressRequest = customerAddressRequest
+        )
+    }
+
+    override suspend fun getCustomerAddresses(customerId: Long): Flow<CustomerAddressesResponse?> {
+        return remoteDataSource.getCustomerAddresses(customerId = customerId)
+    }
+
+    override suspend fun setDefaultAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        return remoteDataSource.setDefaultAddress(
+            customerId = customerId,
+            addressId = addressId
+        )
+    }
+
+    override suspend fun getCustomerAddress(
+        customerId: Long,
+        addressId: Long
+    ): Flow<CustomerAddressRequest?> {
+        return remoteDataSource.getCustomerAddress(
+            customerId = customerId,
+            addressId = addressId
+        )
+    }
+
+    override suspend fun updateCustomerAddress(
+        customerId: Long,
+        addressId: Long,
+        customerAddressRequest: CustomerAddressRequest
+    ): Flow<Any?> {
+        return remoteDataSource.updateCustomerAddress(
+            customerId = customerId,
+            addressId = addressId,
+            customerAddressRequest = customerAddressRequest
+        )
+    }
+
+    override suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?> {
+        return remoteDataSource.getDiscountCodesByPriceRule(
+            priceRuleId = priceRuleId
+        )
+    }
+
+    //map
+    override fun getAutoCompleteText(query: String, placesClient: PlacesClient): Task<FindAutocompletePredictionsResponse> {
+        return remoteDataSource.getPlacesApiAutoComplete(query,placesClient)
+    }
+
+    override fun fetchGoogleMapPlaceById(placeId: String, placesClient: PlacesClient): Task<FetchPlaceResponse> {
+        return remoteDataSource.fetchPlaceById(placeId,placesClient)
+
+    }
+
 
 }
