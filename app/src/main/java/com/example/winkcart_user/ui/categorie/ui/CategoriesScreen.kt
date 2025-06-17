@@ -63,15 +63,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 
 import com.example.winkcart_user.ui.utils.navigation.CustomSearchBar
 
 
 @Composable
-fun CategoriesScreen (categoriesViewModel: CategoriesViewModel,
+fun CategoriesScreen (categoriesViewModel: CategoriesViewModel=hiltViewModel(),
                       navController: NavController,
-                      currencyViewModel: CurrencyViewModel){
+                      currencyViewModel: CurrencyViewModel=hiltViewModel()){
 
     val allProducts by  categoriesViewModel.products.collectAsState()
     val searchInput by categoriesViewModel.searchInput.collectAsState()

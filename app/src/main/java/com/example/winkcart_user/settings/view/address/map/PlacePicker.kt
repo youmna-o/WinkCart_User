@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.winkcart_user.R
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.ui.theme.myPurple

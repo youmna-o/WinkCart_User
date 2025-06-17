@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.view.components.CartItem
@@ -64,8 +65,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 //fun CartView(viewModel: CartViewModel,navController: NavController) {
-fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
-
+fun CartView(viewModel: CartViewModel= hiltViewModel(),authViewModel: AuthViewModel= hiltViewModel(), checkoutAction: (String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
     val draftOrders by viewModel.draftOrders.collectAsState()

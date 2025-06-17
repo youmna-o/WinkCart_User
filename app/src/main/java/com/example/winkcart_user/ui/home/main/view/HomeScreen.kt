@@ -81,6 +81,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.data.ResponseStatus
@@ -93,7 +94,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
-    navController: NavController, brandsViewModel: BrandsViewModel
+    navController: NavController, brandsViewModel: BrandsViewModel= hiltViewModel()
 ) {
     val brandsState by brandsViewModel.brandList.collectAsState()
     when (brandsState) {

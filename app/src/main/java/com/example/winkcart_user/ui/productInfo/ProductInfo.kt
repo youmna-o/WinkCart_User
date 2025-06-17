@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
@@ -72,9 +73,9 @@ fun ProductInfo(
     productID: Long,
     navController: NavController,
     scrollState: ScrollState,
-    categoriesViewModel: CategoriesViewModel,
-    cartViewModel: CartViewModel,
-    favouriteViewModel: FavouriteViewModel,
+    categoriesViewModel: CategoriesViewModel=hiltViewModel(),
+    cartViewModel: CartViewModel= hiltViewModel(),
+    favouriteViewModel: FavouriteViewModel=hiltViewModel(),
 ) {
     val context =LocalContext.current
     val customerID = cartViewModel.customerID.collectAsState()

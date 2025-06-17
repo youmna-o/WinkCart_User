@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ProfileViewModel( private val repo: FirebaseRepo,  val productRepo: ProductRepo) : ViewModel(){
+@HiltViewModel
+class ProfileViewModel@Inject constructor( private val repo: FirebaseRepo,  val productRepo: ProductRepo) : ViewModel(){
     
     fun getGemail(): String{
         return repo.getUserGemail()

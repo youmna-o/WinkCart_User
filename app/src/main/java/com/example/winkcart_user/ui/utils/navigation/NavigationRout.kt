@@ -18,6 +18,7 @@ sealed class NavigationRout(val route: String) {
         fun createRoute(customerId: Long, addressId: Long) = "EditAddress/$customerId/$addressId"
     }
     data object AboutUs :NavigationRout("AboutUs")
+    data object Splash :NavigationRout("Splash")
     data object ContactUs :NavigationRout("ContactUs")
      data object PaymentMethods :NavigationRout("PaymentMethods/{totalAmount}/{currencyCode}") {
          fun createRoute(totalAmount: String, currencyCode: String) = "PaymentMethods/$totalAmount/$currencyCode"

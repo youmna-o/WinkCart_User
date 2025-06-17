@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.repository.ProductRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CurrencyViewModel(private val repo: ProductRepo) :ViewModel() {
+@HiltViewModel
+class CurrencyViewModel@Inject constructor(private val repo: ProductRepo) :ViewModel() {
     private val _currencyCode = MutableStateFlow("")
     val currencyCode = _currencyCode.asStateFlow()
 

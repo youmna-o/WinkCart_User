@@ -8,12 +8,15 @@ import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.orders.OrderDetailsResponse
 import com.example.winkcart_user.data.model.orders.OrdersResponse
 import com.example.winkcart_user.data.repository.ProductRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class OrdersViewModel(private val repository: ProductRepo) : ViewModel() {
+@HiltViewModel
+class OrdersViewModel@Inject constructor(private val repository: ProductRepo) : ViewModel() {
     private val _ordersList = MutableStateFlow<ResponseStatus<OrdersResponse>>(ResponseStatus.Loading)
     val ordersList = _ordersList.asStateFlow()
 

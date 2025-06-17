@@ -20,12 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.ui.utils.extractUsername
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewModel) {
+fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewModel= hiltViewModel()) {
     var showDialog = remember { mutableStateOf(false) }
     val email = remember { profileViewModel.getGemail() }
     val isGuest = remember { profileViewModel.isGuest() }

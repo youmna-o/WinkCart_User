@@ -1,5 +1,6 @@
 package com.example.winkcart_user
 
+import Splash
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
@@ -28,24 +29,18 @@ import com.example.winkcart_user.settings.view.contactus.ContactUsView
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.view.address.map.PlacePicker
-import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.auth.login.LoginScreen
 import com.example.winkcart_user.auth.signUp.SignUpScreen
-import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
 import com.example.winkcart_user.payment.view.CheckoutScreen
 import com.example.winkcart_user.payment.view.SuccessView
-import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
-import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.ui.home.main.view.HomeScreen
-import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.views.VendorProductScreen
 import com.example.winkcart_user.ui.productInfo.ProductInfo
 import com.example.winkcart_user.ui.profile.orders.view.OrderDetailsScreen
 import com.example.winkcart_user.ui.profile.orders.view.OrdersScreen
 import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
 import com.example.winkcart_user.ui.profile.userProfile.view.ProfileScreen
-import com.example.winkcart_user.ui.profile.userProfile.view.ProfileViewModel
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.NetworkAwareWrapper
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
@@ -53,18 +48,11 @@ import com.google.android.gms.maps.model.LatLng
 import kotlin.collections.contains
 
 @Composable
-fun AppInit(authViewModel : AuthViewModel,
+fun AppInit(
             cartViewModel: CartViewModel,
-            categoriesViewModel : CategoriesViewModel,
-            settingsViewModel: SettingsViewModel,
-            vendorProductViewModel :VendorProductsViewModel,
-            brandsViewModel: BrandsViewModel,
-            currencyViewModel : CurrencyViewModel,
-            favouriteViewModel: FavouriteViewModel,
             ordersViewModel : OrdersViewModel,
-            paymentViewModel: PaymentViewModel,
             placesViewModel: PlacesViewModel,
-            profileViewModel: ProfileViewModel
+
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -89,57 +77,38 @@ fun AppInit(authViewModel : AuthViewModel,
                 }
             }
         ) { paddingValues ->
-            val pa =paddingValues
-
+            val pa = paddingValues
             NetworkAwareWrapper {
                 NavHost(
+
                     navController = navController,
-                    startDestination =
-                        when {
+                    startDestination = NavigationRout.Splash.route,
 
-
-                            cartViewModel.readCustomersID().isBlank() -> NavigationRout.SignUp.route
-                            else -> NavigationRout.Home.route
-                            ///   else ->NavigationRout.Login.route
-
-                        },
                     //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,
                     modifier = Modifier.padding(2.dp)
                 ) {
                     var addressLatLon: LatLng? = null
+                    composable(NavigationRout.Splash.route) {
+                        Splash(navController, cartViewModel)
+                    }
                     composable(NavigationRout.Login.route) {
-                        LoginScreen(
-                            navController = navController,
-                            authViewModel = authViewModel,
-                            cartViewModel
-                        )
+                        LoginScreen(navController = navController)
                     }
                     composable(NavigationRout.SignUp.route) {
-                        SignUpScreen(
-                            navController = navController,
-                            authViewModel = authViewModel,
-                            cartViewModel
-                        )
+                        SignUpScreen(navController = navController)
                     }
                     composable(NavigationRout.Home.route) {
-                        HomeScreen(navController = navController, brandsViewModel = brandsViewModel)
+                        HomeScreen(navController = navController)
                     }
                     composable("vendor_products/{brand}") { backStackEntry ->
                         val brand = backStackEntry.arguments?.getString("brand") ?: ""
                         VendorProductScreen(
                             vendor = brand, navController = navController,
-                            vendorProductsViewModel = vendorProductViewModel
                         )
                     }
-                    composable(NavigationRout.Profile.route) {
-                        ProfileScreen(
-                            navController,
-                            profileViewModel = profileViewModel
-                        )
-                    }
+                    composable(NavigationRout.Profile.route) { ProfileScreen(navController) }
                     composable(NavigationRout.Settings.route) {
                         SettingsView(
-                            viewModel = settingsViewModel,
                             addressAction = { navController.navigate(NavigationRout.Address.route) },
                             contactUsAction = { navController.navigate(NavigationRout.ContactUs.route) },
                             aboutUsAction = { navController.navigate(NavigationRout.AboutUs.route) },
@@ -148,7 +117,6 @@ fun AppInit(authViewModel : AuthViewModel,
                     }
                     composable(NavigationRout.Cart.route) {
                         CartView(
-                            viewModel = cartViewModel,
                             checkoutAction = { totalAmount, currencyCode ->
                                 navController.navigate(
                                     NavigationRout.PaymentMethods.createRoute(
@@ -159,38 +127,23 @@ fun AppInit(authViewModel : AuthViewModel,
                                 )
                             },
                             backAction = { navController.popBackStack() },
-                            authViewModel = authViewModel,
                             navController = navController,
                         )
                     }
-                    composable(NavigationRout.Favourite.route) {
-                        Favourite(
-                            favouriteViewModel,
-                            navController
-                        )
-                    }
-                    composable(NavigationRout.categories.route) {
-                        CategoriesScreen(
-                            categoriesViewModel,
-                            navController,
-                            currencyViewModel
-                        )
-                    }
+                    composable(NavigationRout.Favourite.route) { Favourite(navController = navController) }
+                    composable(NavigationRout.categories.route) { CategoriesScreen(navController = navController) }
                     composable(NavigationRout.ProductInfo.route) { backStackEntry ->
                         val productId = backStackEntry.arguments?.getString("productId") ?: ""
                         ProductInfo(
                             productId.toLong(),
                             navController = navController,
                             scrollState = scroll,
-                            categoriesViewModel = categoriesViewModel,
-                            cartViewModel = cartViewModel,
-                            favouriteViewModel = favouriteViewModel,
+
 
                             )
                     }
                     composable(NavigationRout.Address.route) {
                         AddressView(
-                            viewModel = settingsViewModel,
                             addAction = { navController.navigate(NavigationRout.AddAddress.route) },
                             backAction = { navController.popBackStack() },
                             editAction = { customerId, addressId ->
@@ -208,7 +161,6 @@ fun AppInit(authViewModel : AuthViewModel,
 
                     composable(NavigationRout.AddAddress.route) {
                         AddAddressView(
-                            viewModel = settingsViewModel,
                             backAction = { navController.popBackStack() },
                             navigateToMapAction = { navController.navigate(NavigationRout.Map.route) },
                             addressLatLon = addressLatLon
@@ -232,7 +184,6 @@ fun AppInit(authViewModel : AuthViewModel,
                         EditAddressView(
                             customerId = customerId,
                             addressId = addressId,
-                            viewModel = settingsViewModel,
                             backAction = { navController.popBackStack() },
                             navigateToMapAction = { navController.navigate(NavigationRout.Map.route) },
                             addressLatLon = addressLatLon
@@ -244,10 +195,7 @@ fun AppInit(authViewModel : AuthViewModel,
                         OrderDetailsScreen(navController, ordersViewModel, orderId.toLong())
                     }
                     composable(NavigationRout.Orders.route) {
-                        OrdersScreen(
-                            navController = navController,
-                            ordersViewModel = ordersViewModel
-                        )
+                        OrdersScreen(navController = navController)
                     }
                     composable(
                         NavigationRout.Checkout.route,
@@ -264,17 +212,15 @@ fun AppInit(authViewModel : AuthViewModel,
                         val currencyCode =
                             backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                         CheckoutScreen(
-                            cartViewModel,
-                            currencyViewModel,
-                            navController,
-                            paymentViewModel,
+                            navController = navController,
                             cardNumber = cardNumber,
                             totalAmount = totalAmount,
                             currencyCode = currencyCode,
-                            settingsViewModel = settingsViewModel,
-                            goToSuccess = { navController.navigate(NavigationRout.Success.route) }
-
+                            goToSuccess = {
+                                navController.navigate(NavigationRout.Success.route)
+                            }
                         )
+
                     }
 
                     composable(
@@ -289,7 +235,6 @@ fun AppInit(authViewModel : AuthViewModel,
                         val currencyCode =
                             backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                         PaymentMethodsView(
-                            viewModel = paymentViewModel,
                             backAction = { navController.popBackStack() },
                             totalAmount = totalAmount,
                             currencyCode = currencyCode,
@@ -320,7 +265,7 @@ fun AppInit(authViewModel : AuthViewModel,
 
                     composable(NavigationRout.Map.route) {
                         PlacePicker(
-                            placesViewModel = placesViewModel
+                            placesViewModel
                         ) { latLon ->
                             addressLatLon = latLon
                             navController.popBackStack()
@@ -330,6 +275,5 @@ fun AppInit(authViewModel : AuthViewModel,
                 }
             }
         }
+        }
     }
-
-}
