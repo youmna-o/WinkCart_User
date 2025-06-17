@@ -34,9 +34,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun ADSPager() {
     val images = listOf(
-        R.drawable.ads1,
-        R.drawable.ads2,
-        R.drawable.ads3,
+        R.drawable.ads8,
+        R.drawable.ads6,
+        R.drawable.ads9,
         R.drawable.ads4
     )
 

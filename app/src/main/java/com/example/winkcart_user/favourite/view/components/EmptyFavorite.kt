@@ -24,7 +24,7 @@ fun EmptyFavorite() {
         modifier = Modifier.fillMaxSize()
     ) {
         LottieAnimationView(
-            animationRes = R.raw.animation_ecommice,
+            animationRes = R.raw.empty_favorite_animation,
         )
 
         Spacer(modifier = Modifier.height(24.dp))

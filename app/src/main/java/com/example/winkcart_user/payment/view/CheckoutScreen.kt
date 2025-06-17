@@ -26,7 +26,6 @@ import com.example.winkcart_user.payment.view.components.ProductListSection
 import com.example.winkcart_user.payment.view.components.SummarySection
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
-import com.example.winkcart_user.ui.utils.components.PlayOnceThenHideAnimation
 import com.example.winkcart_user.ui.utils.components.TimedLottieAnimation
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
@@ -55,7 +54,6 @@ fun CheckoutScreen(
     val discount by cartViewModel.discountAmount.collectAsState()
     val discountOnly = discount.split(" ").first().toDoubleOrNull() ?: 0.0
     var showLottieCheckVerify by remember { mutableStateOf(false) }
-    var showLottieVerified by remember { mutableStateOf(false) }
     Log.i("TAG", "CheckoutScreen: $discountOnly")
 
     var showSuccessDialog by remember { mutableStateOf(false) }
@@ -172,34 +170,16 @@ fun CheckoutScreen(
             LaunchedEffect(showLottieCheckVerify) {
                 if (showLottieCheckVerify) {
                     delay(3000)
-                    showLottieCheckVerify = false
-                    showLottieVerified = true
-                }
-            }
-        }
-
-        if (showLottieVerified) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                PlayOnceThenHideAnimation(resId = R.raw.verified_animation, message = "Done!") {
-
                     paymentViewModel.createOrder(lineItems = allLineItems)
 
                     draftOrderList.forEach { draftOrder ->
                         draftOrder.id.let { cartViewModel.deleteDraftOrder(it) }
                     }
-                    showLottieVerified = false
+                    showLottieCheckVerify = false
                     goToSuccess()
                 }
-
             }
-
         }
-
     }
 }
 
