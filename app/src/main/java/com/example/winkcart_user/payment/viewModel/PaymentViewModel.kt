@@ -1,4 +1,4 @@
-package com.example.winkcart_user.payment.viewModel
+package com.example.winkcart_user.ui.checkout.view.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
