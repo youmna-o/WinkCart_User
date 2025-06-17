@@ -49,7 +49,7 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = hiltViewModel(), cartViewModel: CartViewModel) {
+fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = hiltViewModel(), cartViewModel: CartViewModel = hiltViewModel()) {
     val emailError by authViewModel.signInEmailError.collectAsState()
     val passwordError by authViewModel.signInEmailError.collectAsState()
 

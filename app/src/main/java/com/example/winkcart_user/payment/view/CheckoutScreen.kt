@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.CurrencyViewModel
 import com.example.winkcart_user.cart.viewModel.CartViewModel
@@ -28,11 +29,11 @@ import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreen(
-    cartViewModel: CartViewModel,
-    currencyViewModel: CurrencyViewModel,
+    cartViewModel: CartViewModel=hiltViewModel(),
+    currencyViewModel: CurrencyViewModel=hiltViewModel(),
     navController: NavController,
-    paymentViewModel: PaymentViewModel,
-    settingsViewModel: SettingsViewModel,
+    paymentViewModel: PaymentViewModel=hiltViewModel(),
+    settingsViewModel: SettingsViewModel=hiltViewModel(),
     cardNumber : String,
     totalAmount: String,
     currencyCode: String,

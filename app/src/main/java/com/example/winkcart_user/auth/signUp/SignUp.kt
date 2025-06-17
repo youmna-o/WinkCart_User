@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.model.customer.CustomerRequest
@@ -41,7 +42,7 @@ import com.google.firebase.ktx.Firebase
 private val db = Firebase.firestore
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel , cartViewModel: CartViewModel){
+fun SignUpScreen(navController: NavController ,authViewModel: AuthViewModel = hiltViewModel(), cartViewModel: CartViewModel = hiltViewModel()){
     val emailError by authViewModel.signUpEmailError.collectAsState()
     val passwordError by authViewModel.signUppasswordError.collectAsState()
     var context = LocalContext.current

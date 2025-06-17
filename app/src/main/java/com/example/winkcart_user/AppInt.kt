@@ -52,18 +52,11 @@ import com.google.android.gms.maps.model.LatLng
 import kotlin.collections.contains
 
 @Composable
-fun AppInit(authViewModel : AuthViewModel,
+fun AppInit(
             cartViewModel: CartViewModel,
-            categoriesViewModel : CategoriesViewModel,
-            settingsViewModel: SettingsViewModel,
-            vendorProductViewModel :VendorProductsViewModel,
-            brandsViewModel: BrandsViewModel,
-            currencyViewModel : CurrencyViewModel,
-            favouriteViewModel: FavouriteViewModel,
             ordersViewModel : OrdersViewModel,
-            paymentViewModel: PaymentViewModel,
             placesViewModel: PlacesViewModel,
-            profileViewModel: ProfileViewModel
+
 ) {
     val scroll = rememberScrollState()
     val navController = rememberNavController()
@@ -105,25 +98,23 @@ fun AppInit(authViewModel : AuthViewModel,
             ) {
                 var addressLatLon: LatLng? = null
                 composable(NavigationRout.Login.route) {
-                    LoginScreen(navController = navController,cartViewModel=cartViewModel)
+                    LoginScreen(navController = navController)
                 }
                 composable(NavigationRout.SignUp.route) {
-                    SignUpScreen(navController = navController,authViewModel=authViewModel, cartViewModel)
+                    SignUpScreen(navController = navController)
                 }
                 composable(NavigationRout.Home.route) {
-                    HomeScreen(navController = navController,brandsViewModel=brandsViewModel)
+                    HomeScreen(navController = navController)
                 }
                 composable("vendor_products/{brand}") { backStackEntry ->
                     val brand = backStackEntry.arguments?.getString("brand") ?: ""
                     VendorProductScreen(
                         vendor = brand, navController = navController,
-                        vendorProductsViewModel = vendorProductViewModel
                     )
                 }
-                composable(NavigationRout.Profile.route) { ProfileScreen(navController, profileViewModel = profileViewModel) }
+                composable(NavigationRout.Profile.route) { ProfileScreen(navController) }
                 composable(NavigationRout.Settings.route) {
                     SettingsView(
-                        viewModel = settingsViewModel,
                         addressAction = {navController.navigate(NavigationRout.Address.route)},
                         contactUsAction = {navController.navigate(NavigationRout.ContactUs.route)},
                         aboutUsAction = {navController.navigate(NavigationRout.AboutUs.route)},
@@ -131,7 +122,6 @@ fun AppInit(authViewModel : AuthViewModel,
                     )
                 }
                 composable(NavigationRout.Cart.route) { CartView(
-                    viewModel = cartViewModel,
                     checkoutAction = { totalAmount, currencyCode ->
                             navController.navigate(
                                 NavigationRout.PaymentMethods.createRoute(totalAmount, currencyCode)
@@ -139,11 +129,10 @@ fun AppInit(authViewModel : AuthViewModel,
                             )
                         },
                     backAction = {navController.popBackStack()},
-                    authViewModel = authViewModel,
                    navController =  navController,
                 ) }
-                composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel, navController) }
-                composable(NavigationRout.categories.route) { CategoriesScreen(categoriesViewModel,navController,currencyViewModel) }
+                composable(NavigationRout.Favourite.route) { Favourite( navController=navController) }
+                composable(NavigationRout.categories.route) { CategoriesScreen(navController=navController) }
                 composable(NavigationRout.ProductInfo.route) {
                         backStackEntry ->
                     val productId = backStackEntry.arguments?.getString("productId") ?: ""
@@ -151,15 +140,12 @@ fun AppInit(authViewModel : AuthViewModel,
                         productId.toLong(),
                         navController = navController,
                         scrollState = scroll,
-                        categoriesViewModel = categoriesViewModel,
-                        cartViewModel = cartViewModel,
-                        favouriteViewModel= favouriteViewModel,
+
 
                     )
                 }
                 composable(NavigationRout.Address.route) {
                     AddressView(
-                        viewModel = settingsViewModel,
                         addAction = {navController.navigate(NavigationRout.AddAddress.route)},
                         backAction = {navController.popBackStack()},
                         editAction = { customerId, addressId ->
@@ -173,7 +159,6 @@ fun AppInit(authViewModel : AuthViewModel,
                 }
 
                 composable(NavigationRout.AddAddress.route) { AddAddressView(
-                    viewModel = settingsViewModel,
                     backAction = {navController.popBackStack()},
                     navigateToMapAction =  { navController.navigate(NavigationRout.Map.route) },
                     addressLatLon = addressLatLon
@@ -194,7 +179,6 @@ fun AppInit(authViewModel : AuthViewModel,
                     EditAddressView(
                         customerId = customerId,
                         addressId = addressId,
-                        viewModel = settingsViewModel,
                         backAction = {navController.popBackStack()},
                         navigateToMapAction =  { navController.navigate(NavigationRout.Map.route) },
                         addressLatLon = addressLatLon
@@ -206,7 +190,7 @@ fun AppInit(authViewModel : AuthViewModel,
                     OrderDetailsScreen(navController,ordersViewModel,orderId.toLong())
                 }
                 composable(NavigationRout.Orders.route) {
-                    OrdersScreen(navController = navController, ordersViewModel = ordersViewModel)
+                    OrdersScreen(navController = navController)
                 }
                 composable(
                     NavigationRout.Checkout.route,
@@ -220,17 +204,15 @@ fun AppInit(authViewModel : AuthViewModel,
                     val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: return@composable
                     val currencyCode = backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                     CheckoutScreen(
-                        cartViewModel,
-                        currencyViewModel,
-                        navController,
-                        paymentViewModel,
+                        navController = navController,
                         cardNumber = cardNumber,
                         totalAmount = totalAmount,
                         currencyCode = currencyCode,
-                        settingsViewModel = settingsViewModel,
-                        goToSuccess = {navController.navigate(NavigationRout.Success.route)}
-
+                        goToSuccess = {
+                            navController.navigate(NavigationRout.Success.route)
+                        }
                     )
+
                 }
 
                 composable(NavigationRout.PaymentMethods.route,
@@ -242,7 +224,6 @@ fun AppInit(authViewModel : AuthViewModel,
                     val totalAmount = backStackEntry.arguments?.getString("totalAmount") ?: return@composable
                     val currencyCode = backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                     PaymentMethodsView(
-                        viewModel = paymentViewModel,
                         backAction = {navController.popBackStack()},
                         totalAmount = totalAmount,
                         currencyCode = currencyCode,
@@ -267,7 +248,7 @@ fun AppInit(authViewModel : AuthViewModel,
 
                 composable(NavigationRout.Map.route) {
                     PlacePicker(
-                        placesViewModel = placesViewModel
+                        placesViewModel
                     ) { latLon ->
                         addressLatLon = latLon
                         navController.popBackStack()

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.orders.Order
@@ -42,7 +43,7 @@ import com.example.winkcart_user.ui.utils.formatDate
 import com.example.winkcart_user.ui.utils.getDeliveryStatus
 
 @Composable
-fun OrderDetailsScreen (navController: NavController, ordersViewModel: OrdersViewModel,orderID :Long){
+fun OrderDetailsScreen (navController: NavController, ordersViewModel: OrdersViewModel= hiltViewModel(), orderID :Long){
 
     ordersViewModel.getOrderDetails(orderID)
     val orderDetails = ordersViewModel.orderDetails.collectAsState().value

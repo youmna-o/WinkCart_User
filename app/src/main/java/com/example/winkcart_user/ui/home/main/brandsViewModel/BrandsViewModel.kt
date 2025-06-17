@@ -6,12 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.data.ResponseStatus
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BrandsViewModel(private  val repo: ProductRepo) : ViewModel() {
+@HiltViewModel
+class BrandsViewModel@Inject constructor(private  val repo: ProductRepo) : ViewModel() {
 
     init {
        getSmartCollections()

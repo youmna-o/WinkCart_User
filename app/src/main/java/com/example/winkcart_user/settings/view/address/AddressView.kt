@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
@@ -41,7 +42,7 @@ import com.google.android.gms.maps.model.LatLng
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddressView(
-    viewModel: SettingsViewModel,
+    viewModel: SettingsViewModel=hiltViewModel(),
     addAction : ()-> Unit,
     backAction : () -> Unit,
     editAction : (Long, Long) -> Unit

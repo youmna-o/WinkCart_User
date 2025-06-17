@@ -7,12 +7,15 @@ import com.example.winkcart_user.data.repository.ProductRepo
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.net.PlacesClient
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 
 class PlacesViewModel (private  val repo: ProductRepo, val placesClient: PlacesClient): ViewModel() {
     private val _search= MutableSharedFlow<String>(replay = 1)
