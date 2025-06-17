@@ -34,8 +34,9 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import javax.inject.Inject
 
-class RemoteDataSourceImpl(val retrofitHelper: RetrofitHelper) : RemoteDataSource {
+class RemoteDataSourceImpl@Inject constructor(val retrofitHelper: RetrofitHelper) : RemoteDataSource {
   //var auth = Firebase.auth
     override suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?> {
         val result = retrofitHelper.shopifyService.getSmartCollections(token = BuildConfig.shopifyAccessToken)

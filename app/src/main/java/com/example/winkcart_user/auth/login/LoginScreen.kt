@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.BuildConfig
 import com.example.winkcart_user.R
@@ -45,8 +46,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
+
 @Composable
-fun LoginScreen(navController: NavController, authViewModel: AuthViewModel, cartViewModel: CartViewModel) {
+fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = hiltViewModel(), cartViewModel: CartViewModel) {
     val emailError by authViewModel.signInEmailError.collectAsState()
     val passwordError by authViewModel.signInEmailError.collectAsState()
 

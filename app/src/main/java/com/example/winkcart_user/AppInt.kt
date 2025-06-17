@@ -105,7 +105,7 @@ fun AppInit(authViewModel : AuthViewModel,
             ) {
                 var addressLatLon: LatLng? = null
                 composable(NavigationRout.Login.route) {
-                    LoginScreen(navController = navController , authViewModel = authViewModel,cartViewModel)
+                    LoginScreen(navController = navController,cartViewModel=cartViewModel)
                 }
                 composable(NavigationRout.SignUp.route) {
                     SignUpScreen(navController = navController,authViewModel=authViewModel, cartViewModel)

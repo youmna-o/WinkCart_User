@@ -7,9 +7,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import com.example.winkcart_user.utils.Constants.BASE_URL_CURRENCY
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import javax.inject.Inject
 
 
-object RetrofitHelper {
+class RetrofitHelper @Inject constructor()  {
 
     val logging = HttpLoggingInterceptor(){ message ->
         Log.i("TAG", message)

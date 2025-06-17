@@ -38,7 +38,9 @@ import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
 import com.example.winkcart_user.ui.profile.userProfile.view.ProfileFactory
 import com.example.winkcart_user.ui.profile.userProfile.view.ProfileViewModel
 import com.google.android.libraries.places.api.Places
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +49,7 @@ class MainActivity : ComponentActivity() {
             Places.initialize(this, BuildConfig.MAPS_API_KEY)
         }
         setContent {
-            val retrofitHelper = RetrofitHelper
+            val retrofitHelper = RetrofitHelper()
             val remoteDataSource = RemoteDataSourceImpl(retrofitHelper)
             val localDataSource = LocalDataSourceImpl(
                 SettingsDaoImpl(
@@ -71,7 +73,7 @@ class MainActivity : ComponentActivity() {
             val settingsViewModel: SettingsViewModel = viewModel(
                 factory = SettingsFactory(
                     ProductRepoImpl(
-                        RemoteDataSourceImpl(RetrofitHelper),
+                        RemoteDataSourceImpl(retrofitHelper),
                         LocalDataSourceImpl(
                             SettingsDaoImpl(
                                 LocalContext.current.getSharedPreferences(
@@ -86,7 +88,7 @@ class MainActivity : ComponentActivity() {
             val cartViewModel: CartViewModel = viewModel(
                 factory = CartFactory(
                     repo = ProductRepoImpl(
-                        remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                        remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                         localDataSource = LocalDataSourceImpl(
                             SettingsDaoImpl(
                                 LocalContext.current.getSharedPreferences(
@@ -101,7 +103,7 @@ class MainActivity : ComponentActivity() {
             val favViewModel: FavouriteViewModel = viewModel(
                 factory = FavouriteFactory(
                     repo = ProductRepoImpl(
-                        remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                        remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                         localDataSource = LocalDataSourceImpl(
                             SettingsDaoImpl(
                                 LocalContext.current.getSharedPreferences(
@@ -116,7 +118,7 @@ class MainActivity : ComponentActivity() {
 
             val brandFactory = BrandsFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                     localDataSource = LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -129,7 +131,7 @@ class MainActivity : ComponentActivity() {
 
             val vendorFactory = VendorsProductFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                     localDataSource = LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -142,7 +144,7 @@ class MainActivity : ComponentActivity() {
 
             val categoryFactory = CategoryFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                     localDataSource = LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -157,7 +159,7 @@ class MainActivity : ComponentActivity() {
 
             val currencyFactory = CurrencyFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                     localDataSource = LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -170,7 +172,7 @@ class MainActivity : ComponentActivity() {
 
             val ordersFactory = OrdersFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                     localDataSource = LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -183,7 +185,7 @@ class MainActivity : ComponentActivity() {
 
             val paymentFactory = PaymentFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                     localDataSource = LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
@@ -199,7 +201,7 @@ class MainActivity : ComponentActivity() {
             val placesClient= Places.createClient(LocalContext.current)
             val placesViewModelFactory = PlacesViewModelFactory(
                 repo = ProductRepoImpl(
-                    remoteDataSource = RemoteDataSourceImpl(RetrofitHelper),
+                    remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
                     localDataSource = LocalDataSourceImpl(
                         SettingsDaoImpl(
                             LocalContext.current.getSharedPreferences("AppSettings", MODE_PRIVATE)
