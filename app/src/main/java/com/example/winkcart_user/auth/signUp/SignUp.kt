@@ -33,8 +33,8 @@ import androidx.navigation.NavController
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.auth.AuthViewModel
-import com.example.winkcart_user.ui.utils.CustomSmallTextField
-import com.example.winkcart_user.ui.utils.CustomTextField
+import com.example.winkcart_user.ui.utils.components.CustomSmallTextField
+import com.example.winkcart_user.ui.utils.components.CustomTextField
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 

@@ -23,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,35 +38,49 @@ import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.ui.theme.myPurple
+import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 
 
 @Composable
-fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, onApplyClicked: (PriceRule, String ) -> Unit) {
-
+fun CouponItem(
+    viewModel: CartViewModel,
+    priceRule: PriceRule,
+    imageID: Int,
+    onApplyClicked: (PriceRule, String) -> Unit,
+    currencyCode: String,
+    currencyRate: String
+) {
     LaunchedEffect(priceRule.id) {
         viewModel.getDiscountCodesByPriceRule(priceRule.id)
     }
 
-    val discountCodeState by viewModel.priceRuleDiscountCodes.collectAsState()
+    val discountCodesMap by viewModel.discountCodesByPriceRule.collectAsState()
+    val discountCodeState = discountCodesMap[priceRule.id]
 
-    val firstDiscountCode = when (discountCodeState) {
-        is ResponseStatus.Success -> {
-            val codes = (discountCodeState as ResponseStatus.Success).result?.discount_codes
-            if (codes?.isNotEmpty() == true) codes[0].code else "No code"
+    val firstDiscountCode = remember { mutableStateOf("Loading...") }
+
+    LaunchedEffect(discountCodeState) {
+        when (discountCodeState) {
+            is ResponseStatus.Success -> {
+                val codes = discountCodeState.result.discount_codes
+                firstDiscountCode.value = if (codes.isNotEmpty()) codes[0].code else "No code"
+            }
+            is ResponseStatus.Error -> {
+                firstDiscountCode.value = "Error loading code"
+            }
+            is ResponseStatus.Loading, null -> {
+                firstDiscountCode.value = "Loading..."
+            }
         }
-        is ResponseStatus.Error -> "Error loading code"
-        is ResponseStatus.Loading -> "Loading..."
     }
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
-
-        ) {
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,6 +89,7 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(12.dp)
                     .height(IntrinsicSize.Min),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -81,17 +98,13 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .height(65.dp)
-                        .width(100.dp)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 12.dp,
-                                bottomStart = 12.dp
-                            )
-                        )
+                        .height(80.dp)
+                        .width(120.dp)
+                        .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp))
                 )
 
-                Spacer(Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(12.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,77 +113,92 @@ fun CouponItem(viewModel: CartViewModel, priceRule : PriceRule, imageID: Int, on
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(end = 8.dp),
+                            .padding(end = 12.dp),
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = priceRule.title,
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .width(110.dp),
+                            softWrap = false
+                        )
+
+                        Text(
+                            text = firstDiscountCode.value,
+                            color = Color.Gray,
+                            fontSize = 14.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
 
+                        val priceDiscount = convertCurrency(priceRule.value.trimStart('-'), currencyRate, currencyCode)
+                        val discountText = when (priceRule.value_type) {
+                            "percentage" -> "${priceRule.value.trimStart('-')}%"
+                            "fixed_amount" -> {"$priceDiscount $currencyCode"}
+                            else -> ""
+                        }
+
                         Text(
-                            text = firstDiscountCode,
+                            text = discountText,
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Column(
+                        modifier = Modifier
+                            .padding(end = 12.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = viewModel.getRemainingMonthsText(priceRule.ends_at),
                             color = Color.Gray,
                             fontSize = 12.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
 
-                    }
-                    Spacer(Modifier.weight(1f))
-                    Column(
-                        modifier = Modifier
-                            .padding(end = 8.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
+                        Spacer(modifier = Modifier.height(6.dp))
 
-                        Text(
-                            text = viewModel.getRemainingMonthsText(
-                                endsAt = priceRule.ends_at
-                            ),
-                            color = Color.Gray,
-                            fontSize = 10.sp,
-                        )
-                        Spacer(Modifier.height(4.dp))
                         Surface(
                             shape = RoundedCornerShape(24.dp),
-                            shadowElevation = 16.dp,
+                            shadowElevation = 12.dp,
                             color = Color.Transparent
                         ) {
                             Button(
                                 onClick = {
-                                    onApplyClicked(priceRule,firstDiscountCode)
-
+                                    onApplyClicked(priceRule, firstDiscountCode.value)
                                 },
                                 shape = RoundedCornerShape(24.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = myPurple),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
                                 modifier = Modifier
-                                    .width(80.dp)
-                                    .height(30.dp)
+                                    .width(100.dp)
+                                    .height(36.dp)
                             ) {
                                 Text(
                                     text = "Apply",
                                     color = Color.White,
-                                    fontSize = 10.sp,
+                                    fontSize = 12.sp,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
-
                     }
                 }
             }
         }
     }
-
-
-
 }
-
 
 
 

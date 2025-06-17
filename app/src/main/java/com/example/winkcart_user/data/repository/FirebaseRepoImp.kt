@@ -8,20 +8,21 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 
-class FirebaseRepoImp(private  val remoteDataSource: RemoteDataSource) : FirebaseRepo{
+class FirebaseRepoImp(private  val remoteDataSource: RemoteDataSource) : FirebaseRepo {
     override fun signUpFireBase(
         email: String,
         password: String
     ): Task<AuthResult> {
-        return remoteDataSource.signUpFireBase(email,password)
+        return remoteDataSource.signUpFireBase(email, password)
     }
 
     override fun signInFireBase(
         email: String,
         password: String
-    ): Task<AuthResult>{
-        return remoteDataSource.signInFireBase(email,password)
+    ): Task<AuthResult> {
+        return remoteDataSource.signInFireBase(email, password)
     }
+
     override fun sendEmailVerification(onComplete: (Boolean) -> Unit) {
         val user = Firebase.auth.currentUser
         user?.sendEmailVerification()

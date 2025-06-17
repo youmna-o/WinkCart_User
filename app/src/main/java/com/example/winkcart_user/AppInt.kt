@@ -19,7 +19,6 @@ import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.favourite.Favourite
 import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.payment.view.PaymentMethodsView
-import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.settings.view.SettingsView
 import com.example.winkcart_user.settings.view.aboutus.AboutUsView
 import com.example.winkcart_user.settings.view.address.AddAddressView
@@ -36,6 +35,7 @@ import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesView
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
 import com.example.winkcart_user.payment.view.CheckoutScreen
 import com.example.winkcart_user.payment.view.SuccessView
+import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
 import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.ui.home.main.view.HomeScreen
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
@@ -154,6 +154,7 @@ fun AppInit(authViewModel : AuthViewModel,
                         categoriesViewModel = categoriesViewModel,
                         cartViewModel = cartViewModel,
                         favouriteViewModel= favouriteViewModel,
+                        currencyViewModel = currencyViewModel
 
                     )
                 }

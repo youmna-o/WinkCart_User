@@ -14,9 +14,11 @@ import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -52,15 +54,17 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
     private val _priceRules = MutableStateFlow<ResponseStatus<PriceRulesResponse>>(ResponseStatus.Loading)
     val priceRules = _priceRules.asStateFlow()
 
-    //private var appliedCoupon: PriceRule? = null
     private val _appliedCoupon = MutableStateFlow<PriceRule?>(null)
     val appliedCoupon = _appliedCoupon.asStateFlow()
 
     private val _discountAmount = MutableStateFlow("0.00 EGP")
     val discountAmount = _discountAmount.asStateFlow()
 
-    private val _priceRuleDiscountCodes = MutableStateFlow<ResponseStatus<DiscountCodesResponse?>>(ResponseStatus.Loading)
-    val priceRuleDiscountCodes = _priceRuleDiscountCodes.asStateFlow()
+    private val _discountCodesByPriceRule = MutableStateFlow<Map<Long, ResponseStatus<DiscountCodesResponse>>>(emptyMap())
+    val discountCodesByPriceRule: StateFlow<Map<Long, ResponseStatus<DiscountCodesResponse>>> = _discountCodesByPriceRule
+
+
+
 
     fun setAppliedCoupon(coupon: PriceRule) {
         if (_appliedCoupon.value?.id != coupon.id) {
@@ -326,22 +330,6 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
         }
     }
 
-   /* fun getPriceRules() {
-        viewModelScope.launch {
-            repo.getPriceRules()
-                .catch { exception ->
-                    _priceRules.value = ResponseStatus.Error(exception)
-                }.collect{ response ->
-                    if(response!= null){
-                        _priceRules.value = ResponseStatus.Success(response)
-                    }else{
-                        _priceRules.value = ResponseStatus.Error(
-                            NullPointerException("Price Rules is null")
-                        )
-                    }
-                }
-        }
-    }*/
 
     fun getPriceRules() {
         viewModelScope.launch {
@@ -358,7 +346,7 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
                             ?.flatMap { it.line_items.mapNotNull { item -> item?.product_id } }
                             ?.toSet() ?: emptySet()
 
-                        val filteredRules = response.price_rules.filter { rule ->
+                        val validRules = response.price_rules.filter { rule ->
                             try {
                                 val startsAt = Instant.parse(rule.starts_at)
                                 startsAt.isBefore(now) || startsAt == now
@@ -375,7 +363,26 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
                             }
                         }
 
-                        val filteredResponse = response.copy(price_rules = filteredRules)
+                        // Check discount codes for each price rule
+                        val filteredWithCodes = validRules.mapNotNull { rule ->
+                            val discountCodes = try {
+                                repo.getDiscountCodesByPriceRule(rule.id).firstOrNull()
+                            } catch (e: Exception) {
+                                null
+                            }
+
+                            if (discountCodes?.discount_codes?.isNotEmpty() == true) {
+                                // Add to global map for UI (optional)
+                                _discountCodesByPriceRule.update { currentMap ->
+                                    currentMap + (rule.id to ResponseStatus.Success(discountCodes))
+                                }
+                                rule
+                            } else {
+                                null
+                            }
+                        }
+
+                        val filteredResponse = response.copy(price_rules = filteredWithCodes)
                         _priceRules.value = ResponseStatus.Success(filteredResponse)
                     } else {
                         _priceRules.value = ResponseStatus.Error(
@@ -385,6 +392,7 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
                 }
         }
     }
+
 
 
 
@@ -405,17 +413,29 @@ class CartViewModel (private val repo: ProductRepo ) :ViewModel() {
 
     fun getDiscountCodesByPriceRule(priceRuleId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
+            _discountCodesByPriceRule.value += (priceRuleId to ResponseStatus.Loading)
+
             repo.getDiscountCodesByPriceRule(priceRuleId)
                 .catch { exception ->
-                    _priceRuleDiscountCodes.value = ResponseStatus.Error(exception)
-
+                    _discountCodesByPriceRule.value += (priceRuleId to ResponseStatus.Error(
+                        exception
+                    ))
                 }
                 .collect { response ->
-                    _priceRuleDiscountCodes.value = ResponseStatus.Success(response)
-                    Log.d("DISCOUNT_CODES", _priceRuleDiscountCodes.toString())
+                    if (response != null) {
+                        _discountCodesByPriceRule.value += (priceRuleId to ResponseStatus.Success(
+                            response
+                        ))
+                    } else {
+                        _discountCodesByPriceRule.value += (priceRuleId to ResponseStatus.Error(
+                            Throwable("Null response")
+                        ))
+                    }
                 }
         }
     }
+
+
 
 
 

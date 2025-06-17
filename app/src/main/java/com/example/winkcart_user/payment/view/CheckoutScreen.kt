@@ -1,6 +1,7 @@
 package com.example.winkcart_user.payment.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -20,8 +21,9 @@ import com.example.winkcart_user.payment.view.components.DefaultAddressSection
 import com.example.winkcart_user.payment.view.components.PaymentSection
 import com.example.winkcart_user.payment.view.components.ProductListSection
 import com.example.winkcart_user.payment.view.components.SummarySection
-import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
+import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
+import com.example.winkcart_user.ui.utils.navigation.NavigationRout
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 
 
@@ -107,9 +109,11 @@ fun CheckoutScreen(
                         }
                         is ResponseStatus.Error -> {
                             Text(
-                                text = "Failed to load address",
+                                text = "Add Address",
                                 color = Color.Red,
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable { navController.navigate(NavigationRout.AddAddress.route) }
                             )
                         }
                         is ResponseStatus.Loading -> {
@@ -117,7 +121,7 @@ fun CheckoutScreen(
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    PaymentSection(cardNumber = cardNumber)
+                    PaymentSection(cardNumber = cardNumber, changeAction = {navController.popBackStack()})
                     Spacer(modifier = Modifier.height(16.dp))
                     ProductListSection(
                         draftOrderList,
@@ -140,33 +144,6 @@ fun CheckoutScreen(
                     }
                 }
             }
-
-
-            /*if (showSuccessDialog) {
-                AlertDialog(
-                    onDismissRequest = { showSuccessDialog = false },
-                    confirmButton = {
-                        TextButton(onClick = { showSuccessDialog = false }) {
-                            Text("OK")
-                        }
-                    },
-                    title = { Text("Order Submitted") },
-                    text = { Text("Your order has been submitted successfully.") }
-                )
-            }
-
-            if (showErrorDialog) {
-                AlertDialog(
-                    onDismissRequest = { showErrorDialog = false },
-                    confirmButton = {
-                        TextButton(onClick = { showErrorDialog = false }) {
-                            Text("OK")
-                        }
-                    },
-                    title = { Text("Order Failed") },
-                    text = { Text(errorMessage) }
-                )
-            }*/
         }
     }
 }

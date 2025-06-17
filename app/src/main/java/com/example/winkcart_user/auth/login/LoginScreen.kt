@@ -39,7 +39,7 @@ import com.example.winkcart_user.BuildConfig
 import com.example.winkcart_user.R
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.auth.AuthViewModel
-import com.example.winkcart_user.ui.utils.CustomTextField
+import com.example.winkcart_user.ui.utils.components.CustomTextField
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

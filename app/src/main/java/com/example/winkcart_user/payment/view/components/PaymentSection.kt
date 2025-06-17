@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 
 @Composable
-fun PaymentSection(cardNumber: String) {
+fun PaymentSection(cardNumber: String, changeAction: () -> Unit ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -23,6 +23,6 @@ fun PaymentSection(cardNumber: String) {
             Text("Payment", fontWeight = FontWeight.Bold)
             Text(cardNumber)
         }
-        Text("Change", color = Color.Red, modifier = Modifier.clickable { })
+        Text("Change", color = Color.Red, modifier = Modifier.clickable { changeAction()})
     }
 }

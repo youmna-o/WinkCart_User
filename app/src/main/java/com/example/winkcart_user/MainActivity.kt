@@ -22,14 +22,14 @@ import com.example.winkcart_user.data.repository.FirebaseRepoImp
 import com.example.winkcart_user.data.repository.ProductRepoImpl
 import com.example.winkcart_user.favourite.FavouriteFactory
 import com.example.winkcart_user.favourite.FavouriteViewModel
-import com.example.winkcart_user.payment.viewModel.PaymentFactory
-import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.settings.viewmodel.SettingsFactory
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModelFactory
 import com.example.winkcart_user.auth.AuthFactory
 import com.example.winkcart_user.auth.AuthViewModel
+import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentFactory
+import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
 import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorsProductFactory

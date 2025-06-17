@@ -15,12 +15,10 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,12 +28,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.R
+import com.example.winkcart_user.cart.view.components.EmptyCart
 import com.example.winkcart_user.data.ResponseStatus
+import com.example.winkcart_user.settings.view.address.components.AddressCard
+import com.example.winkcart_user.settings.view.address.components.NoAddressUI
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
-import com.example.winkcart_user.ui.utils.AddFAB
+import com.example.winkcart_user.ui.utils.components.AddFAB
 import com.example.winkcart_user.ui.theme.BackgroundColor
-import com.google.android.gms.maps.model.LatLng
+import com.example.winkcart_user.ui.utils.components.LottieAnimationView
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,12 +49,10 @@ fun AddressView(
 ) {
     val customerId by viewModel.customerID.collectAsState()
     viewModel.readCustomerID()
+    Log.i("TAG", " Setting inti CustomerID: $customerId ")
     viewModel.getCustomerAddresses(customerId.toLong())
-   /* LaunchedEffect(customerId) {
-        viewModel.getCustomerAddresses(customerId.toLong())
-    }*/
+
     val customerAddresses by viewModel.customerAddresses.collectAsState()
-    //val customerDefaultAddressResponse by viewModel.customerDefaultAddressResponse.collectAsState()
 
     Scaffold (
         topBar = {
@@ -111,33 +110,27 @@ fun AddressView(
                         }
                     } else {
                         Box(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues),
                             contentAlignment = Alignment.Center
                         ) {
+
                             NoAddressUI()
                         }
                     }
                 }
-                is ResponseStatus.Loading -> /*LoadingUI()*/NoAddressUI()
-                is ResponseStatus.Error -> /*ErrorUI()*/NoAddressUI()
+                is ResponseStatus.Loading -> {
+                    LottieAnimationView(
+                        animationRes = R.raw.animation_loading,
+                        message = "Loading your cart..."
+                    )
+                }
+                is ResponseStatus.Error -> {}/*ErrorUI()NoAddressUI()*/
             }
         }
     }
         }
 }
 
-@Composable
-fun NoAddressUI() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            stringResource(R.string.you_have_not_added_any_addresses_yet),
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
-        )
-        Text(
-            stringResource(R.string.add_a_new_address_to_make_delivery_easier),
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
-        )
-    }
-}
+

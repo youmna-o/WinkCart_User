@@ -1,6 +1,5 @@
 package com.example.winkcart_user.cart.view
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,12 +19,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -57,15 +56,16 @@ import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
-import com.example.winkcart_user.ui.utils.CustomButton
+import com.example.winkcart_user.ui.utils.components.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 import kotlinx.coroutines.launch
+import com.example.winkcart_user.cart.view.components.EmptyCart
+import com.example.winkcart_user.ui.utils.components.LottieAnimationView
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-//fun CartView(viewModel: CartViewModel,navController: NavController) {
 fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
-
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
     val draftOrders by viewModel.draftOrders.collectAsState()
@@ -82,7 +82,13 @@ fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutActi
     val scroll = rememberScrollState()
 
 
+    viewModel.refreshTotalAmount()
+    viewModel.readCustomerID()
+    viewModel.getDraftOrders(customerId = customerID)
 
+    viewModel.readCurrencyRate()
+    viewModel.readCurrencyCode()
+    viewModel.getPriceRules()
 
     LaunchedEffect(showSheet) {
         if (showSheet) {
@@ -92,29 +98,226 @@ fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutActi
         }
     }
 
-
-    viewModel.refreshTotalAmount()
-    viewModel.readCustomerID()
-    viewModel.getDraftOrders(customerId = customerID)
-
-    viewModel.readCurrencyRate()
-    viewModel.readCurrencyCode()
-    viewModel.getPriceRules()
-
-    val draftOrderList = when (draftOrders) {
-        is ResponseStatus.Success -> (draftOrders as ResponseStatus.Success).result.draft_orders
-        else -> emptyList()
-    }
     val priceRulesList = when (priceRules) {
         is ResponseStatus.Success -> (priceRules as ResponseStatus.Success).result.price_rules
         else -> emptyList()
     }
 
-    Log.i("TAG", "CartView: draftOrders = ${draftOrderList.size}")
-    Log.i("TAG", "CartView: priceRules = ${priceRulesList.size}")
+    when (val orders = draftOrders) {
+            is ResponseStatus.Loading -> {
+                LottieAnimationView(
+                    animationRes = R.raw.animation_loading,
+                    message = "Loading your cart..."
+                )
+                return
+            }
+
+            is ResponseStatus.Error -> {
+                LottieAnimationView(
+                    animationRes = R.raw.animation_loading,
+                    message = "No internet connection"
+                )
+                return
+            }
+
+            is ResponseStatus.Success -> {
+                val result = orders.result.draft_orders
+
+                Scaffold(
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Text(
+                                    text = stringResource(R.string.cart),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = { backAction.invoke() }) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                                }
+                            },
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+                        )
+                    }
+                ) { paddingValues ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(BackgroundColor)
+                            .padding(SCREEN_PADDING)
+                            .padding(paddingValues)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scroll)
+                        ) {
+
+                            if (result.isNotEmpty()) {
+                                LazyColumn(
+                                    modifier = Modifier.weight(1f),
+                                ) {
+                                    items(result.size) { index ->
+                                        CartItem(
+                                            draftOrder = result[index],
+                                            currencyCode = currencyCodeSaved,
+                                            currencyRate = currencyRateSaved,
+                                            onDeleteClick = { draftOrderId ->
+                                                viewModel.deleteDraftOrder(draftOrderId)
+                                            },
+                                            onQuantityChange = { updatedDraftOrder, newQuantity ->
+                                                val updatedLineItem =
+                                                    updatedDraftOrder.line_items[0]?.copy(quantity = newQuantity)
+
+                                                val updatedDraftOrderRequest = DraftOrderRequest(
+                                                    draft_order = result[index].copy(
+                                                        line_items = listOf(
+                                                            updatedLineItem
+                                                        )
+                                                    ),
+
+                                                    )
+
+                                                viewModel.refreshTotalAmount()
+
+                                                viewModel.updateDraftOrder(
+                                                    updatedDraftOrder.id,
+                                                    updatedDraftOrderRequest
+                                                )
+                                            },
+                                            onItemClick = {
+                                                val productId =
+                                                    result[index].line_items[0]?.product_id ?: 0L
+                                                navController.navigate("ProductInfo/$productId")
+                                            }
+                                        )
+
+                                    }
+                                }
+                                Spacer(Modifier.height(30.dp))
+                                OutlinedTextField(
+                                    value = promoCode,
+                                    onValueChange = {
+                                        promoCode = it
+
+                                    },
+                                    readOnly = true,
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    label = { Text(stringResource(R.string.choose_your_promo_code)) },
+                                    trailingIcon = {
+                                        if (appliedCoupon != null) {
+                                            // Show close icon
+                                            Surface(
+                                                shape = CircleShape,
+                                                color = Color.Red,
+                                                shadowElevation = 4.dp,
+                                            ) {
+                                                IconButton(
+                                                    onClick = {
+                                                        // Clear applied coupon
+                                                        promoCode = ""
+                                                        viewModel.clearAppliedCoupon()
+                                                    },
+                                                    modifier = Modifier.size(36.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.Remove,
+                                                        contentDescription = "Remove coupon",
+                                                        tint = Color.White
+                                                    )
+                                                }
+                                            }
+                                        } else {
+                                            // Show apply arrow icon
+                                            Surface(
+                                                shape = CircleShape,
+                                                color = Color.Black,
+                                                shadowElevation = 4.dp,
+                                            ) {
+                                                IconButton(
+                                                    onClick = {
+                                                        showSheet = true
+                                                    },
+                                                    modifier = Modifier.size(36.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Outlined.ArrowDropDown,
+                                                        contentDescription = "Apply promo",
+                                                        tint = Color.White
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(12.dp)
+
+                                )
+                                /*   Spacer(Modifier.height(20.dp))*/
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 2.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.total_amount),
+                                        color = Color.Gray,
+                                        fontSize = 24.sp,
+                                    )
+                                    Text(
+                                        text = totalAmount,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 24.sp,
+                                    )
+
+                                }
+
+                                Spacer(Modifier.height(30.dp))
+                                CustomButton(lable = stringResource(R.string.check_out)) {
+                                    if (result.isNotEmpty()) {
+                                        checkoutAction(totalAmount, currencyCodeSaved)
+                                    }
+                                }
+                                Spacer(Modifier.height(20.dp))
+                                CustomButton(lable = "Sign out") {
+                                    authViewModel.signOut()
+                                    viewModel.writeCustomerID("")
+                                    viewModel.readCustomerID()
+
+                                    navController.navigate("home") {
+                                        popUpTo("home") { inclusive = true }
+                                    }
+                                }
+                                Spacer(Modifier.height(100.dp))
 
 
-    // Modal Bottom Sheet
+                            }  else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(paddingValues),
+                                    contentAlignment = Alignment.Center
+                                ) {
+
+                                    EmptyCart()
+                                }
+
+
+                            }
+
+
+                        }
+
+                    }
+                }
+            }
+        }
+
+
     if (showSheet) {
 
         ModalBottomSheet(
@@ -158,215 +361,18 @@ fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutActi
                                     showSheet = false
                                     viewModel.setAppliedCoupon(selectedPriceRule)
                                     viewModel.refreshTotalAmount()
-                                }
-                            )
-                        }
-
-                    }
-                }
-
-
-            }
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.cart),
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { backAction.invoke() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BackgroundColor)
-                .padding(SCREEN_PADDING)
-                .padding(paddingValues)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scroll)
-            ) {
-
-                if (draftOrderList.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        items(draftOrderList.size) { index ->
-                            CartItem(
-                                draftOrder = draftOrderList[index],
+                                },
                                 currencyCode = currencyCodeSaved,
-                                currencyRate = currencyRateSaved,
-                                onDeleteClick = { draftOrderId ->
-                                    viewModel.deleteDraftOrder(draftOrderId)
-                                },
-                                onQuantityChange = { updatedDraftOrder, newQuantity ->
-                                    val updatedLineItem =
-                                        updatedDraftOrder.line_items[0]?.copy(quantity = newQuantity)
-
-                                    val updatedDraftOrderRequest = DraftOrderRequest(
-                                        draft_order = draftOrderList[index].copy(
-                                            line_items = listOf(
-                                                updatedLineItem
-                                            )
-                                        ),
-
-                                        )
-
-                                    viewModel.refreshTotalAmount()
-
-                                    viewModel.updateDraftOrder(
-                                        updatedDraftOrder.id,
-                                        updatedDraftOrderRequest
-                                    )
-                                },
-                                onItemClick = {
-                                    val productId = draftOrderList[index].line_items[0]?.product_id ?: 0L
-                                    navController.navigate("ProductInfo/$productId")
-                                }
-                            )
-
-                        }
-                    }
-                } else {
-                    Box(
-                        modifier = Modifier.weight(1f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        //need update with lotti or image for empty cart
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                "  All products from this vendor are currently out of stock. ",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Gray
-                            )
-                            Text(
-                                " Stay tuned for updates!",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Gray
+                                currencyRate = currencyRateSaved
                             )
                         }
 
-
                     }
                 }
-                Spacer(Modifier.height(30.dp))
-                OutlinedTextField(
-                    value = promoCode,
-                    onValueChange = {
-                        promoCode = it
-
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    label = { Text(stringResource(R.string.Enter_your_promo_code)) },
-                    trailingIcon = {
-                        if (appliedCoupon != null) {
-                            // Show close icon
-                            Surface(
-                                shape = CircleShape,
-                                color = Color.Red,
-                                shadowElevation = 4.dp,
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        // Clear applied coupon
-                                        promoCode = ""
-                                        viewModel.clearAppliedCoupon()
-                                    },
-                                    modifier = Modifier.size(36.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Remove,
-                                        contentDescription = "Remove coupon",
-                                        tint = Color.White
-                                    )
-                                }
-                            }
-                        } else {
-                            // Show apply arrow icon
-                            Surface(
-                                shape = CircleShape,
-                                color = Color.Black,
-                                shadowElevation = 4.dp,
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        showSheet = true
-                                    },
-                                    modifier = Modifier.size(36.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
-                                        contentDescription = "Apply promo",
-                                        tint = Color.White
-                                    )
-                                }
-                            }
-                        }
-                    },
-                    shape = RoundedCornerShape(12.dp)
-
-                )
-                /*   Spacer(Modifier.height(20.dp))*/
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 2.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.total_amount),
-                        color = Color.Gray,
-                        fontSize = 24.sp,
-                    )
-                    Text(
-                        text = totalAmount,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                    )
-
-                }
-
-                Spacer(Modifier.height(30.dp))
-                CustomButton(lable = stringResource(R.string.check_out)) {
-                    if(draftOrderList.isNotEmpty()) {
-                        checkoutAction(totalAmount, currencyCodeSaved)
-                    }
-                }
-                Spacer(Modifier.height(20.dp))
-                CustomButton(lable = "Sign out") {
-                    authViewModel.signOut()
-                    viewModel.writeCustomerID("")
-                    viewModel.readCustomerID()
-
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = true }
-                    }
-                }
-                Spacer(Modifier.height(100.dp))
 
 
             }
-
-
         }
-
     }
 }
 
