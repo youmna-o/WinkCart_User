@@ -49,7 +49,7 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationBarItem(
             icon = {   Icon(
                 painter = painterResource(id = R.drawable.menu),
-                contentDescription = "category",
+                contentDescription = "Category",
                 tint = Color.Gray,
                 modifier = Modifier.size(24.dp)
             ) },
@@ -103,7 +103,7 @@ fun BottomNavigationBar(navController: NavController) {
                 tint = Color.Gray,
                 modifier = Modifier.size(24.dp)
             ) },
-            label = { Text("Settings") },
+            label = { Text("Profile") },
             selected = currentRoute == NavigationRout.Profile.route,
             onClick = {
                 navController.navigate(NavigationRout.Profile.route) {
@@ -116,20 +116,6 @@ fun BottomNavigationBar(navController: NavController) {
             }
         )
 
-     /*   NavigationBarItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-            label = { Text("Settings") },
-            selected = currentRoute == NavigationRout.Settings.route,
-            onClick = {
-                navController.navigate(NavigationRout.Settings.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }
-        )*/
 
     }
 }
