@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             val retrofitHelper = RetrofitHelper()
-           
+
             val cartViewModel: CartViewModel = viewModel(
                 factory = CartFactory(
                     repo = ProductRepoImpl(

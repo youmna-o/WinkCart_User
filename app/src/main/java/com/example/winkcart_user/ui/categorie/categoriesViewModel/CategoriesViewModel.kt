@@ -86,16 +86,6 @@ class CategoriesViewModel  @Inject constructor(private val repo: ProductRepo ) :
         return uniqueProductTypes
     }
 
-//    fun getProductDetails() : Product {
-//        val productResponse: ProductResponse? = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result
-//       // val
-////        val uniqueProductTypes: Set<String> = productResponse?.products
-////            ?.map { it.product_type }
-////            ?.toSet()
-////            ?: emptySet()
-////        return uniqueProductTypes
-//   // }
-
 
     fun getMenProducts(): List<Product> {
         val productResponse = (_productList.value as? ResponseStatus.Success<ProductResponse>)?.result

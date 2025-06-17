@@ -1,5 +1,6 @@
-package com.example.winkcart_user.payment.viewModel
+package com.example.winkcart_user.ui.checkout.view.viewModel
 
+import android.R
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.LineItemDraft
 import com.example.winkcart_user.data.model.orders.CustomerOrder
+import com.example.winkcart_user.data.model.orders.DiscountCode
 import com.example.winkcart_user.data.model.orders.OrderData
 import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
@@ -51,15 +53,20 @@ class PaymentViewModel@Inject constructor(private  val repo: ProductRepo) : View
     val ordersResponse = _ordersResponse.asStateFlow()
 
     fun createOrder(
-        lineItems: List<LineItemDraft>
+        lineItems: List<LineItemDraft>,discountCode: String, amount: String
     ) {
+
         val request = OrderRequest(
             order = OrderData(
                 customer = CustomerOrder(id =repo.readCustomersID().toLong()),
                 line_items = lineItems,
-                send_receipt = true
+                send_receipt = true,
+                discount_codes = listOf(
+                    DiscountCode(code = discountCode, amount = amount)///
+                )
             )
         )
+
         viewModelScope.launch {
             val orders = repo.createOrder(request)
             Log.i("TAG", "createOrder: ${orders}")

@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class OrdersResponse(
     @SerializedName("orders")
-    var orders : List<Order>
+    var orders: List<Order>
 )

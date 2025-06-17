@@ -18,8 +18,69 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun SummarySection(orderAmount: String, discount: String,currencyCode: String, onClick: () -> Unit) {
+fun SummarySection(
+    orderAmount: String,
+    discount: String,
+    currencyCode: String,
+    onClick: () -> Unit
+) {
+    val totalAfterDiscount = orderAmount.toDoubleOrNull() ?: 0.0
+    val discountValue = discount.toDoubleOrNull() ?: 0.0
+    val totalBeforeDiscount = (totalAfterDiscount + discountValue).coerceAtLeast(0.0)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+    ) {
+        // Total before discount
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Total Before Discount:")
+            Text(String.format("%.2f %s", totalBeforeDiscount, currencyCode))
+        }
+
+        // Discount
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Discount:")
+            Text("-${String.format("%.2f %s", discountValue, currencyCode)}")
+        }
+
+        // Total after discount
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Total to Pay:", fontWeight = FontWeight.Bold)
+            Text(
+                text = String.format("%.2f %s", totalAfterDiscount, currencyCode),
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Button(
+            onClick = onClick,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(50)
+        ) {
+            Text("SUBMIT ORDER", color = Color.White)
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+    }
+}
+
+/*fun SummarySection(orderAmount: String, discount: String,currencyCode: String, onClick: () -> Unit) {
     val summary = orderAmount.toDouble() + discount.toDouble()
+    val realPeice = orderAmount.toDouble()
+    val discount = discount.toDouble()
     val formattedSummary:String?
     if(summary<0.0){
         formattedSummary = "0.00"
@@ -67,4 +128,4 @@ fun SummarySection(orderAmount: String, discount: String,currencyCode: String, o
         }
         Spacer(modifier = Modifier.height(30.dp))
     }
-}
+}*/
