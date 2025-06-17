@@ -216,7 +216,7 @@ data class Order(
     val customer: Customer,
 
     @SerializedName("discount_applications")
-    val discountApplications: List<Any>,
+    val discountApplications: List<DiscountApplication>,
 
     @SerializedName("fulfillments")
     val fulfillments: List<Any>,
@@ -226,6 +226,7 @@ data class Order(
 
     @SerializedName("shipping_address")
     val shippingAddress: Address
+
 )
 
 data class Address(
@@ -300,18 +301,14 @@ data class MoneySet(
 )
 
 
-data class SmsMarketingConsent(
-    @SerializedName("state")
-    val state: String,
-
-    @SerializedName("opt_in_level")
-    val optInLevel: String,
-
-    @SerializedName("consent_updated_at")
-    val consentUpdatedAt: Date?,
-
-    @SerializedName("consent_collected_from")
-    val consentCollectedFrom: String?
+data class DiscountApplication(
+    val target_type: String,
+    val type: String,
+    val value: String,
+    val value_type: String,
+    val allocation_method: String,
+    val target_selection: String,
+    val code: String
 )
 
 data class CustomerAddress(

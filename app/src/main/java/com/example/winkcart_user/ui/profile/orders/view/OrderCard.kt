@@ -79,9 +79,19 @@ fun OrderCard(order: Order, onClick: () -> Unit) {
 
             OrderDetailRow("Quantity:", "${calculateQuantities(order.lineItems)} unit")
             OrderDetailRow(
-                "Total Price:",
-                "${calculateTotalAfterDiscount(order.lineItems)} ${order.currency}"
+                "Price Before Discount:",
+                "${order.totalLineItemsPrice} ${order.currency}"
             )
+            OrderDetailRow(
+                "Discount:",
+                "${order?.discountApplications?.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0} ${order.currency}"
+            )
+
+            OrderDetailRow(
+                "Total Price:",
+                "${order.totalLineItemsPrice.toDouble() - (order.discountApplications.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0)} ${order.currency}"
+            )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 

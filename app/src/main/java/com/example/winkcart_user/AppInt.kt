@@ -18,7 +18,6 @@ import androidx.navigation.navArgument
 import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.favourite.Favourite
-import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.payment.view.PaymentMethodsView
 import com.example.winkcart_user.settings.view.SettingsView
 import com.example.winkcart_user.settings.view.aboutus.AboutUsView
@@ -26,7 +25,6 @@ import com.example.winkcart_user.settings.view.address.AddAddressView
 import com.example.winkcart_user.settings.view.address.AddressView
 import com.example.winkcart_user.settings.view.address.EditAddressView
 import com.example.winkcart_user.settings.view.contactus.ContactUsView
-import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.view.address.map.PlacePicker
 import com.example.winkcart_user.auth.login.LoginScreen
@@ -214,7 +212,7 @@ fun AppInit(
                         CheckoutScreen(
                             navController = navController,
                             cardNumber = cardNumber,
-                            totalAmount = totalAmount,
+                            totalAmountAfterDiscount = totalAmount,
                             currencyCode = currencyCode,
                             goToSuccess = {
                                 navController.navigate(NavigationRout.Success.route)

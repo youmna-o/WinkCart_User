@@ -1,5 +1,6 @@
 package com.example.winkcart_user.payment.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +25,7 @@ import com.example.winkcart_user.payment.view.components.SummarySection
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import kotlin.math.log
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +37,7 @@ fun CheckoutScreen(
     paymentViewModel: PaymentViewModel=hiltViewModel(),
     settingsViewModel: SettingsViewModel=hiltViewModel(),
     cardNumber : String,
-    totalAmount: String,
+    totalAmountAfterDiscount: String,
     currencyCode: String,
     goToSuccess: () -> Unit
 
@@ -47,6 +49,7 @@ fun CheckoutScreen(
     val customerId by cartViewModel.customerID.collectAsState()
     val discount by cartViewModel.discountAmount.collectAsState()
     val discountOnly = discount.split(" ").first().toDoubleOrNull() ?: 0.0
+    Log.i("TAaG", "CheckoutScreen: $discountOnly")
 
 
 
@@ -127,11 +130,11 @@ fun CheckoutScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     SummarySection(
-                        orderAmount = totalAmount,
+                        orderAmount = totalAmountAfterDiscount,
                         discount = discountOnly.toString(),
                         currencyCode = currencyCode
                     ) {
-                        paymentViewModel.createOrder(lineItems = allLineItems)
+                        paymentViewModel.createOrder(lineItems = allLineItems, discountCode ="50Code", amount = discountOnly.toString())
 
                         draftOrderList.forEach { draftOrder ->
                             draftOrder.id.let { cartViewModel.deleteDraftOrder(it) }

@@ -346,7 +346,7 @@ fun CartView(viewModel: CartViewModel= hiltViewModel(),authViewModel: AuthViewMo
                 Spacer(Modifier.height(30.dp))
                 CustomButton(lable = stringResource(R.string.check_out)) {
                     if(draftOrderList.isNotEmpty()) {
-                        checkoutAction(totalAmount, currencyCodeSaved)
+                        checkoutAction(totalAmount, currencyCodeSaved,)
                     }
                 }
                 Spacer(Modifier.height(20.dp))

@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.profile.orders.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -141,8 +142,14 @@ fun OrderDetailsScreenOnSuccess(order:Order,navController: NavController){
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Order information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                OrderInfoRow("Total Amount:", "${order.currentTotalPrice} ${order.currency}")
-                OrderInfoRow("Discount:", "${order.currentTotalDiscounts} ${order.currency}" )
+                OrderInfoRow("Before Discount:", "${order.currentTotalPrice} ${order.currency}")
+                OrderInfoRow("Discount:", "${order.discountApplications.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0}")
+                Log.i("TAgggG", "OrderDetailsScreenOnSuccess: ${order.currentTotalPrice}  ")
+                Log.i("TAgggG", "OrderDetailsScreenOnSuccess: ${order.currentTotalDiscounts}  ")
+                Log.i("TAgggG", "OrderDetailsScreenOnSuccess: ${order.discountApplications.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0}  ")
+
+
+                OrderInfoRow("Total Amount:", "${order.currentTotalPrice.toDouble() -(order.discountApplications.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0 )} ${order.currency}")
             }
         }
 
