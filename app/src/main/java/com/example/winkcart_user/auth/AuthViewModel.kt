@@ -14,6 +14,7 @@ import com.example.winkcart_user.utils.Constants
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -21,9 +22,10 @@ import kotlinx.coroutines.launch
 
 
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-
-class AuthViewModel( private val repo: FirebaseRepo, private val customerRepo : ProductRepoImpl) : ViewModel(){
+@HiltViewModel
+class AuthViewModel @Inject constructor( private val repo: FirebaseRepo, private val customerRepo : ProductRepoImpl) : ViewModel(){
 
 
     private val _signInEmailError = MutableStateFlow("")

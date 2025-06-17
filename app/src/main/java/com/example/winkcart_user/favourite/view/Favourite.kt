@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.ResponseStatus
@@ -40,7 +41,7 @@ import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Favourite(viewModel: FavouriteViewModel, navController: NavController) {
+fun Favourite(viewModel: FavouriteViewModel= hiltViewModel(), navController: NavController) {
 
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()

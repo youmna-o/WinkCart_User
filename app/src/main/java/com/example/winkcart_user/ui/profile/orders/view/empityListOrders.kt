@@ -22,7 +22,7 @@ import com.airbnb.lottie.compose.*
 import com.example.winkcart_user.R
 
 @Composable
-fun LottieAnimationView() {
+fun LottieAnimationView(text: String = "You haven't placed any orders yet.\nStart shopping now!", row: Int =R.raw.animation_ecommice) {
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -30,8 +30,8 @@ fun LottieAnimationView() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_ecommice))
-        val progress by animateLottieCompositionAsState(composition)
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(row))
+        val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
 
         LottieAnimation(
             composition = composition,
@@ -41,7 +41,7 @@ fun LottieAnimationView() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "You haven't placed any orders yet.\nStart shopping now!",
+            text = text,
             fontSize = 16.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center

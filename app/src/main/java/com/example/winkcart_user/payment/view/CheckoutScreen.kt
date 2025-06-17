@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.CurrencyViewModel
 import com.example.winkcart_user.R
@@ -35,15 +36,16 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreen(
-    cartViewModel: CartViewModel,
-    currencyViewModel: CurrencyViewModel,
+    cartViewModel: CartViewModel = hiltViewModel(),
+    currencyViewModel: CurrencyViewModel = hiltViewModel(),
     navController: NavController,
-    paymentViewModel: PaymentViewModel,
-    settingsViewModel: SettingsViewModel,
+    paymentViewModel: PaymentViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
     cardNumber : String,
     totalAmount: String,
     currencyCode: String,
-    goToSuccess: () -> Unit
+    goToSuccess: () -> Unit,
+    couponCode: String
 
 ) {
     val draftOrders by cartViewModel.draftOrders.collectAsState()
@@ -170,7 +172,11 @@ fun CheckoutScreen(
             LaunchedEffect(showLottieCheckVerify) {
                 if (showLottieCheckVerify) {
                     delay(3000)
-                    paymentViewModel.createOrder(lineItems = allLineItems)
+                    paymentViewModel.createOrder(
+                        lineItems = allLineItems,
+                        discountCode = "50Code",
+                        amount = discountOnly.toString()
+                    )
 
                     draftOrderList.forEach { draftOrder ->
                         draftOrder.id.let { cartViewModel.deleteDraftOrder(it) }
@@ -182,10 +188,3 @@ fun CheckoutScreen(
         }
     }
 }
-
-
-
-
-
-
-

@@ -1,10 +1,12 @@
 package com.example.winkcart_user.data.local.settings
 
 import android.content.SharedPreferences
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import androidx.core.content.edit
 import com.example.winkcart_user.settings.enums.Currency
+import kotlin.math.log
 
 class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): SettingsDao {
 
@@ -48,6 +50,7 @@ class SettingsDaoImpl(private val sharedPreferences: SharedPreferences): Setting
 
     override fun readCustomersID(): String {
         val customerID = sharedPreferences.getString(CUSTOMER_ID, "") ?: ""
+        Log.i("G", "readCustomersID:customerID ")
         return customerID
     }
 

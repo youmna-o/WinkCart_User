@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.CurrencyViewModel
 import com.example.winkcart_user.cart.viewModel.CartViewModel
@@ -77,10 +78,10 @@ fun ProductInfo(
     productID: Long,
     navController: NavController,
     scrollState: ScrollState,
-    categoriesViewModel: CategoriesViewModel,
-    cartViewModel: CartViewModel,
-    currencyViewModel: CurrencyViewModel,
-    favouriteViewModel: FavouriteViewModel,
+    currencyViewModel: CurrencyViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel=hiltViewModel(),
+    cartViewModel: CartViewModel= hiltViewModel(),
+    favouriteViewModel: FavouriteViewModel=hiltViewModel(),
 ) {
 
     currencyViewModel.readCurrencyCode()

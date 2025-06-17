@@ -1,6 +1,3 @@
-
-
-
 package com.example.winkcart_user.ui.profile.userProfile.view
 
 import android.util.Log
@@ -23,14 +20,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.ui.utils.extractUsername
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewModel,
-                  authViewModel: AuthViewModel) {
+
+
+fun ProfileScreen(
+    navController: NavController,
+    profileViewModel: ProfileViewModel= hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
     val showDialog = remember { mutableStateOf(false) }
     val showDialogLogout = remember { mutableStateOf(false) }
     val email = remember { profileViewModel.getGemail() }
@@ -81,7 +84,8 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
                             .background(Color.Gray.copy(alpha = 0.3f))
                     ) {
                         Text(
-                            text = extractUsername(profileViewModel.getGemail())[0].toString(),
+                            text = extractUsername(profileViewModel.getGemail() ?: "1")
+                                .getOrNull(0)?.toString() ?: "1",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Gray
@@ -132,9 +136,6 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
                     subtitle = " addresses",
                     onClick = { /* */ }
                 )
-
-
-
 
                 ProfileMenuItem(
                     title = "Settings",

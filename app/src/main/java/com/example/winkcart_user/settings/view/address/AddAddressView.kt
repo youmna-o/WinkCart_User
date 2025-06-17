@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
@@ -53,7 +54,7 @@ import com.google.android.gms.maps.model.LatLng
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAddressView(
-    viewModel: SettingsViewModel,
+    viewModel: SettingsViewModel=hiltViewModel(),
     backAction : () -> Unit,
     navigateToMapAction:()->Unit,
     addressLatLon : LatLng?

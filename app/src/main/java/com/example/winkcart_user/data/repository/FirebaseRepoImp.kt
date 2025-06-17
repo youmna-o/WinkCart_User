@@ -7,8 +7,11 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import javax.inject.Inject
 
-class FirebaseRepoImp(private  val remoteDataSource: RemoteDataSource) : FirebaseRepo {
+
+class FirebaseRepoImp @Inject constructor(private  val remoteDataSource: RemoteDataSource) : FirebaseRepo{
+
     override fun signUpFireBase(
         email: String,
         password: String

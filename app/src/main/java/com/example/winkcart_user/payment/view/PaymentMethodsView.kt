@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.winkcart_user.R
 import com.example.winkcart_user.payment.enums.PaymentMethod
 import com.example.winkcart_user.payment.view.components.PaymentOptionCard
@@ -59,7 +60,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentMethodsView(
-    viewModel : PaymentViewModel,
+    viewModel : PaymentViewModel= hiltViewModel(),
     backAction: () -> Unit,
     totalAmount : String,
     currencyCode : String,

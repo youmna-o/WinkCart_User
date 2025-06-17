@@ -3,8 +3,9 @@ package com.example.winkcart_user.data.local
 import com.example.winkcart_user.data.local.settings.SettingsDao
 import com.example.winkcart_user.settings.enums.Currency
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class LocalDataSourceImpl(private val settingsDao: SettingsDao) : LocalDataSource {
+class LocalDataSourceImpl@Inject constructor(private val settingsDao: SettingsDao) : LocalDataSource {
     override suspend fun readCurrencyCode(): Flow<String> {
         return settingsDao.readCurrencyCode()
     }

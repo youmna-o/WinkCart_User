@@ -8,15 +8,17 @@ import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.repository.ProductRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class FavouriteViewModel (private val repo: ProductRepo ) :ViewModel() {
+@HiltViewModel
+class FavouriteViewModel @Inject constructor(private val repo: ProductRepo ) :ViewModel() {
 
     private val _currencyCode = MutableStateFlow("")
     val currencyCode = _currencyCode.asStateFlow()

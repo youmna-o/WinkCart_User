@@ -23,8 +23,9 @@ import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class ProductRepoImpl ( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
+class ProductRepoImpl @Inject constructor( private  val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource) : ProductRepo {
 
     override suspend fun getSmartCollections(): Flow<SmartCollectionsResponse?> {
         return  remoteDataSource.getSmartCollections()

@@ -1,5 +1,6 @@
 package com.example.winkcart_user.ui.profile.orders.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.orders.Order
@@ -42,7 +44,7 @@ import com.example.winkcart_user.ui.utils.formatDate
 import com.example.winkcart_user.ui.utils.getDeliveryStatus
 
 @Composable
-fun OrderDetailsScreen (navController: NavController, ordersViewModel: OrdersViewModel,orderID :Long){
+fun OrderDetailsScreen (navController: NavController, ordersViewModel: OrdersViewModel= hiltViewModel(), orderID :Long){
 
     ordersViewModel.getOrderDetails(orderID)
     val orderDetails = ordersViewModel.orderDetails.collectAsState().value
@@ -140,8 +142,14 @@ fun OrderDetailsScreenOnSuccess(order:Order,navController: NavController){
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Order information", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                OrderInfoRow("Total Amount:", "${order.currentTotalPrice} ${order.currency}")
-                OrderInfoRow("Discount:", "${order.currentTotalDiscounts} ${order.currency}" )
+                OrderInfoRow("Before Discount:", "${order.currentTotalPrice} ${order.currency}")
+                OrderInfoRow("Discount:", "${order.discountApplications.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0}")
+                Log.i("TAgggG", "OrderDetailsScreenOnSuccess: ${order.currentTotalPrice}  ")
+                Log.i("TAgggG", "OrderDetailsScreenOnSuccess: ${order.currentTotalDiscounts}  ")
+                Log.i("TAgggG", "OrderDetailsScreenOnSuccess: ${order.discountApplications.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0}  ")
+
+
+                OrderInfoRow("Total Amount:", "${order.currentTotalPrice.toDouble() -(order.discountApplications.getOrNull(0)?.value?.toDoubleOrNull() ?: 0.0 )} ${order.currency}")
             }
         }
 
