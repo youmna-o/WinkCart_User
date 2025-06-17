@@ -247,6 +247,13 @@ fun ProductInfo(
                             )
                         )
                         favouriteViewModel.createDraftFavouriteOrder(idString, draftOrder)
+                        coroutineScope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = "Added to Favorite successfully",
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+
                     }
                 }) {
                     Icon(

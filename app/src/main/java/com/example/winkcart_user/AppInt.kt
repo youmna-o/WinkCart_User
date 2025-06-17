@@ -16,7 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartViewModel
-import com.example.winkcart_user.favourite.Favourite
+import com.example.winkcart_user.favourite.view.Favourite
 import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.payment.view.PaymentMethodsView
 import com.example.winkcart_user.settings.view.SettingsView
@@ -24,7 +24,6 @@ import com.example.winkcart_user.settings.view.aboutus.AboutUsView
 import com.example.winkcart_user.settings.view.address.AddAddressView
 import com.example.winkcart_user.settings.view.address.AddressView
 import com.example.winkcart_user.settings.view.address.EditAddressView
-import com.example.winkcart_user.settings.view.contactus.ContactUsView
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.view.address.map.PlacePicker
@@ -35,6 +34,7 @@ import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesView
 import com.example.winkcart_user.ui.categorie.ui.CategoriesScreen
 import com.example.winkcart_user.payment.view.CheckoutScreen
 import com.example.winkcart_user.payment.view.SuccessView
+import com.example.winkcart_user.settings.view.contactus.ContactUsView
 import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
 import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
 import com.example.winkcart_user.ui.home.main.view.HomeScreen
@@ -120,7 +120,7 @@ fun AppInit(authViewModel : AuthViewModel,
                         vendorProductsViewModel = vendorProductViewModel
                     )
                 }
-                composable(NavigationRout.Profile.route) { ProfileScreen(navController, profileViewModel = profileViewModel) }
+                composable(NavigationRout.Profile.route) { ProfileScreen(navController, profileViewModel = profileViewModel, authViewModel= authViewModel) }
                 composable(NavigationRout.Settings.route) {
                     SettingsView(
                         viewModel = settingsViewModel,
@@ -139,7 +139,6 @@ fun AppInit(authViewModel : AuthViewModel,
                             )
                         },
                     backAction = {navController.popBackStack()},
-                    authViewModel = authViewModel,
                    navController =  navController,
                 ) }
                 composable(NavigationRout.Favourite.route) { Favourite(favouriteViewModel, navController) }
@@ -179,8 +178,8 @@ fun AppInit(authViewModel : AuthViewModel,
                     navigateToMapAction =  { navController.navigate(NavigationRout.Map.route) },
                     addressLatLon = addressLatLon
                 ) }
-                composable(NavigationRout.ContactUs.route) { ContactUsView() }
-                composable(NavigationRout.AboutUs.route) { AboutUsView() }
+                composable(NavigationRout.ContactUs.route) { ContactUsView(backAction = {navController.popBackStack()}) }
+                composable(NavigationRout.AboutUs.route) { AboutUsView(backAction = {navController.popBackStack()}) }
 
                 composable(
                     route = NavigationRout.EditAddress.route,

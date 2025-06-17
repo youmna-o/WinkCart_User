@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.settings.address.CustomerAddress
+import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.ui.theme.CardBackgroundColor
 import com.example.winkcart_user.ui.theme.HeaderTextColor
 import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
@@ -56,6 +58,8 @@ fun AddressCard(
 ){
 
     var expanded by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
 
     Log.i("TAG", "AddressCard: $address")
     Card(
@@ -129,7 +133,7 @@ fun AddressCard(
                             enabled = !address.default,
                             onClick = {
                                 expanded = false
-                                deleteAction.invoke()
+                                showDialog = true
                             }
                         )
                     }
@@ -192,11 +196,34 @@ fun AddressCard(
             }
         }
 
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Delete Address") },
+                text = { Text("Are you sure you want to delete this address?") },
+                confirmButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = {
+                            showDialog = false
+                            deleteAction.invoke()
+
+                        }
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = { showDialog = false }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
     }
-
-
-
-
 
 }
 

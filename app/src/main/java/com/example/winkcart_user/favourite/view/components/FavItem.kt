@@ -1,4 +1,4 @@
-package com.example.winkcart_user.favourite
+package com.example.winkcart_user.favourite.view.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -150,16 +150,40 @@ fun FavItem(
                                 .padding(end = 8.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
-                            draftOrder.line_items[0]?.let {
-                                Text(
-                                    text = it.title,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.widthIn(max = 200.dp)
-                                )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                draftOrder.line_items[0]?.let {
+                                    Text(
+                                        text = it.title,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.widthIn(max = 200.dp)
+                                    )
+                                }
+                                Spacer(Modifier.weight(1f))
+
+
+                                IconButton(
+                                    onClick = {  showDeleteDialog = true},
+                                    modifier = Modifier
+                                        .size(30.dp)
+                                        .align(Alignment.CenterVertically)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Close,
+                                        contentDescription = "Delete",
+                                        tint = Color.Gray,
+                                        modifier = Modifier.size(25.dp)
+                                    )
+                                }
+
                             }
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
@@ -193,16 +217,10 @@ fun FavItem(
 
 
                             }
-
-
-
-
-
                         }
                     }
 
                     Spacer(modifier = Modifier.height(4.dp))
-                    Row {
 
                         Text(
                             text = "$price $currencyCode",
@@ -210,21 +228,7 @@ fun FavItem(
                             fontWeight = FontWeight.Bold
 
                         )
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(
-                            onClick = {  showDeleteDialog = true},
-                            modifier = Modifier
-                                .size(30.dp)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(25.dp)
-                            )
-                        }
-                    }
+
                     Spacer(modifier = Modifier.height(10.dp))
 
                 }

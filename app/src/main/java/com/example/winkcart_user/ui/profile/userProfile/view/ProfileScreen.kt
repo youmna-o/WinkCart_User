@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -24,12 +24,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.ui.utils.extractUsername
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewModel) {
-    var showDialog = remember { mutableStateOf(false) }
+fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewModel,
+                  authViewModel: AuthViewModel) {
+    val showDialog = remember { mutableStateOf(false) }
+    val showDialogLogout = remember { mutableStateOf(false) }
     val email = remember { profileViewModel.getGemail() }
     val isGuest = remember { profileViewModel.isGuest() }
 
@@ -43,7 +46,7 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
             },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = null)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                 }
             },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -117,8 +120,8 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
                             showDialog.value = true
                         }else{
                             navController.navigate("orders")
-                            var email = profileViewModel.getGemail()
-                            Log.i("TAGG", "ProfileScreen: $email")
+                            val email = profileViewModel.getGemail()
+                            Log.i("TAG", "ProfileScreen: $email")
 
                         }
                     }
@@ -139,6 +142,15 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
                     onClick = { navController.navigate("Settings") }
                 )
 
+                ProfileMenuItem(
+                    title = "Log out",
+                    subtitle = "",
+                    onClick = {
+                        showDialogLogout.value = true
+
+                    }
+                )
+
             }
 
 
@@ -150,6 +162,35 @@ fun ProfileScreen(navController: NavController,profileViewModel: ProfileViewMode
                     navController.navigate("login")
                 },
                 onDismissClick = { showDialog.value = false}
+            )
+        }
+
+        if (showDialogLogout.value) {
+            AlertDialog(
+                onDismissRequest = { showDialogLogout.value = false },
+                title = { Text("Logout") },
+                text = { Text("Are you sure you want to logout?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            authViewModel.signOut()
+                            profileViewModel.writeCustomerID("")
+
+                            navController.navigate("home") {
+                                popUpTo("home") { inclusive = true }
+                            }
+                        }
+                    ) {
+                        Text("Logout")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDialogLogout.value = false }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
             )
         }
     }
@@ -203,7 +244,7 @@ fun ProfileMenuItem(
             }
 
             Icon(
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Navigate",
                 tint = Color.Gray,
                 modifier = Modifier.size(20.dp)

@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -54,7 +53,6 @@ import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
-import com.example.winkcart_user.auth.AuthViewModel
 import com.example.winkcart_user.ui.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.components.CustomButton
 import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
@@ -65,7 +63,7 @@ import com.example.winkcart_user.ui.utils.components.LottieAnimationView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
+fun CartView(viewModel: CartViewModel, checkoutAction: (String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
     val draftOrders by viewModel.draftOrders.collectAsState()
@@ -280,16 +278,6 @@ fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutActi
                                 CustomButton(lable = stringResource(R.string.check_out)) {
                                     if (result.isNotEmpty()) {
                                         checkoutAction(totalAmount, currencyCodeSaved)
-                                    }
-                                }
-                                Spacer(Modifier.height(20.dp))
-                                CustomButton(lable = "Sign out") {
-                                    authViewModel.signOut()
-                                    viewModel.writeCustomerID("")
-                                    viewModel.readCustomerID()
-
-                                    navController.navigate("home") {
-                                        popUpTo("home") { inclusive = true }
                                     }
                                 }
                                 Spacer(Modifier.height(100.dp))
