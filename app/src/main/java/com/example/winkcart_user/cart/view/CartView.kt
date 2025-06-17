@@ -362,7 +362,8 @@ fun CartView(viewModel: CartViewModel,authViewModel: AuthViewModel, checkoutActi
                                     viewModel.setAppliedCoupon(selectedPriceRule)
                                     viewModel.refreshTotalAmount()
                                 },
-                                currencyCode = currencyCodeSaved
+                                currencyCode = currencyCodeSaved,
+                                currencyRate = currencyRateSaved
                             )
                         }
 

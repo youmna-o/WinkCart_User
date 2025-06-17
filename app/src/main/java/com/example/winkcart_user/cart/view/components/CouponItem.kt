@@ -38,6 +38,7 @@ import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.ui.theme.myPurple
+import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
 
 
 @Composable
@@ -46,7 +47,8 @@ fun CouponItem(
     priceRule: PriceRule,
     imageID: Int,
     onApplyClicked: (PriceRule, String) -> Unit,
-    currencyCode: String
+    currencyCode: String,
+    currencyRate: String
 ) {
     LaunchedEffect(priceRule.id) {
         viewModel.getDiscountCodesByPriceRule(priceRule.id)
@@ -58,10 +60,10 @@ fun CouponItem(
     val firstDiscountCode = remember { mutableStateOf("Loading...") }
 
     LaunchedEffect(discountCodeState) {
-        when (val state = discountCodeState) {
+        when (discountCodeState) {
             is ResponseStatus.Success -> {
-                val codes = state.result?.discount_codes
-                firstDiscountCode.value = if (!codes.isNullOrEmpty()) codes[0].code else "No code"
+                val codes = discountCodeState.result.discount_codes
+                firstDiscountCode.value = if (codes.isNotEmpty()) codes[0].code else "No code"
             }
             is ResponseStatus.Error -> {
                 firstDiscountCode.value = "Error loading code"
@@ -132,9 +134,10 @@ fun CouponItem(
                             overflow = TextOverflow.Ellipsis
                         )
 
+                        val priceDiscount = convertCurrency(priceRule.value.trimStart('-'), currencyRate, currencyCode)
                         val discountText = when (priceRule.value_type) {
                             "percentage" -> "${priceRule.value.trimStart('-')}%"
-                            "fixed_amount" -> priceRule.value.trimStart('-') + " $currencyCode" // You can format this further
+                            "fixed_amount" -> {"$priceDiscount $currencyCode"}
                             else -> ""
                         }
 

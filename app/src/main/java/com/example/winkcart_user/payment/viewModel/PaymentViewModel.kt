@@ -33,7 +33,7 @@ class PaymentViewModel(private  val repo: ProductRepo) : ViewModel() {
             nameOnCartError = nameOnCard.isBlank(),
             cardNumberError = cardNumber.isBlank() || cardNumber.length != 16,
             expireDateError = expireDate.isBlank(),
-            cvvError = cvv.isBlank()
+            cvvError = cvv.isBlank()|| cvv.length != 3
         )
 
         _formValidationState.value = validation

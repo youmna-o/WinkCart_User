@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomButton(lable: String, onClick:()-> Unit){
+fun CustomButton(lable: String, onClick: ()-> Unit){
     Button(onClick = onClick, modifier = Modifier.fillMaxWidth().height(48.dp),) {
         Text(lable)
     }
