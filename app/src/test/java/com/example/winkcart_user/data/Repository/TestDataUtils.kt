@@ -5,7 +5,6 @@ import com.example.winkcart_user.data.model.orders.Address
 import com.example.winkcart_user.data.model.orders.Customer
 import com.example.winkcart_user.data.model.orders.CustomerAddress
 import com.example.winkcart_user.data.model.orders.CustomerOrder
-import com.example.winkcart_user.data.model.orders.EmailMarketingConsent
 import com.example.winkcart_user.data.model.orders.LineItem
 import com.example.winkcart_user.data.model.orders.Money
 import com.example.winkcart_user.data.model.orders.MoneySet
@@ -14,7 +13,6 @@ import com.example.winkcart_user.data.model.orders.OrderData
 import com.example.winkcart_user.data.model.orders.OrderRequest
 import com.example.winkcart_user.data.model.orders.OrdersResponse
 import com.example.winkcart_user.data.model.orders.PriceSet
-import com.example.winkcart_user.data.model.orders.SmsMarketingConsent
 import com.example.winkcart_user.data.model.proddata.Variant
 import com.example.winkcart_user.data.model.products.Product
 import java.util.Date
@@ -145,17 +143,6 @@ object FakeOrderFactory {
             multipassIdentifier = null,
             taxExempt = false,
             phone = "1234567890",
-            emailMarketingConsent = EmailMarketingConsent(
-                state = "subscribed",
-                optInLevel = "single_opt_in",
-                consentUpdatedAt = Date()
-            ),
-            smsMarketingConsent = SmsMarketingConsent(
-                state = "not_subscribed",
-                optInLevel = "none",
-                consentUpdatedAt = null,
-                consentCollectedFrom = null
-            ),
             tags = "",
             currency = "USD",
             taxExemptions = emptyList(),

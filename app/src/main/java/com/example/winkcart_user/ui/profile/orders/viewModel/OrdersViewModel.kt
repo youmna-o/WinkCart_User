@@ -19,10 +19,6 @@ class OrdersViewModel(private val repository: ProductRepo) : ViewModel() {
     private val _orderDetails = MutableStateFlow<ResponseStatus<OrderDetailsResponse>>(ResponseStatus.Loading)
     val orderDetails = _orderDetails.asStateFlow()
 
-    init {
-        getUserOrders()
-    }
-
     fun getUserOrders(){
         viewModelScope.launch {
             val orders = repository.getUserOrders()

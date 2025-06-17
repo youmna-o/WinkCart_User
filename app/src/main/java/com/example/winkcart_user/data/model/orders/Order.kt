@@ -299,16 +299,6 @@ data class MoneySet(
     val presentmentMoney: Money
 )
 
-data class EmailMarketingConsent(
-    @SerializedName("state")
-    val state: String,
-
-    @SerializedName("opt_in_level")
-    val optInLevel: String,
-
-    @SerializedName("consent_updated_at")
-    val consentUpdatedAt: Date?
-)
 
 data class SmsMarketingConsent(
     @SerializedName("state")
@@ -414,11 +404,6 @@ data class Customer(
     @SerializedName("phone")
     val phone: String,
 
-    @SerializedName("email_marketing_consent")
-    val emailMarketingConsent: EmailMarketingConsent,
-
-    @SerializedName("sms_marketing_consent")
-    val smsMarketingConsent: SmsMarketingConsent,
 
     @SerializedName("tags")
     val tags: String,
