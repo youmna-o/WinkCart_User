@@ -8,8 +8,8 @@ sealed class NavigationRout(val route: String) {
      data object Cart :NavigationRout("Cart")
      data object Orders : NavigationRout("orders")
      data object Profile : NavigationRout("Profile")
-     data object Checkout : NavigationRout("Checkout/{cardNumber}/{totalAmount}/{currencyCode}/{couponCode}"){
-         fun createRoute(cardNumber: String, totalAmount: String, currencyCode: String, couponCode: String) = "Checkout/$cardNumber/$totalAmount/$currencyCode/$couponCode"
+     data object Checkout : NavigationRout("Checkout/{cardNumber}/{totalAmount}/{currencyCode}/{couponCode}/{discount}"){
+         fun createRoute(cardNumber: String, totalAmount: String, currencyCode: String, couponCode: String, discount: String) = "Checkout/$cardNumber/$totalAmount/$currencyCode/$couponCode/$discount"
      }
      data object OrderDetails : NavigationRout("OrderDetails/{orderId}")
     data object Address :NavigationRout("Address")
@@ -20,8 +20,8 @@ sealed class NavigationRout(val route: String) {
     data object AboutUs :NavigationRout("AboutUs")
     data object Splash :NavigationRout("Splash")
     data object ContactUs :NavigationRout("ContactUs")
-     data object PaymentMethods :NavigationRout("PaymentMethods/{totalAmount}/{currencyCode}/{couponCode}") {
-         fun createRoute(totalAmount: String, currencyCode: String, couponCode: String) = "PaymentMethods/$totalAmount/$currencyCode/$couponCode"
+     data object PaymentMethods :NavigationRout("PaymentMethods/{totalAmount}/{currencyCode}/{couponCode}/{discount}") {
+         fun createRoute(totalAmount: String, currencyCode: String, couponCode: String, discount: String) = "PaymentMethods/$totalAmount/$currencyCode/$couponCode/$discount"
      }
 
      object Home : NavigationRout("home")

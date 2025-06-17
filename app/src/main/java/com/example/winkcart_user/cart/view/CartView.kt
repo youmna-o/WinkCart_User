@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -67,13 +66,15 @@ import com.example.winkcart_user.ui.utils.components.LottieAnimationView
 @Composable
 
 
-fun CartView(viewModel: CartViewModel= hiltViewModel(), checkoutAction: (String,String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
+fun CartView(viewModel: CartViewModel= hiltViewModel(), checkoutAction: (String,String,String,String) -> Unit, backAction: () -> Unit,navController: NavController) {
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val currencyRateSaved by viewModel.currencyRate.collectAsState()
     val draftOrders by viewModel.draftOrders.collectAsState()
     val customerID by viewModel.customerID.collectAsState()
     val totalAmount by viewModel.totalAmount.collectAsState()
     val priceRules by viewModel.priceRules.collectAsState()
+
+    val discount by viewModel.discountAmount.collectAsState()
 
     var promoCode by remember { mutableStateOf("") }
     val appliedCoupon by viewModel.appliedCoupon.collectAsState()
@@ -105,56 +106,57 @@ fun CartView(viewModel: CartViewModel= hiltViewModel(), checkoutAction: (String,
         else -> emptyList()
     }
 
+
     when (val orders = draftOrders) {
-            is ResponseStatus.Loading -> {
-                LottieAnimationView(
-                    animationRes = R.raw.animation_loading,
-                    message = "Loading your cart..."
-                )
-                return
-            }
+        is ResponseStatus.Loading -> {
+            LottieAnimationView(
+                animationRes = R.raw.animation_loading,
+                message = "Loading your cart..."
+            )
+            return
+        }
 
-            is ResponseStatus.Error -> {
-                LottieAnimationView(
-                    animationRes = R.raw.animation_loading,
-                    message = "No internet connection"
-                )
-                return
-            }
+        is ResponseStatus.Error -> {
+            LottieAnimationView(
+                animationRes = R.raw.animation_loading,
+                message = "No internet connection"
+            )
+            return
+        }
 
-            is ResponseStatus.Success -> {
-                val result = orders.result.draft_orders
+        is ResponseStatus.Success -> {
+            val result = orders.result.draft_orders
 
-                Scaffold(
-                    topBar = {
-                        CenterAlignedTopAppBar(
-                            title = {
-                                Text(
-                                    text = stringResource(R.string.cart),
-                                    fontWeight = FontWeight.Bold
-                                )
-                            },
-                            navigationIcon = {
-                                IconButton(onClick = { backAction.invoke() }) {
-                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                                }
-                            },
-                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
-                        )
-                    }
-                ) { paddingValues ->
-                    Box(
+            Scaffold(
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        title = {
+                            Text(
+                                text = stringResource(R.string.cart),
+                                fontWeight = FontWeight.Bold
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { backAction.invoke() }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                            }
+                        },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+                    )
+                }
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(BackgroundColor)
+                        .padding(SCREEN_PADDING)
+                        .padding(paddingValues)
+                ) {
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(BackgroundColor)
-                            .padding(SCREEN_PADDING)
-                            .padding(paddingValues)
+                            .verticalScroll(scroll)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(scroll)
-                        ) {
 
                             if (result.isNotEmpty()) {
                                 LazyColumn(
@@ -281,7 +283,7 @@ fun CartView(viewModel: CartViewModel= hiltViewModel(), checkoutAction: (String,
                                 Spacer(Modifier.height(30.dp))
                                 CustomButton(lable = stringResource(R.string.check_out)) {
                                     if (result.isNotEmpty()) {
-                                        checkoutAction(totalAmount, currencyCodeSaved, promoCode )
+                                        checkoutAction(totalAmount, currencyCodeSaved, promoCode, discount )
                                     }
                                 }
                                 Spacer(Modifier.height(100.dp))

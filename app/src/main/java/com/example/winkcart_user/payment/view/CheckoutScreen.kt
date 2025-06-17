@@ -45,7 +45,8 @@ fun CheckoutScreen(
     totalAmount: String,
     currencyCode: String,
     goToSuccess: () -> Unit,
-    couponCode: String
+    couponCode: String,
+    discount: String
 
 ) {
     val draftOrders by cartViewModel.draftOrders.collectAsState()
@@ -53,10 +54,11 @@ fun CheckoutScreen(
     val orderResponse = paymentViewModel.ordersResponse.collectAsState()
     val defaultCustomerAddress by settingsViewModel.defaultCustomerAddresses.collectAsState()
     val customerId by cartViewModel.customerID.collectAsState()
-    val discount by cartViewModel.discountAmount.collectAsState()
+    //val discount by cartViewModel.discountAmount.collectAsState()
     val discountOnly = discount.split(" ").first().toDoubleOrNull() ?: 0.0
     var showLottieCheckVerify by remember { mutableStateOf(false) }
-    Log.i("TAG", "CheckoutScreen: $discountOnly")
+    Log.i("TAG", "CheckoutScreen: discountOnly = $discountOnly")
+    Log.i("TAG", "CheckoutScreen: discount = $discount")
 
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
@@ -174,7 +176,7 @@ fun CheckoutScreen(
                     delay(3000)
                     paymentViewModel.createOrder(
                         lineItems = allLineItems,
-                        discountCode = "50Code",
+                        discountCode = couponCode,
                         amount = discountOnly.toString()
                     )
 

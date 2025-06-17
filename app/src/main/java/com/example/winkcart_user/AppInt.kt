@@ -119,12 +119,13 @@ fun AppInit(
                     }
                     composable(NavigationRout.Cart.route) {
                         CartView(
-                            checkoutAction = { totalAmount, currencyCode, couponCode ->
+                            checkoutAction = { totalAmount, currencyCode, couponCode, discount ->
                                 navController.navigate(
                                     NavigationRout.PaymentMethods.createRoute(
                                         totalAmount,
                                         currencyCode,
-                                        couponCode
+                                        couponCode,
+                                        discount = discount
                                     )
 
                                 )
@@ -209,7 +210,8 @@ fun AppInit(
                             navArgument("cardNumber") { type = NavType.StringType },
                             navArgument("totalAmount") { type = NavType.StringType },
                             navArgument("currencyCode") { type = NavType.StringType },
-                            navArgument("couponCode") { type = NavType.StringType }
+                            navArgument("couponCode") { type = NavType.StringType },
+                            navArgument("discount") { type = NavType.StringType }
                         )
                     ) { backStackEntry ->
                         val cardNumber =
@@ -220,6 +222,8 @@ fun AppInit(
                             backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                         val couponCode =
                             backStackEntry.arguments?.getString("couponCode") ?: return@composable
+                        val discount =
+                            backStackEntry.arguments?.getString("discount") ?: return@composable
                         CheckoutScreen(
                             navController = navController,
                             cardNumber = cardNumber,
@@ -228,7 +232,8 @@ fun AppInit(
                             goToSuccess = {
                                 navController.navigate(NavigationRout.Success.route)
                             },
-                            couponCode = couponCode
+                            couponCode = couponCode,
+                            discount = discount
                         )
 
                     }
@@ -238,7 +243,8 @@ fun AppInit(
                         arguments = listOf(
                             navArgument("totalAmount") { type = NavType.StringType },
                             navArgument("currencyCode") { type = NavType.StringType },
-                            navArgument("couponCode") { type = NavType.StringType }
+                            navArgument("couponCode") { type = NavType.StringType },
+                            navArgument("discount") { type = NavType.StringType },
                         )
                     ) { backStackEntry ->
                         val totalAmount =
@@ -247,6 +253,8 @@ fun AppInit(
                             backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                         val couponCode =
                             backStackEntry.arguments?.getString("couponCode") ?: return@composable
+                        val discount =
+                            backStackEntry.arguments?.getString("discount") ?: return@composable
                         PaymentMethodsView(
                             backAction = { navController.popBackStack() },
                             totalAmount = totalAmount,
@@ -257,11 +265,13 @@ fun AppInit(
                                         cardNumber,
                                         amount,
                                         currencyCode,
-                                        couponCode
+                                        couponCode,
+                                        discount = discount
                                     )
 
                                 )
                             },
+                            couponCode = couponCode
                         )
                     }
 
@@ -336,6 +346,7 @@ fun AppInit(
                             navArgument("totalAmount") { type = NavType.StringType },
                             navArgument("currencyCode") { type = NavType.StringType },
                             navArgument("couponCode") { type = NavType.StringType },
+                            navArgument("discount") { type = NavType.StringType }
 
                             )
                     ) { backStackEntry ->
@@ -347,6 +358,8 @@ fun AppInit(
                             backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                         val couponCode =
                             backStackEntry.arguments?.getString("couponCode") ?: return@composable
+                        val discount =
+                            backStackEntry.arguments?.getString("discount") ?: return@composable
                         CheckoutScreen(
                             navController = navController,
                             cardNumber = cardNumber,
@@ -355,7 +368,8 @@ fun AppInit(
                             goToSuccess = {
                                 navController.navigate(NavigationRout.Success.route)
                             },
-                            couponCode = couponCode
+                            couponCode = couponCode,
+                            discount = discount
                         )
 
                     }
@@ -366,7 +380,8 @@ fun AppInit(
                         arguments = listOf(
                             navArgument("totalAmount") { type = NavType.StringType },
                             navArgument("currencyCode") { type = NavType.StringType },
-                            navArgument("couponCode") { type = NavType.StringType }
+                            navArgument("couponCode") { type = NavType.StringType },
+                            navArgument("discount") { type = NavType.StringType }
                         )
                     ) { backStackEntry ->
                         val totalAmount =
@@ -375,6 +390,8 @@ fun AppInit(
                             backStackEntry.arguments?.getString("currencyCode") ?: return@composable
                         val couponCode =
                             backStackEntry.arguments?.getString("couponCode") ?: return@composable
+                        val discount =
+                            backStackEntry.arguments?.getString("discount") ?: return@composable
                         PaymentMethodsView(
                             backAction = { navController.popBackStack() },
                             totalAmount = totalAmount,
@@ -385,11 +402,13 @@ fun AppInit(
                                         cardNumber,
                                         amount,
                                         currencyCode,
-                                        couponCode = couponCode
+                                        couponCode = couponCode,
+                                        discount = discount
                                     )
 
                                 )
                             },
+                            couponCode = couponCode
                         )
                     }
 

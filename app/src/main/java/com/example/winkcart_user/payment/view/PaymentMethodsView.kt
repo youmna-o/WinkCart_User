@@ -64,9 +64,10 @@ fun PaymentMethodsView(
     backAction: () -> Unit,
     totalAmount : String,
     currencyCode : String,
-    goToCheckout: (String, String) -> Unit
+    goToCheckout: (String, String) -> Unit,
+    couponCode: String
 ) {
-    Log.i("TAG", "PaymentMethodsView: totalAmount: $totalAmount, currencyCode : $currencyCode ")
+    Log.i("TAG", "PaymentMethodsView: totalAmount: $totalAmount, currencyCode : $currencyCode , couponCode: $couponCode")
     val selectedOption = remember { mutableStateOf<PaymentMethod?>(null) }
     var showCardSheet = remember { mutableStateOf(false) }
     var cardNumber by remember { mutableStateOf("") }

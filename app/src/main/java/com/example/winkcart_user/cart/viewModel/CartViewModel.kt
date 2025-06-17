@@ -63,6 +63,8 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
     private val _discountAmount = MutableStateFlow("0.00 EGP")
     val discountAmount = _discountAmount.asStateFlow()
 
+
+
     private val _discountCodesByPriceRule = MutableStateFlow<Map<Long, ResponseStatus<DiscountCodesResponse>>>(emptyMap())
     val discountCodesByPriceRule: StateFlow<Map<Long, ResponseStatus<DiscountCodesResponse>>> = _discountCodesByPriceRule
 
@@ -82,7 +84,6 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
         calculateTotalAmount()
     }
 
-
     init {
         readCurrencyCode()
         readCurrencyRate()
@@ -93,7 +94,6 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
             }
         }
     }
-
 
 
     private fun calculateTotalAmount() {
@@ -163,7 +163,10 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
 
         _totalAmount.value = "$convertedTotal $code"
         _discountAmount.value = "$convertedDiscount $code"
+
+        Log.i("TAG", "CheckoutScreen: calculateTotalAmount: ${_discountAmount.value}")
     }
+
 
     fun refreshTotalAmount() {
         calculateTotalAmount()
@@ -398,7 +401,6 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
 
 
 
-
     fun getRemainingMonthsText(endsAt: String): String {
         val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
         val endDate = ZonedDateTime.parse(endsAt, formatter)
@@ -437,10 +439,6 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
                 }
         }
     }
-
-
-
-
 
 }
 class CartFactory(private  val repo: ProductRepo): ViewModelProvider.Factory{
