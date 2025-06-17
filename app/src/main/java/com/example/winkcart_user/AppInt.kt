@@ -1,5 +1,6 @@
 package com.example.winkcart_user
 
+import Splash
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +49,7 @@ import com.example.winkcart_user.ui.profile.userProfile.view.ProfileScreen
 import com.example.winkcart_user.ui.profile.userProfile.view.ProfileViewModel
 import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
+import com.example.winkcart_user.ui.utils.navigation.NavigationRout.Splash
 import com.google.android.gms.maps.model.LatLng
 import kotlin.collections.contains
 
@@ -84,19 +86,15 @@ fun AppInit(
             val pa =paddingValues
             NavHost(
                 navController = navController,
-                startDestination =
-                when{
+                startDestination = NavigationRout.Splash.route,
 
-                  
-                    cartViewModel.readCustomersID().isBlank() -> NavigationRout.SignUp.route
-                      else -> NavigationRout.Home.route
-                     ///   else ->NavigationRout.Login.route
-
-                },
-                    //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,
+                //if(cartViewModel.readCustomerID()==null)NavigationRout.Login.route,
                 modifier = Modifier.padding(2.dp)
             ) {
                 var addressLatLon: LatLng? = null
+                composable(NavigationRout.Splash.route) {
+                    Splash(navController, cartViewModel)
+                }
                 composable(NavigationRout.Login.route) {
                     LoginScreen(navController = navController)
                 }

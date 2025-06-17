@@ -55,6 +55,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        viewBinding = true
     }
 }
 dependencies {
@@ -74,6 +75,11 @@ dependencies {
     implementation(libs.play.services.analytics.impl)
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.benchmark.macro)
+    implementation(libs.material)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
@@ -146,5 +152,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
+   //lotti
+    implementation("com.airbnb.android:lottie:6.1.0")
 }
