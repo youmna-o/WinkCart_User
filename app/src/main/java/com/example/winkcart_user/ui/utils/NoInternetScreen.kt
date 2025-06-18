@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.winkcart_user.R
-import com.example.winkcart_user.ui.profile.orders.view.LottieAnimationView
+import com.example.winkcart_user.profile.orders.view.LottieAnimationView
 
 @Composable
 fun NoInternetScreen() {

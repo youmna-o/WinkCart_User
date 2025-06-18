@@ -2,7 +2,7 @@ package com.example.winkcart_user.viewModels
 
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.repository.ProductRepo
-import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
+import com.example.winkcart_user.profile.orders.viewModel.OrdersViewModel
 import com.example.winkcart_user.viewMOdels.createFakeOrderDetailsResponse
 
 import io.mockk.coEvery

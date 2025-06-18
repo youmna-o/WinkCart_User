@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
-import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
+import com.example.winkcart_user.ui.utils.CurrencyConversion.convertCurrency
 
 @Composable
 fun CartItem(

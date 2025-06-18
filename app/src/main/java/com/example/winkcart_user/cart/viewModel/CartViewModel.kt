@@ -11,7 +11,7 @@ import com.example.winkcart_user.data.model.coupons.pricerule.PriceRulesResponse
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderResponse
 import com.example.winkcart_user.data.repository.ProductRepo
-import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
+import com.example.winkcart_user.ui.utils.CurrencyConversion.convertCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

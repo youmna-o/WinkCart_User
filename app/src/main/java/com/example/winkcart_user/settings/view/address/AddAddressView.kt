@@ -45,10 +45,10 @@ import com.example.winkcart_user.data.model.settings.address.CustomerAddress
 import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
 import com.example.winkcart_user.helperclasses.MapUtils
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
-import com.example.winkcart_user.ui.theme.BackgroundColor
-import com.example.winkcart_user.ui.theme.myPurple
+import com.example.winkcart_user.theme.BackgroundColor
+import com.example.winkcart_user.theme.myPurple
 import com.example.winkcart_user.ui.utils.components.CustomButton
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
 import com.google.android.gms.maps.model.LatLng
 
 @OptIn(ExperimentalMaterial3Api::class)

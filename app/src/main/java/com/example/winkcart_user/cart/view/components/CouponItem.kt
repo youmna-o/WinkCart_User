@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
-import com.example.winkcart_user.ui.theme.myPurple
-import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
+import com.example.winkcart_user.theme.myPurple
+import com.example.winkcart_user.ui.utils.CurrencyConversion.convertCurrency
 
 
 @Composable

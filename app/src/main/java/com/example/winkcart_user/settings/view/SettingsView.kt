@@ -32,8 +32,8 @@ import com.example.winkcart_user.R
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.settings.view.currency.CurrencySelectionSheet
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
-import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.theme.BackgroundColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

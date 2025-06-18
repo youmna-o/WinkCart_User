@@ -54,9 +54,9 @@ import com.example.winkcart_user.cart.view.components.CouponItem
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
-import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.example.winkcart_user.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.components.CustomButton
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
 import kotlinx.coroutines.launch
 import com.example.winkcart_user.cart.view.components.EmptyCart
 import com.example.winkcart_user.ui.utils.components.LottieAnimationView

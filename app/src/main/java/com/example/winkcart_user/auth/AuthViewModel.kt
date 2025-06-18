@@ -10,7 +10,7 @@ import com.example.winkcart_user.data.model.AuthModel
 import com.example.winkcart_user.data.model.customer.CustomerRequest
 import com.example.winkcart_user.data.repository.FirebaseRepo
 import com.example.winkcart_user.data.repository.ProductRepoImpl
-import com.example.winkcart_user.utils.Constants
+import com.example.winkcart_user.ui.utils.Constants
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth

@@ -32,10 +32,10 @@ import com.example.winkcart_user.R
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.settings.view.address.components.AddressCard
 import com.example.winkcart_user.settings.view.address.components.NoAddressUI
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
 import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.utils.components.AddFAB
-import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.example.winkcart_user.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.components.LottieAnimationView
 
 

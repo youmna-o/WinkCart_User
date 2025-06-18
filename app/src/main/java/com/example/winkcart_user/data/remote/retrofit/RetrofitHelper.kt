@@ -1,10 +1,10 @@
 package com.example.winkcart_user.data.remote.retrofit
 
 import android.util.Log
-import com.example.winkcart_user.utils.Constants
+import com.example.winkcart_user.ui.utils.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import com.example.winkcart_user.utils.Constants.BASE_URL_CURRENCY
+import com.example.winkcart_user.ui.utils.Constants.BASE_URL_CURRENCY
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Inject
@@ -36,7 +36,7 @@ class RetrofitHelper @Inject constructor()  {
     }
 
     val currencyService: CurrencyService by lazy {
-        createRetrofit(Constants.BASE_URL_CURRENCY).create(CurrencyService::class.java)
+        createRetrofit(BASE_URL_CURRENCY).create(CurrencyService::class.java)
     }
 
 

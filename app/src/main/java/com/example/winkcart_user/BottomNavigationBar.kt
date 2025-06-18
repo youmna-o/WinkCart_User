@@ -67,7 +67,12 @@ fun BottomNavigationBar(navController: NavController) {
         )
 
         NavigationBarItem(
-            icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Cart") },
+            icon = {  Icon(
+                painter = painterResource(id = R.drawable.cart1),
+                contentDescription = "cart",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            ) },
             label = { Text("Cart") },
             selected = currentRoute == NavigationRout.Cart.route,
             onClick = {
@@ -81,7 +86,12 @@ fun BottomNavigationBar(navController: NavController) {
             }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Favorite, contentDescription = "Favourite") },
+            icon = {  Icon(
+                painter = painterResource(id = R.drawable.shape_fav),
+                contentDescription = "Favourite",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            ) },
             label = { Text("Favourite") },
             selected = currentRoute == NavigationRout.Favourite.route,
             onClick = {
@@ -94,8 +104,6 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
-
-
         NavigationBarItem(
             icon = { Icon(
                 painter = painterResource(id = R.drawable.profile),
@@ -115,7 +123,5 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             }
         )
-
-
     }
 }

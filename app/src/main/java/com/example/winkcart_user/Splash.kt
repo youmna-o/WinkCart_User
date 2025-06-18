@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
-import com.example.winkcart_user.ui.theme.Rose40
+import com.example.winkcart_user.theme.Rose40
 
 
 @Composable

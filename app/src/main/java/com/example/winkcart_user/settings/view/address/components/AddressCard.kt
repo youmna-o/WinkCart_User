@@ -42,10 +42,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
 import com.example.winkcart_user.data.model.settings.address.CustomerAddress
-import com.example.winkcart_user.data.model.settings.address.CustomerAddressRequest
-import com.example.winkcart_user.ui.theme.CardBackgroundColor
-import com.example.winkcart_user.ui.theme.HeaderTextColor
-import com.example.winkcart_user.utils.Constants.CARD_CARD_CORNER_RADIUS
+import com.example.winkcart_user.theme.CardBackgroundColor
+import com.example.winkcart_user.theme.HeaderTextColor
+import com.example.winkcart_user.ui.utils.Constants.CARD_CARD_CORNER_RADIUS
 
 
 @Composable

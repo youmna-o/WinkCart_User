@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.winkcart_user.data.model.products.ProductAbstracted
-import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
+import com.example.winkcart_user.ui.utils.CurrencyConversion.convertCurrency
 
 @Composable
 fun ProductItem (product: ProductAbstracted ,currencyRate:String, currencyCode:String, onProductItemClicked : () -> Unit){

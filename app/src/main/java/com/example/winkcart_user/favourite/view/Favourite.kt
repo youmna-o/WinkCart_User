@@ -35,9 +35,9 @@ import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.favourite.FavouriteViewModel
 import com.example.winkcart_user.favourite.view.components.EmptyFavorite
 import com.example.winkcart_user.favourite.view.components.FavItem
-import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.example.winkcart_user.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.components.LottieAnimationView
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -16,9 +16,9 @@ import com.example.winkcart_user.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_user.data.repository.ProductRepoImpl
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModel
 import com.example.winkcart_user.settings.viewmodel.map.PlacesViewModelFactory
-import com.example.winkcart_user.ui.theme.WinkCart_UserTheme
-import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersFactory
-import com.example.winkcart_user.ui.profile.orders.viewModel.OrdersViewModel
+import com.example.winkcart_user.theme.WinkCart_UserTheme
+import com.example.winkcart_user.profile.orders.viewModel.OrdersFactory
+import com.example.winkcart_user.profile.orders.viewModel.OrdersViewModel
 import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
 

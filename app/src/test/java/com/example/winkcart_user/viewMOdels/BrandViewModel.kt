@@ -5,7 +5,7 @@ import com.example.winkcart_user.data.model.vendors.Image
 import com.example.winkcart_user.data.model.vendors.SmartCollection
 import com.example.winkcart_user.data.model.vendors.SmartCollectionsResponse
 import com.example.winkcart_user.data.repository.ProductRepo
-import com.example.winkcart_user.ui.home.main.brandsViewModel.BrandsViewModel
+import com.example.winkcart_user.home.main.brandsViewModel.BrandsViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertTrue

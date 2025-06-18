@@ -4,14 +4,13 @@ import com.example.winkcart_user.data.Repository.createMockProduct
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.repository.ProductRepo
-import com.example.winkcart_user.ui.categorie.categoriesViewModel.CategoriesViewModel
+import com.example.winkcart_user.categorie.categoriesViewModel.CategoriesViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle

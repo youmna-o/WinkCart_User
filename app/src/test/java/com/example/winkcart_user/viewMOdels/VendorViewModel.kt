@@ -4,7 +4,7 @@ import com.example.winkcart_user.data.Repository.createMockProduct
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.repository.ProductRepo
-import com.example.winkcart_user.ui.home.vendorProducts.viewModel.VendorProductsViewModel
+import com.example.winkcart_user.home.vendorProducts.viewModel.VendorProductsViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals

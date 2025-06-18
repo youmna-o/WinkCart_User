@@ -23,9 +23,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.R
-import com.example.winkcart_user.ui.theme.BackgroundColor
+import com.example.winkcart_user.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.components.CustomButton
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
 
 @Composable
 fun SuccessView(

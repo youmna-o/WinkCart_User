@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
-import com.example.winkcart_user.utils.CurrencyConversion.convertCurrency
+import com.example.winkcart_user.ui.utils.CurrencyConversion.convertCurrency
 
 @Composable
 fun ProductListSection(

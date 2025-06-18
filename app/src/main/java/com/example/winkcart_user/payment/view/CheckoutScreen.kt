@@ -29,7 +29,7 @@ import com.example.winkcart_user.settings.viewmodel.SettingsViewModel
 import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
 import com.example.winkcart_user.ui.utils.components.TimedLottieAnimation
 import com.example.winkcart_user.ui.utils.navigation.NavigationRout
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
 import kotlinx.coroutines.delay
 
 

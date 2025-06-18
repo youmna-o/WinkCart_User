@@ -48,8 +48,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_user.R
-import com.example.winkcart_user.utils.Constants.SCREEN_PADDING
-import com.example.winkcart_user.ui.theme.HeaderTextColor
+import com.example.winkcart_user.ui.utils.Constants.SCREEN_PADDING
+import com.example.winkcart_user.theme.HeaderTextColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
