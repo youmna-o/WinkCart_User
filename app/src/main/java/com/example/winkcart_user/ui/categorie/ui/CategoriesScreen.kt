@@ -169,42 +169,92 @@ fun CategoriesScreenOnSuccess(categoriesViewModel: CategoriesViewModel,
             isFilterAppliedState = false
         }
 
-        Column(modifier = Modifier.padding(paddingValues)) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+        ) {
             Spacer(modifier = Modifier.height(8.dp))
             CustomSearchBar(
                 searchInput = searchInput,
-                onSearchInputChange =  onSearchInputChange,
+                onSearchInputChange = onSearchInputChange,
             )
-            CategoryTabs(
-                selectedTabIndex = selectedTabIndex,
-                subcategories = subcategories,
-                selectedSubcategory = selectedSubcategoryIndex,
-                onTabSelected = { selectedTabIndex = it
-                    isFilterAppliedState = false },
-                onSubcategorySelected = { selectedSubcategoryIndex = it
-                    isFilterAppliedState = false}
-            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item {
+                    CategoryTabs(
+                        selectedTabIndex = selectedTabIndex,
+                        subcategories = subcategories,
+                        selectedSubcategory = selectedSubcategoryIndex,
+                        onTabSelected = {
+                            selectedTabIndex = it
+                            isFilterAppliedState = false
+                        },
+                        onSubcategorySelected = {
+                            selectedSubcategoryIndex = it
+                            isFilterAppliedState = false
+                        }
+                    )
+                }
 
-            FilterSortRow(
-                onApplyFilter = { min, max ->
-                    currentList = baseList.filter { product ->
-                        val priceStr = product.variants[0].price
-                        val convertedPrice = convertCurrency(priceStr, currencyRate, currencyCode).toFloatOrNull()
-                        convertedPrice != null && convertedPrice in min..max}
-                   isFilterAppliedState = true
-                },
-                onResetFilter = {
-                    currentList = baseList
-                    isFilterAppliedState = false
-                },
-                isResetEnabled = isFilterAppliedState,
-            )
-            CategoryProducts(
-                filteredList,
-                currencyRate = currencyRate,
-                currencyCode = currencyCode,
-                navController = navController,
-            )
+                item {
+                    FilterSortRow(
+                        onApplyFilter = { min, max ->
+                            currentList = baseList.filter { product ->
+                                val priceStr = product.variants[0].price
+                                val convertedPrice = convertCurrency(priceStr, currencyRate, currencyCode).toFloatOrNull()
+                                convertedPrice != null && convertedPrice in min..max
+                            }
+                            isFilterAppliedState = true
+                        },
+                        onResetFilter = {
+                            currentList = baseList
+                            isFilterAppliedState = false
+                        },
+                        isResetEnabled = isFilterAppliedState,
+                    )
+                }
+                items(filteredList.size) { index ->
+                    ProductItem(
+                        product = ProductAbstracted(
+                            id = filteredList[index].id,
+                            title = filteredList[index].title,
+                            price = filteredList[index].variants[0].price,
+                            imageUrl = filteredList[index].image?.src ?: ""
+                        ),
+                        currencyCode = currencyCode,
+                        currencyRate = currencyRate,
+                        onProductItemClicked = {
+                            navController.navigate("ProductInfo/${filteredList[index].id}")
+                        }
+                    )
+                }
+
+                if (filteredList.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "All products in this section are currently out of stock.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Gray
+                                )
+                                Text(
+                                    "Stay tuned for updates!",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Gray
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
