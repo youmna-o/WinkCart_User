@@ -296,7 +296,8 @@ fun createFakeGetOrderResponse(
         shippingAddress = address
     )
 
-    return OrdersResponse(order)
+    val orders = listOf(order)
+    return OrdersResponse(orders)
 }
 
 

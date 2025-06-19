@@ -157,7 +157,6 @@ dependencies {
     testImplementation ("app.cash.turbine:turbine:1.0.0")
     testImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test:runner:1.5.2")
-    testImplementation(kotlin("test"))
     //DI=> hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")

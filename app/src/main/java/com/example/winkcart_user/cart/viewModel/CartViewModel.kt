@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -40,16 +41,16 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
     val customerID = _customerID.asStateFlow()
 
     private val _createDraftOrderResponse = MutableStateFlow<ResponseStatus<Any>>(ResponseStatus.Loading)
-    //val createDraftOrderResponse = _createDraftOrderResponse.asStateFlow()
+    val createDraftOrderResponse = _createDraftOrderResponse.asStateFlow()
 
     private val _draftOrders = MutableStateFlow<ResponseStatus<DraftOrderResponse>>(ResponseStatus.Loading)
     val draftOrders = _draftOrders.asStateFlow()
 
     private val _deleteDraftOrders = MutableStateFlow<ResponseStatus<Unit>>(ResponseStatus.Loading)
-    //val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
+    val deleteDraftOrders = _deleteDraftOrders.asStateFlow()
 
     private val _updateDraftOrder = MutableStateFlow<ResponseStatus<DraftOrderResponse>>(ResponseStatus.Loading)
-    //val updateDraftOrder = _updateDraftOrder.asStateFlow()
+    val updateDraftOrder = _updateDraftOrder.asStateFlow()
 
     private val _totalAmount = MutableStateFlow("0.00 EGP")
     val totalAmount = _totalAmount.asStateFlow()
@@ -439,6 +440,27 @@ class CartViewModel @Inject constructor(private val repo: ProductRepo ) :ViewMod
                 }
         }
     }
+
+    @VisibleForTesting
+    fun setCurrencyForTest(code: String, rate: String) {
+        _currencyCode.value = code
+        _currencyRate.value = rate
+    }
+
+    @VisibleForTesting
+    fun setDraftOrdersForTest(response: ResponseStatus<DraftOrderResponse>) {
+        _draftOrders.value = response
+    }
+    fun setCustomerIdForTest(id: String) {
+        (this as? CartViewModel)?.apply {
+            val field = this::class.java.getDeclaredField("_customerID")
+            field.isAccessible = true
+            val stateFlow = field.get(this) as MutableStateFlow<String>
+            stateFlow.value = id
+        }
+    }
+
+
 
 }
 class CartFactory(private  val repo: ProductRepo): ViewModelProvider.Factory{
