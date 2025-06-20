@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WinkCart_User</string>
+    <string name="app_name">WinkCart</string>
     <string name="settings">Settings</string>
     <string name="address">Address</string>
     <string name="currency">Currency</string>

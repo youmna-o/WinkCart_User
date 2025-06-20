@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.winkcart_user.auth.AuthViewModel
+import com.example.winkcart_user.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.extractUsername
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,98 +58,102 @@ fun ProfileScreen(
 
             )
     },
-        containerColor = Color(0xFFF5F5F5)) {
-        padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(32.dp)
-
+    containerColor = Color(0xFFF5F5F5)) {
+    padding ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundColor)
+            .padding(padding)
         ) {
-            item {
-                Spacer(modifier = Modifier.height(70.dp))
+     LazyColumn(
+         modifier = Modifier
+             .fillMaxSize()
+             .background(Color.White)
+             .padding(32.dp)
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 32.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .background(Color.Gray.copy(alpha = 0.3f))
-                    ) {
-                        Text(
-                            text = extractUsername(profileViewModel.getGemail())
-                                .getOrNull(0)?.toString() ?: "1",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Gray
-                        )
-                    }
+     ) {
+         item {
+             Row(
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(bottom = 32.dp),
+                 verticalAlignment = Alignment.CenterVertically
+             ) {
+                 Box(
+                     contentAlignment = Alignment.Center,
+                     modifier = Modifier
+                         .size(64.dp)
+                         .clip(CircleShape)
+                         .background(Color.Gray.copy(alpha = 0.3f))
+                 ) {
+                     Text(
+                         text = extractUsername(profileViewModel.getGemail())
+                             .getOrNull(0)?.toString() ?: "1",
+                         fontSize = 24.sp,
+                         fontWeight = FontWeight.Bold,
+                         color = Color.Gray
+                     )
+                 }
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                 Spacer(modifier = Modifier.width(16.dp))
 
-                    Column {
-                        Text(
-                            text =  if (profileViewModel.isGuest())
-                                "Guest"
+                 Column {
+                     Text(
+                         text = if (profileViewModel.isGuest())
+                             "Guest"
+                         else
+                             extractUsername(profileViewModel.getGemail()),
+                         fontSize = 18.sp,
+                         fontWeight = FontWeight.Medium,
+                         color = Color.Black
+                     )
+                     Text(
+                         text = if (isGuest) "" else email,
+                         fontSize = 14.sp,
+                         color = Color.Gray,
+                         modifier = Modifier.padding(top = 4.dp)
+                     )
+                 }
+             }
+         }
 
-                            else
-                                extractUsername(profileViewModel.getGemail()),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
-                        )
-                        Text(
-                            text =if (isGuest) "" else email,
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
-                }
-            }
+         item {
+             ProfileMenuItem(
+                 title = "My Orders",
+                 subtitle = "see your delivered orders",
+                 onClick = {
+                     if (profileViewModel.isGuest()) {
+                         showDialog.value = true
+                     } else {
+                         navController.navigate("orders")
+                         val email = profileViewModel.getGemail()
 
-            item {
-                ProfileMenuItem(
-                    title = "My Orders",
-                    subtitle = "see your delivered orders",
-                    onClick = {
-                        if (profileViewModel.isGuest()){
-                            showDialog.value = true
-                        }else{
-                            navController.navigate("orders")
-                            val email = profileViewModel.getGemail()
-
-                        }
-                    }
-                )
-
-
-                ProfileMenuItem(
-                    title = "Settings",
-                    subtitle = "addresses,about us etc ",
-                    onClick = { navController.navigate("Settings") }
-                )
-
-                ProfileMenuItem(
-                    title = "Log out",
-                    subtitle = "",
-                    onClick = {
-                        showDialogLogout.value = true
-
-                    }
-                )
-
-            }
+                     }
+                 }
+             )
 
 
-        }
+             ProfileMenuItem(
+                 title = "Settings",
+                 subtitle = "addresses,about us etc ",
+                 onClick = { navController.navigate("Settings") }
+             )
+
+             ProfileMenuItem(
+                 title = "Log out",
+                 subtitle = "",
+                 onClick = {
+                     showDialogLogout.value = true
+
+                 }
+             )
+
+         }
+
+
+     }
+ }
         if (showDialog.value) {
             CustomAlertDialog(
                 onClick = {

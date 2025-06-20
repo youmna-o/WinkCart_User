@@ -141,6 +141,10 @@ class FakeRemoteDataSource : RemoteDataSource {
         TODO("Not yet implemented")
     }
 
+    override suspend fun deleteCustomerAddress(customerId: Long, addressId: Long): Flow<Unit?> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getDiscountCodesByPriceRule(priceRuleId: Long): Flow<DiscountCodesResponse?> {
         TODO("Not yet implemented")
     }

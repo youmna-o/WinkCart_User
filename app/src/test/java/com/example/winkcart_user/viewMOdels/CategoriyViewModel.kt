@@ -1,6 +1,6 @@
 package com.example.winkcart_user.viewMOdels
 
-import com.example.winkcart_user.data.Repository.createMockProduct
+import com.example.winkcart_user.data.repository.createMockProduct
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.model.products.ProductResponse
 import com.example.winkcart_user.data.repository.ProductRepo

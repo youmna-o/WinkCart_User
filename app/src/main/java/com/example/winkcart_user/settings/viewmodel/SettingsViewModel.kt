@@ -63,7 +63,7 @@ class SettingsViewModel@Inject constructor(private  val repo: ProductRepo) : Vie
 
     init {
         readCustomerID()
-        Log.i("TAG", " Setting inti CustomerID: ${customerID.value} ")
+       // Log.i("TAG", " Setting inti CustomerID: ${customerID.value} ")
         viewModelScope.launch {
             val storedDate = try {
                 repo.readCurrencyReadingDate().first()

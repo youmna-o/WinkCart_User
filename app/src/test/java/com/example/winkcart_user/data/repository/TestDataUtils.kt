@@ -1,5 +1,10 @@
-package com.example.winkcart_user.data.Repository
+package com.example.winkcart_user.data.repository
 
+import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
+import com.example.winkcart_user.data.model.coupons.pricerule.ToEntitlementPurchase
+import com.example.winkcart_user.data.model.coupons.pricerule.ToEntitlementQuantityRatio
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrder
+import com.example.winkcart_user.data.model.draftorder.cart.DraftOrderRequest
 import com.example.winkcart_user.data.model.draftorder.cart.LineItemDraft
 import com.example.winkcart_user.data.model.orders.Address
 import com.example.winkcart_user.data.model.orders.Customer
@@ -256,11 +261,82 @@ fun createMockProduct(id: Long, title: String, price: Double,vendor:String ="Moc
                         price = "19.99",
                         quantity = 1,
                         variant_id = 11,
-                        properties = emptyList()
+                        properties = emptyList(),
+                        product_id = 1
                     )
                 ),
                 send_receipt = true
             )
         )
     }
+
+
+fun createDraftOrderWithItems(vararg items: LineItemDraft): DraftOrder {
+    return DraftOrder(
+        id = 999L,
+        customer = com.example.winkcart_user.data.model.draftorder.cart.Customer(123),
+        line_items = items.toList()
+    )
+}
+
+
+fun createPercentageCoupon(
+    id: Long = 1L,
+    value: Double = 10.0,
+    entitledProductIds: List<Long> = emptyList()
+): PriceRule {
+    return PriceRule(
+        id = id,
+        value_type = "percentage",
+        value = "-$value",
+        customer_selection = "all",
+        target_type = "line_item",
+        target_selection = if (entitledProductIds.isEmpty()) "all" else "entitled",
+        allocation_method = "across",
+        allocation_limit = null,
+        once_per_customer = false,
+        usage_limit = null,
+        starts_at = "2024-01-01T00:00:00Z",
+        ends_at = "2025-01-01T00:00:00Z",
+        created_at = "2024-01-01T00:00:00Z",
+        updated_at = "2024-01-01T00:00:00Z",
+        entitled_product_ids = entitledProductIds,
+        entitled_variant_ids = listOf(),
+        entitled_collection_ids = listOf(),
+        entitled_country_ids = listOf(),
+        prerequisite_product_ids = listOf(),
+        prerequisite_variant_ids = listOf(),
+        prerequisite_collection_ids = listOf(),
+        customer_segment_prerequisite_ids = listOf(),
+        prerequisite_customer_ids = listOf(),
+        prerequisite_subtotal_range = null,
+        prerequisite_quantity_range = null,
+        prerequisite_shipping_price_range = null,
+        prerequisite_to_entitlement_quantity_ratio = ToEntitlementQuantityRatio(0, 0),
+        prerequisite_to_entitlement_purchase = ToEntitlementPurchase(0),
+        title = "Test $value% Coupon",
+        admin_graphql_api_id = "gid://shopify/PriceRule/$id"
+    )
+}
+
+fun createFakeDraftOrderRequest(): DraftOrderRequest {
+    return DraftOrderRequest(
+        draft_order = com.example.winkcart_user.data.model.draftorder.cart.DraftOrder(
+            id = 999,
+            customer = com.example.winkcart_user.data.model.draftorder.cart.Customer(123),
+            line_items = listOf(
+                LineItemDraft(
+                    title = "Test Item",
+                    price = "100.0",
+                    quantity = 1,
+                    product_id = 1,
+                    variant_id = 1,
+                    properties = listOf(
+                        com.example.winkcart_user.data.model.draftorder.cart.Property("SavedAt", "Cart")
+                    )
+                )
+            )
+        )
+    )
+}
 

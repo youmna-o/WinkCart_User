@@ -46,7 +46,7 @@ import com.example.winkcart_user.R
 import com.example.winkcart_user.payment.enums.PaymentMethod
 import com.example.winkcart_user.payment.view.components.PaymentOptionCard
 import com.example.winkcart_user.payment.view.components.PaymentSectionHeader
-import com.example.winkcart_user.ui.checkout.view.viewModel.PaymentViewModel
+import com.example.winkcart_user.payment.viewModel.PaymentViewModel
 import com.example.winkcart_user.theme.BackgroundColor
 import com.example.winkcart_user.ui.utils.components.TimedLottieAnimation
 import com.example.winkcart_user.ui.utils.components.CustomButton

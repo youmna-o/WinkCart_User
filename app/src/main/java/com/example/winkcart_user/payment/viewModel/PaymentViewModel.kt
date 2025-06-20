@@ -1,6 +1,5 @@
-package com.example.winkcart_user.ui.checkout.view.viewModel
+package com.example.winkcart_user.payment.viewModel
 
-import android.R
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -69,17 +68,17 @@ class PaymentViewModel@Inject constructor(private  val repo: ProductRepo) : View
 
         viewModelScope.launch {
             val orders = repo.createOrder(request)
-            Log.i("TAG", "createOrder: ${orders}")
+            Log.i("TAG", "createOrder: $orders")
             orders.catch {
                 _ordersResponse.value = ResponseStatus.Error(it)
-                Log.i("TAG", "createOrder error: ${orders}")
-            }.collect{ it
+                Log.i("TAG", "createOrder error: $orders")
+            }.collect{
                 if (it!= null ){
-                    _ordersResponse.value= ResponseStatus.Success<OrdersResponse>(it)
-                    Log.i("TAG", "createOrder value : ${orders}")
+                    _ordersResponse.value= ResponseStatus.Success(it)
+                    Log.i("TAG", "createOrder value : $orders")
                 }else{
                     _ordersResponse.value = ResponseStatus.Error(NullPointerException("userOrders  is null"))
-                    Log.i("TAG", "createOrdernull: ${orders}")
+                    Log.i("TAG", "createOrder null: $orders")
                 }
 
             }
