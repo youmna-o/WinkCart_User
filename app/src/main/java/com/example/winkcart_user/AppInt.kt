@@ -18,7 +18,6 @@ import androidx.navigation.navArgument
 import com.example.winkcart_user.cart.view.CartView
 import com.example.winkcart_user.cart.viewModel.CartViewModel
 import com.example.winkcart_user.favourite.view.Favourite
-
 import com.example.winkcart_user.payment.view.PaymentMethodsView
 import com.example.winkcart_user.settings.view.SettingsView
 import com.example.winkcart_user.settings.view.aboutus.AboutUsView
@@ -31,6 +30,7 @@ import com.example.winkcart_user.settings.view.address.map.PlacePicker
 import com.example.winkcart_user.auth.login.LoginScreen
 import com.example.winkcart_user.auth.signUp.SignUpScreen
 import com.example.winkcart_user.categorie.view.CategoriesScreen
+import com.example.winkcart_user.data.repository.ProductRepo
 import com.example.winkcart_user.payment.view.CheckoutScreen
 import com.example.winkcart_user.payment.view.SuccessView
 import com.example.winkcart_user.home.main.view.HomeScreen
@@ -51,6 +51,7 @@ fun AppInit(
             cartViewModel: CartViewModel,
             ordersViewModel : OrdersViewModel,
             placesViewModel: PlacesViewModel,
+            repo: ProductRepo
 
 ) {
     val scroll = rememberScrollState()
@@ -72,7 +73,7 @@ fun AppInit(
             containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
                 if (showBottomBar) {
-                    BottomNavigationBar(navController = navController)
+                    BottomNavigationBar(navController = navController, customerId = repo.readCustomersID() )
                 }
             }
         ) { paddingValues ->

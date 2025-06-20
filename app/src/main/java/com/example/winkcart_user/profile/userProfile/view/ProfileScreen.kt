@@ -83,7 +83,7 @@ fun ProfileScreen(
                             .background(Color.Gray.copy(alpha = 0.3f))
                     ) {
                         Text(
-                            text = extractUsername(profileViewModel.getGemail() ?: "1")
+                            text = extractUsername(profileViewModel.getGemail())
                                 .getOrNull(0)?.toString() ?: "1",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
@@ -170,8 +170,9 @@ fun ProfileScreen(
                             authViewModel.signOut()
                             profileViewModel.writeCustomerID("")
 
-                            navController.navigate("home") {
-                                popUpTo("home") { inclusive = true }
+                            navController.navigate("Login") {
+                                popUpTo(0)
+                                launchSingleTop = true
                             }
                         }
                     ) {

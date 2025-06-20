@@ -65,7 +65,7 @@ fun AddressCard(
         shape = RoundedCornerShape(CARD_CARD_CORNER_RADIUS),
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp),
+            .height(230.dp),
         colors = CardDefaults.cardColors(
             containerColor = CardBackgroundColor
         ),
@@ -192,6 +192,7 @@ fun AddressCard(
                     color = HeaderTextColor,
                     fontSize = 16.sp,
                 )
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 

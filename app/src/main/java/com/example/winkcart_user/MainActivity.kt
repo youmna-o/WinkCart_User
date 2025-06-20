@@ -84,6 +84,17 @@ class MainActivity : ComponentActivity() {
                     cartViewModel = cartViewModel,
                     ordersViewModel = ordersViewModel,
                     placesViewModel=placesViewModel,
+                    repo = ProductRepoImpl(
+                        remoteDataSource = RemoteDataSourceImpl(retrofitHelper),
+                        localDataSource = LocalDataSourceImpl(
+                            SettingsDaoImpl(
+                                LocalContext.current.getSharedPreferences(
+                                    "AppSettings",
+                                    MODE_PRIVATE
+                                )
+                            )
+                        )
+                    )
 
                 )
             }

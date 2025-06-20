@@ -125,7 +125,7 @@ class ProductRepoImplTest {
         assertNotNull(result)
         assertEquals(1, result?.products?.count { it.title == "Sneakers" })
         assertEquals(2, result?.products?.size)
-        assertEquals("Jacket",result?.products[1]?.title)
+        assertEquals("Jacket", result?.products?.get(1)?.title)
     }
 
     @Test
