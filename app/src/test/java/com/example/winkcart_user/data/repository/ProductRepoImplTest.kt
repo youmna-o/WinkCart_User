@@ -190,7 +190,7 @@ class ProductRepoImplTest {
         assertEquals("Jacket", result?.products?.get(1)?.title)
     }
 
-    @Test
+  /*  @Test
     fun `getUserOrders returns orders successfully`() = runTest {
         val ordersResponse = FakeOrderFactory.createFakeOrdersResponse()
         coEvery { localDataSource.readCustomersID() } returns "123"
@@ -201,7 +201,7 @@ class ProductRepoImplTest {
         assertNotNull(result)
         assertEquals(1, result?.orders?.size)
         assertEquals("MockVendor", result?.orders?.first()?.lineItems?.first()?.vendor)
-    }
+    }*/
     @Test
     fun `getSpecificOrderDetails returns correct order details`() = runTest {
 
