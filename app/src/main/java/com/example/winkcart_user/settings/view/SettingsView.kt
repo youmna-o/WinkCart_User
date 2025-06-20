@@ -45,6 +45,7 @@ fun SettingsView(
     backAction : () -> Unit
 ) {
 
+//    viewModel.readCustomerID()
     val currencyCodeSaved by viewModel.currencyCode.collectAsState()
     val defaultCity by viewModel.defaultCity.collectAsState()
     var city by remember { mutableStateOf("") }
