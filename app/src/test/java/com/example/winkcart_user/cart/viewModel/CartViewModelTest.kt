@@ -1,9 +1,9 @@
 package com.example.winkcart_user.cart.viewModel
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.winkcart_user.data.Repository.createDraftOrderWithItems
-import com.example.winkcart_user.data.Repository.createFakeDraftOrderRequest
-import com.example.winkcart_user.data.Repository.createPercentageCoupon
+import com.example.winkcart_user.data.repository.createDraftOrderWithItems
+import com.example.winkcart_user.data.repository.createFakeDraftOrderRequest
+import com.example.winkcart_user.data.repository.createPercentageCoupon
 import com.example.winkcart_user.data.ResponseStatus
 import com.example.winkcart_user.data.repository.ProductRepo
 import org.junit.runner.RunWith

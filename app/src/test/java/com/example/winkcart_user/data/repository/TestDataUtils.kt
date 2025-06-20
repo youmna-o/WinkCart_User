@@ -1,4 +1,4 @@
-package com.example.winkcart_user.data.Repository
+package com.example.winkcart_user.data.repository
 
 import com.example.winkcart_user.data.model.coupons.pricerule.PriceRule
 import com.example.winkcart_user.data.model.coupons.pricerule.ToEntitlementPurchase
