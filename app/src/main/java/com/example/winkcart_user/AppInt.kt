@@ -301,7 +301,7 @@ fun AppInit(
 
                     composable(NavigationRout.AddAddress.route) {
                         AddAddressView(
-                            backAction = { navController.popBackStack() },
+                            backAction = { navController.popBackStack() /*navController.navigate(NavigationRout.Address.route)*/ },
                             navigateToMapAction = { navController.navigate(NavigationRout.Map.route) },
                             addressLatLon = addressLatLon
                         )

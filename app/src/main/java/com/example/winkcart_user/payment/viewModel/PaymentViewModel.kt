@@ -55,13 +55,26 @@ class PaymentViewModel@Inject constructor(private  val repo: ProductRepo) : View
         lineItems: List<LineItemDraft>,discountCode: String, amount: String
     ) {
 
-        val request = OrderRequest(
+       /* val request = OrderRequest(
             order = OrderData(
                 customer = CustomerOrder(id =repo.readCustomersID().toLong()),
                 line_items = lineItems,
                 send_receipt = true,
                 discount_codes = listOf(
                     DiscountCode(code = discountCode, amount = amount)///
+                )
+            )
+        )*/
+        val request = OrderRequest(
+            order = OrderData(
+                customer = CustomerOrder(id =repo.readCustomersID().toLong()),
+                line_items = lineItems,
+                send_receipt = true,
+                discount_codes = listOf(
+                    DiscountCode(
+                        code = if (discountCode.isEmpty()) "" else discountCode,
+                        amount = if (amount.isEmpty()|| amount=="0.0") "" else amount
+                    )
                 )
             )
         )

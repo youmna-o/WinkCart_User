@@ -258,6 +258,7 @@ fun AddAddressView(
                                 phone = "+20 $phoneNumber",
                             )
                         )
+                        Log.i("TAG", "AddAddressView: ")
                         viewModel.addCustomerAddress(
                             customerId = customerID.toLong(),
                             customerAddressRequest = customerAddressRequest
