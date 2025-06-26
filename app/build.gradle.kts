@@ -21,8 +21,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.winkcart_user"
-        minSdk = 31
-        targetSdk = 35
+        minSdk = 23
+        targetSdk = 30
         versionCode = 1
         versionName = "1.0"
 
